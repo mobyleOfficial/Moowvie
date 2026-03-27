@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:moowvies/l10n/app_localizations.dart';
+import 'package:moowvie/l10n/app_localizations.dart';
+import 'package:movies/movies.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,7 +9,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  static const String appTitle = 'Moowvies';
+  static const String appTitle = 'Moowvie';
 
   @override
   Widget build(BuildContext context) {

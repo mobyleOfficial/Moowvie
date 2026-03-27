@@ -1,2 +1,2 @@
-# Moowvies
-Save and share your favorite moowvies
+# Moowvie
+Save and share your favorite moowvie
