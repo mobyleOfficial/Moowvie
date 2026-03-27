@@ -1,6 +1,6 @@
 {
-    "name": "moow",
-    "short_name": "moow",
+    "name": "moowvies",
+    "short_name": "moowvies",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

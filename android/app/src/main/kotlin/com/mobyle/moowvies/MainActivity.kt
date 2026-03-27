@@ -1,4 +1,4 @@
-package com.mobyle.moow
+package com.mobyle.moowvies
 
 import io.flutter.embedding.android.FlutterActivity
 
