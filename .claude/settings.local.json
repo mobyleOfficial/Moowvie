@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r moow /c/Users/Abe/Desktop/Projetos/Mobyle/moow --include=*.gradle --include=*.gradle.kts --include=*.properties)",
+      "Bash(grep:*)",
+      "Bash(cd:*)",
+      "Bash(mv moow.iml moowvies.iml)",
+      "Bash(mv android/moow_android.iml android/moowvies_android.iml)"
+    ]
+  }
+}
