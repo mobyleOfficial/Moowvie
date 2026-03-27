@@ -29,4 +29,4 @@ doc/api/
 .flutter-plugins-dependencies
 
 # Claude Code
-CLAUDE.md
+.claude/

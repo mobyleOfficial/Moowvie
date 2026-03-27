@@ -1,0 +1,19 @@
+{
+  "@@locale": "en",
+  "appTitle": "Moowvies",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "homeTitle": "Moowvies",
+  "@homeTitle": {
+    "description": "The title shown on the home page app bar"
+  },
+  "counterLabel": "You have pushed the button this many times:",
+  "@counterLabel": {
+    "description": "Label shown above the counter"
+  },
+  "increment": "Increment",
+  "@increment": {
+    "description": "Tooltip for the increment button"
+  }
+}

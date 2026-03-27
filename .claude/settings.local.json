@@ -5,7 +5,10 @@
       "Bash(grep:*)",
       "Bash(cd:*)",
       "Bash(mv moow.iml moowvies.iml)",
-      "Bash(mv android/moow_android.iml android/moowvies_android.iml)"
+      "Bash(mv android/moow_android.iml android/moowvies_android.iml)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter gen-l10n:*)"
     ]
   }
 }
