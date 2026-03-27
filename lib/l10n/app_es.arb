@@ -1,7 +1,7 @@
 {
   "@@locale": "es",
-  "appTitle": "Moowvies",
-  "homeTitle": "Moowvies",
+  "appTitle": "Moowvie",
+  "homeTitle": "Moowvie",
   "counterLabel": "Has pulsado el botón esta cantidad de veces:",
   "increment": "Incrementar"
 }

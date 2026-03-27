@@ -1,0 +1,16 @@
+name: movies
+description: Movies feature module for Moowvie
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  movies_domain:
+    path: domain
+  movies_data:
+    path: data
