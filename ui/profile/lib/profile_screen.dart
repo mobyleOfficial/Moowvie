@@ -11,22 +11,28 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ProfileCubit(),
-      child: BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, state) {
-          return switch (state) {
-            ProfileLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ProfileSuccess() => const Center(
-                child: Text('Profile'),
-              ),
-            ProfileError() => Center(
-                child: Text(state.message),
-              ),
-          };
-        },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        centerTitle: true,
+      ),
+      body: BlocProvider(
+        create: (_) => ProfileCubit(),
+        child: BlocBuilder<ProfileCubit, ProfileState>(
+          builder: (context, state) {
+            return switch (state) {
+              ProfileLoading() => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ProfileSuccess() => const Center(
+                  child: Text('Profile'),
+                ),
+              ProfileError() => Center(
+                  child: Text(state.message),
+                ),
+            };
+          },
+        ),
       ),
     );
   }
