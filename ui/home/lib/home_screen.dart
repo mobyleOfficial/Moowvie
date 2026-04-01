@@ -1,9 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'home_bloc.dart';
-import 'home_state.dart';
+import 'package:movies_list/movies_list_router.dart';
+import 'package:reviews/reviews_router.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -11,23 +9,25 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeCubit(),
-      child: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          return switch (state) {
-            HomeLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            HomeSuccess() => const Center(
-                child: Text('Home'),
-              ),
-            HomeError() => Center(
-                child: Text(state.message),
-              ),
-          };
-        },
-      ),
+    return AutoTabsRouter.tabBar(
+      routes: const [
+        MoviesListRoute(),
+        ReviewsRoute(),
+      ],
+      builder: (context, child, tabController) {
+        return Column(
+          children: [
+            TabBar(
+              controller: tabController,
+              tabs: const [
+                Tab(text: 'Movies'),
+                Tab(text: 'Reviews'),
+              ],
+            ),
+            Expanded(child: child),
+          ],
+        );
+      },
     );
   }
 }
