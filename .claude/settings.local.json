@@ -1,5 +1,6 @@
 {
   "permissions": {
+    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(grep -r moow /c/Users/Abe/Desktop/Projetos/Mobyle/moow --include=*.gradle --include=*.gradle.kts --include=*.properties)",
       "Bash(grep:*)",

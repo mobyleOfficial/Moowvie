@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_detail/movie_detail_router.dart';
 import 'package:movies/movies.dart';
 
 import 'package:movies_list/movies_list_bloc.dart';
@@ -26,6 +27,11 @@ class _MoviesListPageState extends State<MoviesListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MoviesListScreen(cubit: _cubit);
+    return MoviesListScreen(
+      cubit: _cubit,
+      onMovieTap: (movieId) => context.router.root.push(
+        MovieDetailRoute(movieId: movieId),
+      ),
+    );
   }
 }

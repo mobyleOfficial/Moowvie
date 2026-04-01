@@ -16,4 +16,8 @@ abstract class MoviesModule {
   @lazySingleton
   GetTrendingMovies getTrendingMovies(MoviesRepository repository) =>
       GetTrendingMovies(repository);
+
+  @lazySingleton
+  GetMovieDetail getMovieDetail(MoviesRepository repository) =>
+      GetMovieDetail(repository);
 }
