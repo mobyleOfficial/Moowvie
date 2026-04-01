@@ -22,7 +22,9 @@
       "Bash(dart analyze:*)",
       "Bash(mv moowvie.iml moovie.iml)",
       "Bash(mv android/moowvies_android.iml android/moovie_android.iml)",
-      "Bash(find C:UsersAbeDesktopProjetosMobylemoovieuicommonlibsrc -type f -name *.dart)"
+      "Bash(find C:UsersAbeDesktopProjetosMobylemoovieuicommonlibsrc -type f -name *.dart)",
+      "Read(//c/Users/Abe/.pub-cache/hosted/pub.dev/auto_route-11.1.0/**)",
+      "Bash(2)"
     ]
   }
 }
