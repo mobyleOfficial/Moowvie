@@ -7,8 +7,13 @@ import 'package:movies_list/movies_list_state.dart';
 
 class MoviesListScreen extends StatelessWidget {
   final MoviesListCubit cubit;
+  final void Function(int movieId) onMovieTap;
 
-  const MoviesListScreen({super.key, required this.cubit});
+  const MoviesListScreen({
+    super.key,
+    required this.cubit,
+    required this.onMovieTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,7 @@ class MoviesListScreen extends StatelessWidget {
                   itemBuilder: (context, movie, index) => ListTile(
                     title: Text(movie.title),
                     subtitle: Text(movie.releaseDate),
+                    onTap: () => onMovieTap(movie.id),
                   ),
                   firstPageProgressIndicatorBuilder: (_) =>
                       const Center(child: CircularProgressIndicator()),

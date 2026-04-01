@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:home/home_router.dart';
 import 'package:moovie/routes/main_screen.dart';
+import 'package:movie_detail/movie_detail_router.dart';
 import 'package:movies_list/movies_list_router.dart';
 import 'package:profile_ui/profile_router.dart';
 import 'package:reviews/reviews_router.dart';
@@ -37,6 +38,7 @@ class AppRouter extends RootStackRouter {
             ),
           ],
         ),
+        AutoRoute(page: MovieDetailRoute.page),
         CustomRoute(
           page: ProfileRoute.page,
           transitionsBuilder: TransitionsBuilders.slideBottom,

@@ -1,0 +1,17 @@
+name: movie_detail
+description: MovieDetail UI module
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: any
+  auto_route: any
+  get_it: any
+  core:
+    path: ../../core
+  movies:
+    path: ../../features/movies

@@ -1,6 +1,6 @@
 import 'package:movies_domain/domain.dart';
 
-import 'remote_movie.dart';
+import 'package:movies_data/models/remote/remote_movie.dart';
 
 class RemoteTrendingMovieListing {
   final int totalPages;

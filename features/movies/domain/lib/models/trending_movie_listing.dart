@@ -1,4 +1,4 @@
-import 'movie.dart';
+import 'package:movies_domain/models/movie.dart';
 
 class TrendingMovieListing {
   final int totalPages;
