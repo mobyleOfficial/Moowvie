@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,13 @@ class MoviesListScreen extends StatelessWidget {
     required this.onMovieTap,
   });
 
+  static const String _posterBaseUrl = 'https://image.tmdb.org/t/p/w342';
+  static const int _gridCrossAxisCount = 3;
+  static const double _gridChildAspectRatio = 2 / 3;
+  static const double _gridSpacing = 8;
+  static const double _gridPadding = 16;
+  static const double _cardBorderRadius = 10;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -25,13 +33,22 @@ class MoviesListScreen extends StatelessWidget {
         child: PagingListener(
           controller: cubit.pagingController,
           builder: (context, pagingState, fetchNextPage) =>
-              PagedListView<int, Movie>(
+              PagedGridView<int, Movie>(
                 state: pagingState,
                 fetchNextPage: fetchNextPage,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: _gridPadding,
+                  vertical: _gridPadding,
+                ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _gridCrossAxisCount,
+                  childAspectRatio: _gridChildAspectRatio,
+                  crossAxisSpacing: _gridSpacing,
+                  mainAxisSpacing: _gridSpacing,
+                ),
                 builderDelegate: PagedChildBuilderDelegate<Movie>(
-                  itemBuilder: (context, movie, index) => ListTile(
-                    title: Text(movie.title),
-                    subtitle: Text(movie.releaseDate),
+                  itemBuilder: (context, movie, index) => _MoviePosterCard(
+                    movie: movie,
                     onTap: () => onMovieTap(movie.id),
                   ),
                   firstPageProgressIndicatorBuilder: (_) =>
@@ -48,6 +65,36 @@ class MoviesListScreen extends StatelessWidget {
                       ),
                 ),
               ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MoviePosterCard extends StatelessWidget {
+  final Movie movie;
+  final VoidCallback onTap;
+
+  const _MoviePosterCard({required this.movie, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(MoviesListScreen._cardBorderRadius),
+      child: Material(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        child: InkWell(
+          onTap: onTap,
+          child: movie.posterPath.isNotEmpty
+              ? Ink.image(
+                  image: CachedNetworkImageProvider(
+                    '${MoviesListScreen._posterBaseUrl}${movie.posterPath}',
+                  ),
+                  fit: BoxFit.cover,
+                )
+              : const Center(
+                  child: Icon(Icons.movie, size: 36),
+                ),
         ),
       ),
     );
