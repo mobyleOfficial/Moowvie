@@ -48,4 +48,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String movieGenres(String genres) {
     return 'Genres: $genres';
   }
+
+  @override
+  String get activitiesTab => 'Activities';
+
+  @override
+  String get newUserRecordTab => 'New Record';
 }

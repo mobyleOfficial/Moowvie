@@ -1,7 +1,8 @@
+import 'package:common/src/theme/moovie_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'platform_helper.dart';
+import 'package:common/src/platform_helper.dart';
 
 class MoovieBottomNavigationBarItem {
   final IconData icon;
@@ -33,12 +34,12 @@ class MoovieBottomNavigationBar extends StatelessWidget {
       return CupertinoTabBar(
         currentIndex: currentIndex,
         onTap: onTap,
+        activeColor: MoovieColors.secondary,
         items: items
             .map(
               (item) => BottomNavigationBarItem(
                 icon: Icon(item.icon),
-                activeIcon:
-                    item.activeIcon != null ? Icon(item.activeIcon) : null,
+                activeIcon: Icon(item.activeIcon ?? item.icon),
                 label: item.label,
               ),
             )
@@ -49,12 +50,13 @@ class MoovieBottomNavigationBar extends StatelessWidget {
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
+      indicatorColor: MoovieColors.secondary,
+      labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       destinations: items
           .map(
             (item) => NavigationDestination(
               icon: Icon(item.icon),
-              selectedIcon:
-                  item.activeIcon != null ? Icon(item.activeIcon) : null,
+              selectedIcon: Icon(item.activeIcon ?? item.icon),
               label: item.label,
             ),
           )

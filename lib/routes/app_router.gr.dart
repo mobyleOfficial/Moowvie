@@ -57,3 +57,20 @@ class SearchTab extends PageRouteInfo<void> {
     },
   );
 }
+
+/// generated route for
+/// [ActivitiesTabPage]
+class ActivitiesTab extends PageRouteInfo<void> {
+  const ActivitiesTab({List<PageRouteInfo>? children})
+    : super(ActivitiesTab.name, initialChildren: children);
+
+  static const String name = 'ActivitiesTab';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const ActivitiesTabPage();
+    },
+  );
+}
+

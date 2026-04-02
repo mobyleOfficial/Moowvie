@@ -10,5 +10,7 @@
   "movieRelease": "Estreno: {date}",
   "movieRating": "Puntuación: {rating}",
   "movieRuntime": "Duración: {minutes} min",
-  "movieGenres": "Géneros: {genres}"
+  "movieGenres": "Géneros: {genres}",
+  "activitiesTab": "Actividades",
+  "newUserRecordTab": "Nuevo Récord"
 }
