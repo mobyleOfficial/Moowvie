@@ -63,5 +63,13 @@
         "type": "String"
       }
     }
+  },
+  "activitiesTab": "Activities",
+  "@activitiesTab": {
+    "description": "Bottom navigation activities tab label"
+  },
+  "newUserRecordTab": "New Record",
+  "@newUserRecordTab": {
+    "description": "Bottom navigation new user record tab label"
   }
 }

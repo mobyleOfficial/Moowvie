@@ -1,0 +1,14 @@
+name: new_user_record
+description: NewUserRecord UI module
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: any
+  auto_route: any
+  common:
+    path: ../common

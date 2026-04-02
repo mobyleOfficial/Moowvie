@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:moovie/routes/app_router.dart';
+import 'package:new_user_record/new_user_record_router.dart';
 import 'package:profile_ui/profile_router.dart';
 
 @RoutePage()
@@ -16,6 +17,7 @@ class MainScreen extends StatelessWidget {
       routes: const [
         HomeTab(),
         SearchTab(),
+        ActivitiesTab(),
       ],
       builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
@@ -33,17 +35,31 @@ class MainScreen extends StatelessWidget {
             ],
           ),
           body: SafeArea(child: child),
-          bottomNavigationBar: BottomNavigationBar(
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: MoovieColors.secondary,
+            foregroundColor: MoovieColors.onSecondaryContainer,
+            onPressed: () {
+              context.router.root.push(const NewUserRecordRoute());
+            },
+            child: const Icon(Icons.add),
+          ),
+          bottomNavigationBar: MoovieBottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,
             onTap: tabsRouter.setActiveIndex,
             items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
+              MoovieBottomNavigationBarItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
                 label: l10n.home,
               ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.search),
+              MoovieBottomNavigationBarItem(
+                icon: Icons.search,
                 label: l10n.search,
+              ),
+              MoovieBottomNavigationBarItem(
+                icon: Icons.directions_run_outlined,
+                activeIcon: Icons.directions_run,
+                label: l10n.activitiesTab,
               ),
             ],
           ),

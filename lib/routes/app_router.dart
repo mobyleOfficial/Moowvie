@@ -1,8 +1,10 @@
+import 'package:activities/activities_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:home/home_router.dart';
 import 'package:moovie/routes/main_screen.dart';
 import 'package:movie_detail/movie_detail_router.dart';
 import 'package:movies_list/movies_list_router.dart';
+import 'package:new_user_record/new_user_record_router.dart';
 import 'package:profile_ui/profile_router.dart';
 import 'package:reviews/reviews_router.dart';
 import 'package:search/search_router.dart';
@@ -36,9 +38,21 @@ class AppRouter extends RootStackRouter {
                 AutoRoute(page: SearchRoute.page, initial: true),
               ],
             ),
+            AutoRoute(
+              page: ActivitiesTab.page,
+              children: [
+                AutoRoute(page: ActivitiesRoute.page, initial: true),
+              ],
+            ),
           ],
         ),
         AutoRoute(page: MovieDetailRoute.page),
+        CustomRoute(
+          page: NewUserRecordRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          duration: const Duration(milliseconds: 300),
+          reverseDuration: const Duration(milliseconds: 300),
+        ),
         CustomRoute(
           page: ProfileRoute.page,
           transitionsBuilder: TransitionsBuilders.slideBottom,
@@ -57,3 +71,9 @@ class HomeTabPage extends AutoRouter {
 class SearchTabPage extends AutoRouter {
   const SearchTabPage({super.key});
 }
+
+@RoutePage(name: 'ActivitiesTab')
+class ActivitiesTabPage extends AutoRouter {
+  const ActivitiesTabPage({super.key});
+}
+

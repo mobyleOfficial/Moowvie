@@ -165,6 +165,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Genres: {genres}'**
   String movieGenres(String genres);
+
+  /// Bottom navigation activities tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Activities'**
+  String get activitiesTab;
+
+  /// Bottom navigation new user record tab label
+  ///
+  /// In en, this message translates to:
+  /// **'New Record'**
+  String get newUserRecordTab;
 }
 
 class _AppLocalizationsDelegate
