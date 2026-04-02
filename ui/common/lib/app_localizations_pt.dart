@@ -89,13 +89,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileTabProfile => 'Perfil';
 
   @override
-  String get profileTabDiary => 'Diário';
+  String get profileTabDiary => 'Reviews';
 
   @override
   String get profileTabLists => 'Listas';
 
   @override
-  String get profileTabWatchlist => 'Lista de desejos';
+  String get profileTabWatchlist => 'Assistir Depois';
 
   @override
   String get profileFollowers => 'Seguidores';
