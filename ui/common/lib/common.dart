@@ -14,3 +14,4 @@ export 'src/platform_helper.dart';
 export 'src/moovie_text_field.dart';
 export 'src/moovie_edit_text.dart';
 export 'src/moovie_close_button.dart';
+export 'src/app_bar_controller.dart';

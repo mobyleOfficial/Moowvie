@@ -141,10 +141,12 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     final user = _mockUsers[widget.userId] ?? _defaultUser;
 
+    final inTabContext = AppBarControllerScope.find(context) != null;
+
     return BlocProvider.value(
       value: widget.cubit,
       child: Scaffold(
-        appBar: AppBar(title: Text(user.displayName)),
+        appBar: inTabContext ? null : AppBar(title: Text(user.displayName)),
         body: BlocBuilder<PublicProfileCubit, PublicProfileState>(
           builder: (context, state) => switch (state) {
             PublicProfileLoading() => const Center(
