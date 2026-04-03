@@ -6,9 +6,9 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:movies/movies.dart';
 import 'package:movies_list/movies_list_bloc.dart';
 import 'package:movies_list/movies_list_state.dart';
-import 'package:movies_list/tabs/reviews/movies_reviews_screen.dart';
 import 'package:movies_list/tabs/lists/movies_lists_screen.dart';
 import 'package:movies_list/tabs/articles/movies_articles_screen.dart';
+import 'package:reviews/reviews_list/reviews_screen.dart';
 
 class MoviesListScreen extends StatelessWidget {
   final MoviesListCubit cubit;
@@ -42,7 +42,7 @@ class MoviesListScreen extends StatelessWidget {
                 child: TabBarView(
                   children: [
                     _MoviesGrid(onMovieTap: onMovieTap),
-                    const MoviesReviewsScreen(),
+                    const ReviewsScreen(),
                     const MoviesListsScreen(),
                     const MoviesArticlesScreen(),
                   ],

@@ -132,4 +132,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileFollow => 'Seguir';
+
+  @override
+  String get reviewDetailsBodyTitle => 'Mi reseña';
 }

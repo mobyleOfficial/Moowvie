@@ -17,6 +17,8 @@ dependencies:
     path: ../common
   movie_detail:
     path: ../movie_detail
+  reviews:
+    path: ../reviews
 
 dev_dependencies:
   auto_route_generator: ^10.5.0

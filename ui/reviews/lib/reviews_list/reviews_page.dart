@@ -1,28 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-
-import 'reviews_bloc.dart';
-import 'reviews_screen.dart';
+import 'package:reviews/reviews_list/reviews_screen.dart';
 
 @RoutePage()
-class ReviewsPage extends StatefulWidget {
+class ReviewsPage extends StatelessWidget {
   const ReviewsPage({super.key});
 
   @override
-  State<ReviewsPage> createState() => _ReviewsPageState();
-}
-
-class _ReviewsPageState extends State<ReviewsPage> {
-  final ReviewsCubit _cubit = ReviewsCubit();
-
-  @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ReviewsScreen(cubit: _cubit);
-  }
+  Widget build(BuildContext context) => const ReviewsScreen();
 }
