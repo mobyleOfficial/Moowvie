@@ -31,7 +31,11 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
     _tabIndex = TabIndexScope.find(context) ?? 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _appBarController?.setTitle(tabIndex: _tabIndex, title: widget.userId);
+        _appBarController?.setTitle(
+          tabIndex: _tabIndex,
+          title: widget.userId,
+          onBack: () => context.router.maybePop(),
+        );
       }
     });
   }

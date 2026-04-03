@@ -6,16 +6,23 @@ import 'package:flutter/widgets.dart';
 
 class AppBarController extends ChangeNotifier {
   final Map<int, String> _overrides = {};
+  VoidCallback? backAction;
 
   String? titleForTab(int tabIndex) => _overrides[tabIndex];
 
-  void setTitle({required int tabIndex, required String? title}) {
+  void setTitle({
+    required int tabIndex,
+    required String? title,
+    VoidCallback? onBack,
+  }) {
     final current = _overrides[tabIndex];
     if (current == title) return;
     if (title == null) {
       _overrides.remove(tabIndex);
+      backAction = null;
     } else {
       _overrides[tabIndex] = title;
+      backAction = onBack;
     }
     notifyListeners();
   }

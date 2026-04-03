@@ -26,7 +26,6 @@ class ReviewDetailsPage extends StatefulWidget {
 class _ReviewDetailsPageState extends State<ReviewDetailsPage> {
   late final ReviewDetailsCubit _cubit = ReviewDetailsCubit();
 
-  // Captured once at mount — no InheritedWidget dependency created.
   AppBarController? _appBarController;
   int _tabIndex = 0;
   bool _initialized = false;
@@ -43,6 +42,7 @@ class _ReviewDetailsPageState extends State<ReviewDetailsPage> {
         _appBarController?.setTitle(
           tabIndex: _tabIndex,
           title: widget.movieTitle,
+          onBack: () => context.router.maybePop(),
         );
       }
     });
