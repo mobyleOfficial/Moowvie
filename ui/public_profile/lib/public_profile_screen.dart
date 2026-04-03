@@ -141,7 +141,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     final user = _mockUsers[widget.userId] ?? _defaultUser;
 
-    final inTabContext = AppBarControllerScope.find(context) != null;
+    final inTabContext = TabIndexScope.find(context) != null;
 
     return BlocProvider.value(
       value: widget.cubit,
