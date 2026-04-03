@@ -99,8 +99,19 @@ class _MainScreenState extends State<MainScreen> {
                                             tooltip: MaterialLocalizations.of(
                                                     context)
                                                 .backButtonTooltip,
-                                            onPressed: () =>
-                                                tabsRouter.maybePop(),
+                                            onPressed: () {
+                                              final back =
+                                                  _appBarController.backAction;
+                                              // Clear the title immediately so
+                                              // the app bar animates back to the
+                                              // tab title in sync with the route
+                                              // pop animation in the tab body.
+                                              _appBarController.setTitle(
+                                                tabIndex: activeIndex,
+                                                title: null,
+                                              );
+                                              back?.call();
+                                            },
                                           )
                                         : null,
                                   ),
