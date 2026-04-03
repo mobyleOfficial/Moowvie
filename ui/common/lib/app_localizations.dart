@@ -333,6 +333,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Follow'**
   String get profileFollow;
+
+  /// Section header for the review body text on the review details screen
+  ///
+  /// In en, this message translates to:
+  /// **'My Review'**
+  String get reviewDetailsBodyTitle;
 }
 
 class _AppLocalizationsDelegate
