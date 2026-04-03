@@ -10,7 +10,6 @@ class ReviewDetailsScreen extends StatelessWidget {
   final String reviewDate;
   final double rating;
   final int posterColorIndex;
-
   const ReviewDetailsScreen({
     super.key,
     required this.cubit,
@@ -120,24 +119,18 @@ class ReviewDetailsScreen extends StatelessWidget {
               body: Center(child: Text(state.message)),
             ),
           ReviewDetailsSuccess() => Scaffold(
-              body: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    expandedHeight: 220,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: ExcludeSemantics(
-                        child: Container(color: posterColor),
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExcludeSemantics(
+                      child: Container(
+                        width: double.infinity,
+                        height: 220,
+                        color: posterColor,
                       ),
                     ),
-                    title: Text(
-                      movieTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
+                    Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,8 +195,8 @@ class ReviewDetailsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
         },
