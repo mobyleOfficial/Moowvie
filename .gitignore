@@ -13,6 +13,10 @@ doc/api/
 
 # dotenv environment variables file
 .env*
+env
+
+# Generated env xcconfig (contains secrets)
+ios/Flutter/EnvDefines.xcconfig
 
 # Avoid committing generated Javascript files:
 *.dart.js
