@@ -348,7 +348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+			shellScript = "ENV_FILE=\"$FLUTTER_APPLICATION_PATH/env\"\nif [ -f \"$ENV_FILE\" ]; then\n  EXTRA=\"\"\n  while IFS='=' read -r key value || [ -n \"$key\" ]; do\n    [ -z \"$key\" ] && continue\n    case \"$key\" in \\#*) continue ;; esac\n    ENCODED=$(printf '%s' \"$key=$value\" | base64 | tr -d '\\n')\n    if [ -z \"$EXTRA\" ]; then\n      EXTRA=\"$ENCODED\"\n    else\n      EXTRA=\"$EXTRA,$ENCODED\"\n    fi\n  done < \"$ENV_FILE\"\n  if [ -n \"$EXTRA\" ]; then\n    export DART_DEFINES=\"${DART_DEFINES},$EXTRA\"\n  fi\nfi\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
 		AFEAF6B056EBCEFD7DAF6AAF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
