@@ -34,7 +34,12 @@
       "WebFetch(domain:developer.themoviedb.org)",
       "WebFetch(domain:sirjosh.mintlify.app)",
       "WebFetch(domain:tmdbapis.kometa.wiki)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(ruby configure_flavors.rb)",
+      "Bash(pod install:*)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter build:*)"
     ],
     "defaultMode": "acceptEdits"
   },
