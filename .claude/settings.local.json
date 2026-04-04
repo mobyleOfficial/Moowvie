@@ -34,7 +34,21 @@
       "WebFetch(domain:developer.themoviedb.org)",
       "WebFetch(domain:sirjosh.mintlify.app)",
       "WebFetch(domain:tmdbapis.kometa.wiki)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(flutter --version)",
+      "Bash(xcrun simctl:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(gem install:*)",
+      "Bash(pod --version)",
+      "Bash(brew list:*)",
+      "Bash(brew update:*)",
+      "Bash(brew reinstall:*)",
+      "Bash(pod install:*)",
+      "Bash(flutter devices:*)",
+      "Bash(flutter build:*)",
+      "Bash(gem list:*)",
+      "Bash(flutter clean:*)"
     ],
     "defaultMode": "acceptEdits"
   },
