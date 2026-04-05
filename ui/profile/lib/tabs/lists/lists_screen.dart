@@ -1,16 +1,51 @@
 import 'package:common/common.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:movies/movies.dart';
 
-class ListsScreen extends StatelessWidget {
-  const ListsScreen({super.key});
+class ListsScreen extends StatefulWidget {
+  final GetMovieCollections getMovieCollections;
 
-  static const _lists = [
-    (title: 'Best of 2024', count: 24),
-    (title: 'Sci-Fi Favorites', count: 18),
-    (title: 'Weekend Picks', count: 12),
-    (title: 'Must Watch Classics', count: 30),
-    (title: 'Horror Gems', count: 15),
-  ];
+  const ListsScreen({super.key, required this.getMovieCollections});
+
+  @override
+  State<ListsScreen> createState() => _ListsScreenState();
+}
+
+class _ListsScreenState extends State<ListsScreen> {
+  int _totalPages = 1;
+
+  late final PagingController<int, MovieCollection> _pagingController =
+      PagingController(
+    getNextPageKey: (state) {
+      final nextKey = state.nextIntPageKey;
+
+      if (nextKey > _totalPages) {
+        return null;
+      }
+      return nextKey;
+    },
+    fetchPage: _fetchPage,
+  );
+
+  Future<List<MovieCollection>> _fetchPage(int page) async {
+    final result = await widget.getMovieCollections(page);
+
+    switch (result) {
+      case Success(:final data):
+        _totalPages = data.totalPages;
+        return data.collections;
+      case Failure(:final error):
+        throw Exception(error.message);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +56,30 @@ class ListsScreen extends StatelessWidget {
       colorScheme.tertiaryContainer,
       colorScheme.secondaryContainer,
       colorScheme.surfaceContainerHighest,
-      colorScheme.tertiaryContainer,
     ];
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _lists.length,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: _ListTile(
-          title: _lists[index].title,
-          movieCount: _lists[index].count,
-          coverColor: coverColors[index],
-          moviesLabel: l10n.profileMoviesWatched.toLowerCase(),
+    return PagingListener(
+      controller: _pagingController,
+      builder: (context, pagingState, fetchNextPage) =>
+          PagedListView<int, MovieCollection>(
+        state: pagingState,
+        fetchNextPage: fetchNextPage,
+        padding: const EdgeInsets.all(16),
+        builderDelegate: PagedChildBuilderDelegate<MovieCollection>(
+          itemBuilder: (context, collection, index) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _ListTile(
+              title: collection.title,
+              movieCount: collection.movieCount,
+              coverColor: coverColors[index % coverColors.length],
+              moviesLabel: l10n.profileMoviesWatched.toLowerCase(),
+            ),
+          ),
+          firstPageProgressIndicatorBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
+          firstPageErrorIndicatorBuilder: (_) => Center(
+            child: Text(l10n.unknownError),
+          ),
         ),
       ),
     );

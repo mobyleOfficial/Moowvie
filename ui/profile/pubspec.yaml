@@ -13,8 +13,14 @@ dependencies:
   flutter_bloc: ^9.1.1
   bloc: ^9.2.0
   auto_route: ^11.1.0
+  get_it: ^8.0.3
+  infinite_scroll_pagination: any
   common:
     path: ../common
+  core:
+    path: ../../core
+  movies:
+    path: ../../features/movies
   movie_detail:
     path: ../movie_detail
   reviews:

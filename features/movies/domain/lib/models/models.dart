@@ -2,5 +2,9 @@
 library;
 
 export 'movie.dart';
+export 'movie_collection.dart';
+export 'movie_collection_listing.dart';
 export 'movie_detail.dart';
+export 'movie_review.dart';
+export 'movie_review_listing.dart';
 export 'trending_movie_listing.dart';

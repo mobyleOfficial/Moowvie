@@ -1,13 +1,20 @@
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:movies/movies.dart';
 import 'package:profile_ui/tabs/lists/lists_screen.dart';
 import 'package:profile_ui/tabs/profile_info/profile_info_screen.dart';
 import 'package:profile_ui/tabs/watchlist/watchlist_screen.dart' show WatchlistScreen;
 import 'package:reviews/reviews_list/reviews_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
+  final GetMovieReviews getMovieReviews;
+  final GetMovieCollections getMovieCollections;
 
-  const ProfileScreen({super.key});
+  const ProfileScreen({
+    super.key,
+    required this.getMovieReviews,
+    required this.getMovieCollections,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +32,13 @@ class ProfileScreen extends StatelessWidget {
               l10n.profileTabWatchlist,
             ],
           ),
-          const Expanded(
+          Expanded(
             child: TabBarView(
               children: [
-                ProfileInfoScreen(),
-                ReviewsScreen(),
-                ListsScreen(),
-                WatchlistScreen(),
+                const ProfileInfoScreen(),
+                ReviewsScreen(getMovieReviews: getMovieReviews),
+                ListsScreen(getMovieCollections: getMovieCollections),
+                const WatchlistScreen(),
               ],
             ),
           ),

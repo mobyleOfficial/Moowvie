@@ -13,11 +13,15 @@ import 'package:reviews/reviews_list/reviews_screen.dart';
 class MoviesListScreen extends StatelessWidget {
   final MoviesListCubit cubit;
   final void Function(int movieId) onMovieTap;
+  final GetMovieReviews getMovieReviews;
+  final GetMovieCollections getMovieCollections;
 
   const MoviesListScreen({
     super.key,
     required this.cubit,
     required this.onMovieTap,
+    required this.getMovieReviews,
+    required this.getMovieCollections,
   });
 
   @override
@@ -42,8 +46,9 @@ class MoviesListScreen extends StatelessWidget {
                 child: TabBarView(
                   children: [
                     _MoviesGrid(onMovieTap: onMovieTap),
-                    const ReviewsScreen(),
-                    const MoviesListsScreen(),
+                    ReviewsScreen(getMovieReviews: getMovieReviews),
+                    MoviesListsScreen(
+                        getMovieCollections: getMovieCollections),
                     const MoviesArticlesScreen(),
                   ],
                 ),
