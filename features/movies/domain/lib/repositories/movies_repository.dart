@@ -1,9 +1,13 @@
 import 'package:core/core.dart';
 
+import 'package:movies_domain/models/movie_collection_listing.dart';
 import 'package:movies_domain/models/movie_detail.dart';
+import 'package:movies_domain/models/movie_review_listing.dart';
 import 'package:movies_domain/models/trending_movie_listing.dart';
 
 abstract interface class MoviesRepository {
   Future<Result<TrendingMovieListing>> getTrendingMovieList({required int page});
   Future<Result<MovieDetail>> getMovieDetail({required int movieId});
+  Future<Result<MovieReviewListing>> getMovieReviews({required int page});
+  Future<Result<MovieCollectionListing>> getMovieCollections({required int page});
 }

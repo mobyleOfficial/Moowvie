@@ -20,4 +20,12 @@ abstract class MoviesModule {
   @lazySingleton
   GetMovieDetail getMovieDetail(MoviesRepository repository) =>
       GetMovieDetail(repository);
+
+  @lazySingleton
+  GetMovieReviews getMovieReviews(MoviesRepository repository) =>
+      GetMovieReviews(repository);
+
+  @lazySingleton
+  GetMovieCollections getMovieCollections(MoviesRepository repository) =>
+      GetMovieCollections(repository);
 }
