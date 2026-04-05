@@ -21,7 +21,9 @@ class ReviewsRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ReviewsPage();
+      return ReviewsPage(
+        getMovieReviews: GetIt.instance<GetMovieReviews>(),
+      );
     },
   );
 }

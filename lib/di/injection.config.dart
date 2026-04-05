@@ -53,6 +53,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i987.GetMovieDetail>(
       () => moviesModule.getMovieDetail(gh<_i987.MoviesRepository>()),
     );
+    gh.lazySingleton<_i987.GetMovieReviews>(
+      () => moviesModule.getMovieReviews(gh<_i987.MoviesRepository>()),
+    );
+    gh.lazySingleton<_i987.GetMovieCollections>(
+      () => moviesModule.getMovieCollections(gh<_i987.MoviesRepository>()),
+    );
     return this;
   }
 }

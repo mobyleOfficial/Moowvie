@@ -1,10 +1,44 @@
+import 'package:core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:movies/movies.dart';
 import 'package:reviews/reviews_list/reviews_state.dart';
 
 class ReviewsCubit extends Cubit<ReviewsState> {
-  ReviewsCubit() : super(const ReviewsLoading()) {
-    _load();
+  final GetMovieReviews _getMovieReviews;
+
+  int _totalPages = 1;
+
+  late final PagingController<int, MovieReview> pagingController =
+      PagingController(
+    getNextPageKey: (state) {
+      final nextKey = state.nextIntPageKey;
+
+      if (nextKey > _totalPages) {
+        return null;
+      }
+      return nextKey;
+    },
+    fetchPage: _fetchPage,
+  );
+
+  ReviewsCubit(this._getMovieReviews) : super(const ReviewsLoading());
+
+  Future<List<MovieReview>> _fetchPage(int page) async {
+    final result = await _getMovieReviews(page);
+
+    switch (result) {
+      case Success(:final data):
+        _totalPages = data.totalPages;
+        return data.reviews;
+      case Failure(:final error):
+        throw Exception(error.message);
+    }
   }
 
-  void _load() => emit(const ReviewsSuccess());
+  @override
+  Future<void> close() {
+    pagingController.dispose();
+    return super.close();
+  }
 }

@@ -9,8 +9,15 @@ import 'package:movies_list/movies_list_screen.dart';
 @RoutePage()
 class MoviesListPage extends StatefulWidget {
   final GetTrendingMovies getTrendingMovies;
+  final GetMovieReviews getMovieReviews;
+  final GetMovieCollections getMovieCollections;
 
-  const MoviesListPage({super.key, required this.getTrendingMovies});
+  const MoviesListPage({
+    super.key,
+    required this.getTrendingMovies,
+    required this.getMovieReviews,
+    required this.getMovieCollections,
+  });
 
   @override
   State<MoviesListPage> createState() => _MoviesListPageState();
@@ -32,6 +39,8 @@ class _MoviesListPageState extends State<MoviesListPage> {
       onMovieTap: (movieId) => context.router.root.push(
         MovieDetailRoute(movieId: movieId),
       ),
+      getMovieReviews: widget.getMovieReviews,
+      getMovieCollections: widget.getMovieCollections,
     );
   }
 }

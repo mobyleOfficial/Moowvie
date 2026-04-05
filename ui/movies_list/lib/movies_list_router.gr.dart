@@ -23,6 +23,8 @@ class MoviesListRoute extends PageRouteInfo<void> {
     builder: (data) {
       return MoviesListPage(
         getTrendingMovies: GetIt.instance<GetTrendingMovies>(),
+        getMovieReviews: GetIt.instance<GetMovieReviews>(),
+        getMovieCollections: GetIt.instance<GetMovieCollections>(),
       );
     },
   );

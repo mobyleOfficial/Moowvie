@@ -1,19 +1,25 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:movie_detail/movie_detail_router.dart';
+import 'package:movies/movies.dart';
 import 'package:reviews/review_details/review_details_router.dart';
 import 'package:reviews/reviews_list/reviews_bloc.dart';
 import 'package:reviews/reviews_list/reviews_state.dart';
 
 class ReviewsScreen extends StatefulWidget {
-  const ReviewsScreen({super.key});
+  final GetMovieReviews getMovieReviews;
+
+  const ReviewsScreen({super.key, required this.getMovieReviews});
 
   @override
   State<ReviewsScreen> createState() => _ReviewsScreenState();
 }
 
 class _ReviewsScreenState extends State<ReviewsScreen> {
-  final ReviewsCubit _cubit = ReviewsCubit();
+  late final ReviewsCubit _cubit = ReviewsCubit(widget.getMovieReviews);
 
   @override
   void dispose() {
@@ -24,130 +30,84 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   @override
   Widget build(BuildContext context) => BlocProvider.value(
         value: _cubit,
-        child: BlocBuilder<ReviewsCubit, ReviewsState>(
-          builder: (context, state) => switch (state) {
-            ReviewsLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ReviewsError() => Center(child: Text(state.message)),
-            ReviewsSuccess() => const _ReviewsList(),
-          },
-        ),
+        child: const _ReviewsPaginatedList(),
       );
 }
 
-class _ReviewsList extends StatelessWidget {
-  const _ReviewsList();
-
-  static const _reviews = [
-    (
-      title: 'Dune: Part Two',
-      date: 'Mar 15, 2024',
-      rating: 4.5,
-    ),
-    (
-      title: 'Oppenheimer',
-      date: 'Mar 10, 2024',
-      rating: 5.0,
-    ),
-    (
-      title: 'Poor Things',
-      date: 'Mar 5, 2024',
-      rating: 4.0,
-    ),
-    (
-      title: 'The Zone of Interest',
-      date: 'Feb 28, 2024',
-      rating: 3.5,
-    ),
-    (
-      title: 'Society of the Snow',
-      date: 'Feb 20, 2024',
-      rating: 4.0,
-    ),
-    (
-      title: 'Past Lives',
-      date: 'Feb 14, 2024',
-      rating: 4.5,
-    ),
-    (
-      title: 'Anatomy of a Fall',
-      date: 'Feb 10, 2024',
-      rating: 4.0,
-    ),
-    (
-      title: 'The Holdovers',
-      date: 'Feb 5, 2024',
-      rating: 4.5,
-    ),
-  ];
+class _ReviewsPaginatedList extends StatelessWidget {
+  const _ReviewsPaginatedList();
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ReviewsCubit>();
     final colorScheme = Theme.of(context).colorScheme;
     final posterColors = [
       colorScheme.tertiaryContainer,
       colorScheme.primaryContainer,
       colorScheme.secondaryContainer,
       colorScheme.surfaceContainerHighest,
-      colorScheme.tertiaryContainer,
-      colorScheme.secondaryContainer,
-      colorScheme.primaryContainer,
-      colorScheme.tertiaryContainer,
     ];
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: _reviews.length,
-      separatorBuilder: (_, __) => Divider(
-        indent: 72,
-        height: 1,
-        color: colorScheme.outlineVariant,
-      ),
-      itemBuilder: (context, index) => _ReviewTile(
-        title: _reviews[index].title,
-        date: _reviews[index].date,
-        rating: _reviews[index].rating,
-        posterColor: posterColors[index],
-        posterColorIndex: index,
+    return PagingListener(
+      controller: cubit.pagingController,
+      builder: (context, pagingState, fetchNextPage) =>
+          PagedListView<int, MovieReview>(
+        state: pagingState,
+        fetchNextPage: fetchNextPage,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        builderDelegate: PagedChildBuilderDelegate<MovieReview>(
+          itemBuilder: (context, review, index) => Column(
+            children: [
+              if (index > 0)
+                Divider(
+                  indent: 72,
+                  height: 1,
+                  color: colorScheme.outlineVariant,
+                ),
+              _ReviewTile(
+                review: review,
+                posterColor: posterColors[index % posterColors.length],
+              ),
+            ],
+          ),
+          firstPageProgressIndicatorBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
+          firstPageErrorIndicatorBuilder: (_) => Center(
+            child: Text(AppLocalizations.of(context)!.unknownError),
+          ),
+        ),
       ),
     );
   }
 }
 
 class _ReviewTile extends StatelessWidget {
-  final String title;
-  final String date;
-  final double rating;
+  final MovieReview review;
   final Color posterColor;
-  final int posterColorIndex;
 
   const _ReviewTile({
-    required this.title,
-    required this.date,
-    required this.rating,
+    required this.review,
     required this.posterColor,
-    required this.posterColorIndex,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final ratingLabel = rating % 1 == 0
-        ? '${rating.toInt()} out of 5 stars'
-        : '$rating out of 5 stars';
+    final ratingLabel = review.rating % 1 == 0
+        ? '${review.rating.toInt()} out of 5 stars'
+        : '${review.rating} out of 5 stars';
 
     return Semantics(
-      label: '$title, $date, $ratingLabel',
+      label: '${review.title}, ${review.date}, $ratingLabel',
       button: true,
       child: InkWell(
         onTap: () => context.router.push(
           ReviewDetailsRoute(
-            movieTitle: title,
-            reviewDate: date,
-            rating: rating,
-            posterColorIndex: posterColorIndex,
+            movieTitle: review.title,
+            reviewDate: review.date,
+            rating: review.rating,
+            posterColorIndex: 1,
           ),
         ),
         child: ExcludeSemantics(
@@ -170,7 +130,7 @@ class _ReviewTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        review.title,
                         style: textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: colorScheme.onSurface,
@@ -178,7 +138,7 @@ class _ReviewTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        date,
+                        review.date,
                         style: textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -186,8 +146,10 @@ class _ReviewTile extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: List.generate(5, (starIndex) {
-                          final isFilled = starIndex < rating.floor();
-                          final isHalf = !isFilled && starIndex < rating;
+                          final isFilled =
+                              starIndex < review.rating.floor();
+                          final isHalf =
+                              !isFilled && starIndex < review.rating;
                           return Icon(
                             isHalf
                                 ? Icons.star_half

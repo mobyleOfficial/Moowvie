@@ -21,7 +21,10 @@ class ProfileRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ProfilePage();
+      return ProfilePage(
+        getMovieReviews: GetIt.instance<GetMovieReviews>(),
+        getMovieCollections: GetIt.instance<GetMovieCollections>(),
+      );
     },
   );
 }
