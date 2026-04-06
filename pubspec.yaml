@@ -54,8 +54,6 @@ dependencies:
     path: features/profile
   movies_ui:
     path: ui/movies_ui
-  home:
-    path: ui/home
   common:
     path: ui/common
   profile_ui:

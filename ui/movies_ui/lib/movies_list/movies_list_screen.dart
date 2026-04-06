@@ -45,11 +45,11 @@ class MoviesListScreen extends StatelessWidget {
               Expanded(
                 child: TabBarView(
                   children: [
-                    _MoviesGrid(onMovieTap: onMovieTap),
-                    ReviewsScreen(getMovieReviews: getMovieReviews),
-                    MoviesListsScreen(
-                        getMovieCollections: getMovieCollections),
-                    const MoviesArticlesScreen(),
+                    MoovieKeepAliveTab(child: _MoviesGrid(onMovieTap: onMovieTap)),
+                    MoovieKeepAliveTab(child: ReviewsScreen(getMovieReviews: getMovieReviews)),
+                    MoovieKeepAliveTab(child: MoviesListsScreen(
+                        getMovieCollections: getMovieCollections)),
+                    const MoovieKeepAliveTab(child: MoviesArticlesScreen()),
                   ],
                 ),
               ),
