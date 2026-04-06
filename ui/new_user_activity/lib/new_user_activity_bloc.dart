@@ -8,32 +8,44 @@ import 'package:new_user_activity/new_user_activity_state.dart';
 
 class NewUserActivityCubit extends Cubit<NewUserActivityState> {
   final SearchMovies _searchMovies;
+  final ObserveMovieReviewDraftsList _observeMovieReviewDraftsList;
 
   final StreamController<String> _queryController = StreamController<String>();
   late final StreamSubscription<String> _querySubscription;
+  late final StreamSubscription<List<MovieReviewDraft>> _draftsSubscription;
+
+  List<MovieReviewDraft> _currentDrafts = [];
+  bool _isSearching = false;
 
   static const _debounceDuration = Duration(milliseconds: 300);
   static const _minQueryLength = 3;
 
-  NewUserActivityCubit(this._searchMovies)
+  NewUserActivityCubit(this._searchMovies, this._observeMovieReviewDraftsList)
       : super(const NewUserActivityLoading()) {
     _querySubscription = _queryController.stream
         .distinct()
         .debounce(_debounceDuration)
         .listen(_onQueryChanged);
-    _load();
+    _draftsSubscription = _observeMovieReviewDraftsList().listen(_onDraftsChanged);
   }
 
-  void _load() => emit(const NewUserActivitySuccess());
+  void _onDraftsChanged(List<MovieReviewDraft> drafts) {
+    _currentDrafts = drafts;
+    if (!_isSearching) {
+      emit(NewUserActivitySuccess(drafts: drafts));
+    }
+  }
 
   void onSearchChanged(String query) => _queryController.add(query);
 
   void _onQueryChanged(String query) {
     if (query.length < _minQueryLength) {
-      emit(const NewUserActivitySuccess());
+      _isSearching = false;
+      emit(NewUserActivitySuccess(drafts: _currentDrafts));
       return;
     }
 
+    _isSearching = true;
     emit(const NewUserActivitySearching());
     _search(query);
   }
@@ -55,6 +67,7 @@ class NewUserActivityCubit extends Cubit<NewUserActivityState> {
   Future<void> close() {
     _querySubscription.cancel();
     _queryController.close();
+    _draftsSubscription.cancel();
     return super.close();
   }
 }

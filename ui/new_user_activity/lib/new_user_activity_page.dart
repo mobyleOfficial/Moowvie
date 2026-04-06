@@ -7,16 +7,23 @@ import 'package:new_user_activity/new_user_activity_screen.dart';
 @RoutePage()
 class NewUserActivityPage extends StatefulWidget {
   final SearchMovies searchMovies;
+  final ObserveMovieReviewDraftsList observeMovieReviewDraftsList;
 
-  const NewUserActivityPage({super.key, required this.searchMovies});
+  const NewUserActivityPage({
+    super.key,
+    required this.searchMovies,
+    required this.observeMovieReviewDraftsList,
+  });
 
   @override
   State<NewUserActivityPage> createState() => _NewUserActivityPageState();
 }
 
 class _NewUserActivityPageState extends State<NewUserActivityPage> {
-  late final NewUserActivityCubit _cubit =
-      NewUserActivityCubit(widget.searchMovies);
+  late final NewUserActivityCubit _cubit = NewUserActivityCubit(
+    widget.searchMovies,
+    widget.observeMovieReviewDraftsList,
+  );
 
   @override
   void dispose() {

@@ -22,7 +22,8 @@ class MovieReviewScreen extends StatefulWidget {
 }
 
 class _MovieReviewScreenState extends State<MovieReviewScreen> {
-  final TextEditingController _reviewNameController = TextEditingController();
+  late final TextEditingController _reviewNameController =
+      TextEditingController(text: widget.cubit.initialDraft?.reviewTitle);
 
   static const String _posterBaseUrl = 'https://image.tmdb.org/t/p/w185';
 
@@ -126,6 +127,7 @@ class _ReviewBody extends StatelessWidget {
           const SizedBox(height: 24),
           TextField(
             controller: reviewNameController,
+            onChanged: cubit.updateReviewTitle,
             decoration: InputDecoration(
               hintText: l10n.movieReviewNameHint,
               border: const OutlineInputBorder(),

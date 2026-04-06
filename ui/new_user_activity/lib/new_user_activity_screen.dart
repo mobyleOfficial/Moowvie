@@ -37,16 +37,23 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
     super.dispose();
   }
 
-  List<ActivityItem> _buildItems(AppLocalizations l10n) => [
-        SectionHeader(l10n.newUserActivityDraftsSection),
-        const DraftItem(
-          title: 'Review of Dune: Part Two',
-          subtitle: 'Edited · 2 hours ago',
-        ),
-        const DraftItem(
-          title: 'My Top Sci-Fi Films of 2024',
-          subtitle: 'Edited · Yesterday',
-        ),
+  List<ActivityItem> _buildItems(
+    AppLocalizations l10n,
+    List<MovieReviewDraft> drafts,
+  ) =>
+      [
+        if (drafts.isNotEmpty) ...[
+          SectionHeader(l10n.newUserActivityDraftsSection),
+          ...drafts.map(
+            (draft) => DraftItem(
+              title: draft.movieTitle,
+              subtitle: draft.reviewTitle.isEmpty
+                  ? _formatTimeAgo(draft.updatedAt)
+                  : '${draft.reviewTitle} · ${_formatTimeAgo(draft.updatedAt)}',
+              draft: draft,
+            ),
+          ),
+        ],
         SectionHeader(l10n.newUserActivityRecentSection),
         const SearchItem(query: 'Christopher Nolan films', time: '5m ago'),
         const SearchItem(query: 'best horror movies 2024', time: '1h ago'),
@@ -54,10 +61,18 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
         const SearchItem(query: 'A24 films ranked', time: '2 days ago'),
       ];
 
+  String _formatTimeAgo(DateTime dateTime) {
+    final difference = DateTime.now().difference(dateTime);
+    if (difference.inMinutes < 1) return 'Just now';
+    if (difference.inMinutes < 60) return '${difference.inMinutes}m ago';
+    if (difference.inHours < 24) return '${difference.inHours}h ago';
+    if (difference.inDays < 7) return '${difference.inDays}d ago';
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final items = _buildItems(l10n);
     final colorScheme = Theme.of(context).colorScheme;
     final searchField = Theme(
       data: Theme.of(context).copyWith(
@@ -109,18 +124,33 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
               NewUserActivitySearchResults() => _SearchResultsList(
                   movies: state.movies,
                 ),
-              NewUserActivitySuccess() => ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) => switch (items[index]) {
-                    SectionHeader(:final label) => _SectionHeaderTile(label: label),
-                    DraftItem(:final title, :final subtitle) => _DraftTile(
-                        title: title,
-                        subtitle: subtitle,
-                      ),
-                    SearchItem(:final query, :final time) => _SearchTile(
-                        query: query,
-                        time: time,
-                      ),
+              NewUserActivitySuccess() => Builder(
+                  builder: (context) {
+                    final items = _buildItems(l10n, state.drafts);
+                    return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) => switch (items[index]) {
+                        SectionHeader(:final label) =>
+                          _SectionHeaderTile(label: label),
+                        DraftItem(:final title, :final subtitle, :final draft) =>
+                          _DraftTile(
+                            title: title,
+                            subtitle: subtitle,
+                            onTap: () => context.router.root.push(
+                              MovieReviewRoute(
+                                movieId: draft.movieId,
+                                movieTitle: draft.movieTitle,
+                                posterPath: draft.posterPath,
+                                initialDraft: draft,
+                              ),
+                            ),
+                          ),
+                        SearchItem(:final query, :final time) => _SearchTile(
+                            query: query,
+                            time: time,
+                          ),
+                      },
+                    );
                   },
                 ),
             },
@@ -180,6 +210,7 @@ class _MovieResultTile extends StatelessWidget {
       child: InkWell(
         onTap: () => context.router.root.push(
           MovieReviewRoute(
+            movieId: movie.id,
             movieTitle: movie.title,
             posterPath: movie.posterPath,
           ),
@@ -306,8 +337,9 @@ class _SectionHeaderTile extends StatelessWidget {
 class _DraftTile extends StatelessWidget {
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
-  const _DraftTile({required this.title, required this.subtitle});
+  const _DraftTile({required this.title, required this.subtitle, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +350,7 @@ class _DraftTile extends StatelessWidget {
       label: '$title, $subtitle',
       button: true,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
