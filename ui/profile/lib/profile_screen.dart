@@ -35,10 +35,10 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                const ProfileInfoScreen(),
-                ReviewsScreen(getMovieReviews: getMovieReviews),
-                ListsScreen(getMovieCollections: getMovieCollections),
-                const WatchlistScreen(),
+                const MoovieKeepAliveTab(child: ProfileInfoScreen()),
+                MoovieKeepAliveTab(child: ReviewsScreen(getMovieReviews: getMovieReviews)),
+                MoovieKeepAliveTab(child: ListsScreen(getMovieCollections: getMovieCollections)),
+                const MoovieKeepAliveTab(child: WatchlistScreen()),
               ],
             ),
           ),
