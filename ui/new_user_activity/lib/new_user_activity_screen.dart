@@ -48,8 +48,8 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
             (draft) => DraftItem(
               title: draft.movieTitle,
               subtitle: draft.reviewTitle.isEmpty
-                  ? _formatTimeAgo(draft.updatedAt)
-                  : '${draft.reviewTitle} · ${_formatTimeAgo(draft.updatedAt)}',
+                  ? formatTimeAgo(draft.updatedAt)
+                  : '${draft.reviewTitle} · ${formatTimeAgo(draft.updatedAt)}',
               draft: draft,
             ),
           ),
@@ -60,15 +60,6 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
         const SearchItem(query: 'Wes Anderson', time: 'Yesterday'),
         const SearchItem(query: 'A24 films ranked', time: '2 days ago'),
       ];
-
-  String _formatTimeAgo(DateTime dateTime) {
-    final difference = DateTime.now().difference(dateTime);
-    if (difference.inMinutes < 1) return 'Just now';
-    if (difference.inMinutes < 60) return '${difference.inMinutes}m ago';
-    if (difference.inHours < 24) return '${difference.inHours}h ago';
-    if (difference.inDays < 7) return '${difference.inDays}d ago';
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
-  }
 
   @override
   Widget build(BuildContext context) {

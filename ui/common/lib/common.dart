@@ -18,3 +18,4 @@ export 'src/app_bar_controller.dart';
 export 'src/stream_debounce.dart';
 export 'src/moovie_star_rating.dart';
 export 'src/moovie_tag.dart';
+export 'src/format_time_ago.dart';
