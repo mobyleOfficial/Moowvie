@@ -120,7 +120,11 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
                             child: CircularProgressIndicator(),
                           ),
                         NewUserActivitySearchResults() =>
-                          _SearchResultsList(movies: state.movies),
+                          _SearchResultsList(
+                            movies: state.movies,
+                            onMovieSelected: () => widget.cubit
+                                .onSearchSubmitted(_searchController.text),
+                          ),
                         NewUserActivitySuccess() => Builder(
                             builder: (context) {
                               final items = _buildItems(
@@ -189,10 +193,11 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
 
 class _SearchResultsList extends StatelessWidget {
   final List<Movie> movies;
+  final VoidCallback? onMovieSelected;
 
   static const String _posterBaseUrl = 'https://image.tmdb.org/t/p/w92';
 
-  const _SearchResultsList({required this.movies});
+  const _SearchResultsList({required this.movies, this.onMovieSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -215,15 +220,19 @@ class _SearchResultsList extends StatelessWidget {
         height: 1,
         color: colorScheme.outlineVariant,
       ),
-      itemBuilder: (context, index) => _MovieResultTile(movie: movies[index]),
+      itemBuilder: (context, index) => _MovieResultTile(
+        movie: movies[index],
+        onTap: onMovieSelected,
+      ),
     );
   }
 }
 
 class _MovieResultTile extends StatelessWidget {
   final Movie movie;
+  final VoidCallback? onTap;
 
-  const _MovieResultTile({required this.movie});
+  const _MovieResultTile({required this.movie, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -234,13 +243,16 @@ class _MovieResultTile extends StatelessWidget {
       label: '${movie.title}, ${movie.releaseDate}',
       button: true,
       child: InkWell(
-        onTap: () => context.router.root.push(
-          MovieReviewRoute(
-            movieId: movie.id,
-            movieTitle: movie.title,
-            posterPath: movie.posterPath,
-          ),
-        ),
+        onTap: () {
+          onTap?.call();
+          context.router.root.push(
+            MovieReviewRoute(
+              movieId: movie.id,
+              movieTitle: movie.title,
+              posterPath: movie.posterPath,
+            ),
+          );
+        },
         child: ExcludeSemantics(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
