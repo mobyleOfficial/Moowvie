@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common/common.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,67 +83,84 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.light
+          .copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: (isIOS
-            ? CupertinoNavigationBar(
-                backgroundColor: CupertinoColors.black,
-                leading: const MoovieCloseButton(),
-                middle: searchField,
-              )
-            : AppBar(
-                backgroundColor: Colors.black,
-                leading: const MoovieCloseButton(),
-                title: searchField,
-                titleSpacing: 0,
-              )) as PreferredSizeWidget,
-        body: BlocProvider.value(
-          value: widget.cubit,
-          child: BlocBuilder<NewUserActivityCubit, NewUserActivityState>(
-            builder: (context, state) => switch (state) {
-              NewUserActivityLoading() => const Center(
-                  child: CircularProgressIndicator(),
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: ColoredBox(
+            color: colorScheme.surface,
+            child: Column(
+              children: [
+                MoovieAnimatedAppBar(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  leading: const MoovieCloseButton(),
+                  titleWidget: searchField,
                 ),
-              NewUserActivityError() => Center(
-                  child: Text(state.message),
-                ),
-              NewUserActivitySearching() => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              NewUserActivitySearchResults() => _SearchResultsList(
-                  movies: state.movies,
-                ),
-              NewUserActivitySuccess() => Builder(
-                  builder: (context) {
-                    final items = _buildItems(l10n, state.drafts);
-                    return ListView.builder(
-                      itemCount: items.length,
-                      itemBuilder: (context, index) => switch (items[index]) {
-                        SectionHeader(:final label) =>
-                          _SectionHeaderTile(label: label),
-                        DraftItem(:final title, :final subtitle, :final draft) =>
-                          _DraftTile(
-                            title: title,
-                            subtitle: subtitle,
-                            onTap: () => context.router.root.push(
-                              MovieReviewRoute(
-                                movieId: draft.movieId,
-                                movieTitle: draft.movieTitle,
-                                posterPath: draft.posterPath,
-                                initialDraft: draft,
-                              ),
-                            ),
+                Expanded(
+                  child: BlocProvider.value(
+                    value: widget.cubit,
+                    child: BlocBuilder<NewUserActivityCubit,
+                        NewUserActivityState>(
+                      builder: (context, state) => switch (state) {
+                        NewUserActivityLoading() => const Center(
+                            child: CircularProgressIndicator(),
                           ),
-                        SearchItem(:final query, :final time) => _SearchTile(
-                            query: query,
-                            time: time,
+                        NewUserActivityError() => Center(
+                            child: Text(state.message),
+                          ),
+                        NewUserActivitySearching() => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        NewUserActivitySearchResults() =>
+                          _SearchResultsList(movies: state.movies),
+                        NewUserActivitySuccess() => Builder(
+                            builder: (context) {
+                              final items =
+                                  _buildItems(l10n, state.drafts);
+                              return ListView.builder(
+                                itemCount: items.length,
+                                itemBuilder: (context, index) =>
+                                    switch (items[index]) {
+                                  SectionHeader(:final label) =>
+                                    _SectionHeaderTile(label: label),
+                                  DraftItem(
+                                    :final title,
+                                    :final subtitle,
+                                    :final draft
+                                  ) =>
+                                    _DraftTile(
+                                      title: title,
+                                      subtitle: subtitle,
+                                      onTap: () =>
+                                          context.router.root.push(
+                                        MovieReviewRoute(
+                                          movieId: draft.movieId,
+                                          movieTitle: draft.movieTitle,
+                                          posterPath: draft.posterPath,
+                                          initialDraft: draft,
+                                        ),
+                                      ),
+                                    ),
+                                  SearchItem(
+                                    :final query,
+                                    :final time
+                                  ) =>
+                                    _SearchTile(
+                                      query: query,
+                                      time: time,
+                                    ),
+                                },
+                              );
+                            },
                           ),
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
-            },
+              ],
+            ),
           ),
         ),
       ),
