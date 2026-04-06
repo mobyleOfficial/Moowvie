@@ -6,6 +6,7 @@ class MovieReviewDraft {
   final String movieTitle;
   final String posterPath;
   final String reviewTitle;
+  final String reviewBody;
   final double rating;
   final bool isFavorite;
   final bool isRewatch;
@@ -19,6 +20,7 @@ class MovieReviewDraft {
     required this.movieTitle,
     required this.posterPath,
     required this.reviewTitle,
+    this.reviewBody = '',
     required this.rating,
     required this.isFavorite,
     required this.isRewatch,

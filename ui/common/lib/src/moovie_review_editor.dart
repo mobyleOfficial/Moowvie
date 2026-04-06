@@ -12,6 +12,8 @@ class MoovieReviewEditor extends StatefulWidget {
   static Future<String?> show(BuildContext context, {String? initialHtml}) =>
       MoovieBottomSheet.show<String>(
         context: context,
+        enableDrag: false,
+        isDismissible: false,
         builder: (_) => MoovieReviewEditor(initialHtml: initialHtml),
       );
 
@@ -24,7 +26,7 @@ class _MoovieReviewEditorState extends State<MoovieReviewEditor>
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   late final TabController _tabController;
-  bool _didPop = false;
+  bool _canPop = false;
 
   @override
   void initState() {
@@ -110,8 +112,11 @@ class _MoovieReviewEditorState extends State<MoovieReviewEditor>
   }
 
   void _onDone() {
-    _didPop = true;
-    Navigator.of(context).pop(_buildResult());
+    final result = _buildResult();
+    setState(() => _canPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.of(context).pop(result);
+    });
   }
 
   static String editableToHtml(String text) {
@@ -250,11 +255,9 @@ class _MoovieReviewEditorState extends State<MoovieReviewEditor>
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (_, __) {
-        if (!_didPop) {
-          _onDone();
-        }
+      canPop: _canPop,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _onDone();
       },
       child: Container(
         height: MediaQuery.of(context).size.height * 0.85,

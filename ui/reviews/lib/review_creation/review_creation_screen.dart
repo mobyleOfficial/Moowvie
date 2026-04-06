@@ -24,7 +24,6 @@ class ReviewCreationScreen extends StatefulWidget {
 class _ReviewCreationScreenState extends State<ReviewCreationScreen> {
   late final TextEditingController _reviewNameController =
       TextEditingController(text: widget.cubit.initialDraft?.reviewTitle);
-  String? _reviewHtml;
 
   static const String _posterBaseUrl = 'https://image.tmdb.org/t/p/w185';
 
@@ -34,17 +33,15 @@ class _ReviewCreationScreenState extends State<ReviewCreationScreen> {
     super.dispose();
   }
 
-  Future<void> _openReviewEditor() async {
+  Future<void> _openReviewEditor(String? currentBody) async {
     final result = await MoovieReviewEditor.show(
       context,
-      initialHtml: _reviewHtml,
+      initialHtml: currentBody,
     );
 
     if (!mounted) return;
 
-    setState(() {
-      _reviewHtml = result;
-    });
+    widget.cubit.updateReviewBody(result);
   }
 
   List<String> _buildTags(AppLocalizations l10n) => [
@@ -95,8 +92,8 @@ class _ReviewCreationScreenState extends State<ReviewCreationScreen> {
                 reviewNameController: _reviewNameController,
                 tags: _buildTags(l10n),
                 l10n: l10n,
-                reviewHtml: _reviewHtml,
-                onAddReview: _openReviewEditor,
+                onAddReview: () =>
+                    _openReviewEditor(state.reviewBody.isEmpty ? null : state.reviewBody),
               ),
           },
         ),
@@ -113,7 +110,6 @@ class _ReviewBody extends StatelessWidget {
   final TextEditingController reviewNameController;
   final List<String> tags;
   final AppLocalizations l10n;
-  final String? reviewHtml;
   final VoidCallback onAddReview;
 
   const _ReviewBody({
@@ -124,7 +120,6 @@ class _ReviewBody extends StatelessWidget {
     required this.reviewNameController,
     required this.tags,
     required this.l10n,
-    required this.reviewHtml,
     required this.onAddReview,
   });
 
@@ -178,7 +173,7 @@ class _ReviewBody extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           _AddReviewSection(
-            html: reviewHtml,
+            html: state.reviewBody.isEmpty ? null : state.reviewBody,
             onTap: onAddReview,
           ),
           const SizedBox(height: 24),

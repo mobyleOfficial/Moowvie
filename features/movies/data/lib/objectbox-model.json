@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:7225164119965359674",
-      "lastPropertyId": "11:2501738230344671365",
+      "lastPropertyId": "12:5320040675716211413",
       "name": "LocalMovieReviewDraft",
       "properties": [
         {
@@ -65,6 +65,11 @@
           "id": "11:2501738230344671365",
           "name": "updatedAt",
           "type": 10
+        },
+        {
+          "id": "12:5320040675716211413",
+          "name": "reviewBody",
+          "type": 9
         }
       ],
       "relations": []

@@ -10,6 +10,7 @@ class LocalMovieReviewDraft {
   String movieTitle;
   String posterPath;
   String reviewTitle;
+  String reviewBody;
   double rating;
   bool isFavorite;
   bool isRewatch;
@@ -25,6 +26,7 @@ class LocalMovieReviewDraft {
     required this.movieTitle,
     required this.posterPath,
     required this.reviewTitle,
+    this.reviewBody = '',
     required this.rating,
     required this.isFavorite,
     required this.isRewatch,
@@ -43,6 +45,7 @@ class LocalMovieReviewDraft {
         movieTitle: draft.movieTitle,
         posterPath: draft.posterPath,
         reviewTitle: draft.reviewTitle,
+        reviewBody: draft.reviewBody,
         rating: draft.rating,
         isFavorite: draft.isFavorite,
         isRewatch: draft.isRewatch,
@@ -57,6 +60,7 @@ class LocalMovieReviewDraft {
         movieTitle: movieTitle,
         posterPath: posterPath,
         reviewTitle: reviewTitle,
+        reviewBody: reviewBody,
         rating: rating,
         isFavorite: isFavorite,
         isRewatch: isRewatch,
