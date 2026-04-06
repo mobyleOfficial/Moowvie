@@ -224,35 +224,39 @@ class _MoovieReviewEditorState extends State<MoovieReviewEditor> {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
-      color: colorScheme.surface,
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: Column(
         children: [
-          _EditorAppBar(
-            onClear: _onClear,
-            onDone: _onDone,
-            title: l10n.reviewEditorTitle,
-            clearLabel: l10n.reviewEditorClear,
-          ),
+          _DragHandle(),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                maxLines: null,
-                expands: true,
-                textAlignVertical: TextAlignVertical.top,
-                keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.newline,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface,
-                  height: 1.6,
-                ),
-                decoration: InputDecoration(
-                  hintText: l10n.reviewEditorPlaceholder,
-                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
+            child: ColoredBox(
+              color: colorScheme.surfaceBright,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  maxLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                    height: 1.7,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: l10n.reviewEditorPlaceholder,
+                    hintStyle: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.6),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ),
               ),
             ),
@@ -266,6 +270,9 @@ class _MoovieReviewEditorState extends State<MoovieReviewEditor> {
             onSubheading: () => _insertBlock('## '),
             onList: () => _insertBlock('- '),
             onParagraph: () => _insertBlock('\n'),
+            onClear: _onClear,
+            onDone: _onDone,
+            clearLabel: l10n.reviewEditorClear,
           ),
           SizedBox(height: bottomInset),
         ],
@@ -274,59 +281,20 @@ class _MoovieReviewEditorState extends State<MoovieReviewEditor> {
   }
 }
 
-class _EditorAppBar extends StatelessWidget {
-  final VoidCallback onClear;
-  final VoidCallback onDone;
-  final String title;
-  final String clearLabel;
-
-  const _EditorAppBar({
-    required this.onClear,
-    required this.onDone,
-    required this.title,
-    required this.clearLabel,
-  });
-
+class _DragHandle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      child: Container(
+        width: 36,
+        height: 4,
+        decoration: BoxDecoration(
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(2),
         ),
-      ),
-      child: Row(
-        children: [
-          TextButton(
-            onPressed: onClear,
-            child: Text(
-              clearLabel,
-              style: TextStyle(color: colorScheme.error),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
-            ),
-          ),
-          Semantics(
-            label: 'Done',
-            button: true,
-            child: IconButton(
-              onPressed: onDone,
-              icon: Icon(Icons.check, color: colorScheme.primary),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -341,6 +309,9 @@ class _FormattingToolbar extends StatelessWidget {
   final VoidCallback onSubheading;
   final VoidCallback onList;
   final VoidCallback onParagraph;
+  final VoidCallback onClear;
+  final VoidCallback onDone;
+  final String clearLabel;
 
   const _FormattingToolbar({
     required this.onBold,
@@ -351,6 +322,9 @@ class _FormattingToolbar extends StatelessWidget {
     required this.onSubheading,
     required this.onList,
     required this.onParagraph,
+    required this.onClear,
+    required this.onDone,
+    required this.clearLabel,
   });
 
   @override
@@ -359,59 +333,119 @@ class _FormattingToolbar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
+        color: colorScheme.surfaceContainerLow,
         border: Border(
-          top: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
+          top: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
         ),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Row(
-          children: [
-            _ToolbarButton(
-              icon: Icons.format_bold,
-              tooltip: 'Bold',
-              onPressed: onBold,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            child: Row(
+              children: [
+                _ToolbarButton(
+                  icon: Icons.format_bold,
+                  tooltip: 'Bold',
+                  onPressed: onBold,
+                ),
+                const SizedBox(width: 2),
+                _ToolbarButton(
+                  icon: Icons.format_italic,
+                  tooltip: 'Italic',
+                  onPressed: onItalic,
+                ),
+                const SizedBox(width: 2),
+                _ToolbarButton(
+                  icon: Icons.format_strikethrough,
+                  tooltip: 'Strikethrough',
+                  onPressed: onStrikethrough,
+                ),
+                const SizedBox(width: 2),
+                _ToolbarButton(
+                  icon: Icons.visibility_off_outlined,
+                  tooltip: 'Spoiler',
+                  onPressed: onSpoiler,
+                ),
+                _ToolbarDivider(),
+                _ToolbarButton(
+                  icon: Icons.title,
+                  tooltip: 'Heading',
+                  onPressed: onHeading,
+                ),
+                const SizedBox(width: 2),
+                _ToolbarButton(
+                  icon: Icons.text_fields,
+                  tooltip: 'Subheading',
+                  onPressed: onSubheading,
+                ),
+                const SizedBox(width: 2),
+                _ToolbarButton(
+                  icon: Icons.format_list_bulleted,
+                  tooltip: 'List',
+                  onPressed: onList,
+                ),
+                const SizedBox(width: 2),
+                _ToolbarButton(
+                  icon: Icons.segment,
+                  tooltip: 'Paragraph',
+                  onPressed: onParagraph,
+                ),
+              ],
             ),
-            _ToolbarButton(
-              icon: Icons.format_italic,
-              tooltip: 'Italic',
-              onPressed: onItalic,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: Row(
+              children: [
+                TextButton(
+                  onPressed: onClear,
+                  style: TextButton.styleFrom(
+                    foregroundColor: colorScheme.error,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(clearLabel),
+                ),
+                const Spacer(),
+                Semantics(
+                  label: 'Done',
+                  button: true,
+                  child: FilledButton.tonal(
+                    onPressed: onDone,
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.check,
+                          size: 18,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Done',
+                          style: TextStyle(color: colorScheme.primary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            _ToolbarButton(
-              icon: Icons.format_strikethrough,
-              tooltip: 'Strikethrough',
-              onPressed: onStrikethrough,
-            ),
-            _ToolbarButton(
-              icon: Icons.visibility_off_outlined,
-              tooltip: 'Spoiler',
-              onPressed: onSpoiler,
-            ),
-            _ToolbarDivider(),
-            _ToolbarButton(
-              icon: Icons.title,
-              tooltip: 'Heading',
-              onPressed: onHeading,
-            ),
-            _ToolbarButton(
-              icon: Icons.text_fields,
-              tooltip: 'Subheading',
-              onPressed: onSubheading,
-            ),
-            _ToolbarButton(
-              icon: Icons.format_list_bulleted,
-              tooltip: 'List',
-              onPressed: onList,
-            ),
-            _ToolbarButton(
-              icon: Icons.segment,
-              tooltip: 'Paragraph',
-              onPressed: onParagraph,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -438,9 +472,11 @@ class _ToolbarButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            width: 40,
+            height: 40,
+            alignment: Alignment.center,
             child: Icon(icon, size: 20, color: colorScheme.onSurface),
           ),
         ),
@@ -457,8 +493,11 @@ class _ToolbarDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 20,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      color: colorScheme.outlineVariant,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(1),
+      ),
     );
   }
 }
