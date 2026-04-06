@@ -36,7 +36,10 @@ class _SocialContent extends StatelessWidget {
           MoovieTabBar(tabs: [l10n.socialFriendsTab, l10n.socialMessagesTab]),
           const Expanded(
             child: TabBarView(
-              children: [FriendsScreen(), MessagesScreen()],
+              children: [
+                MoovieKeepAliveTab(child: FriendsScreen()),
+                MoovieKeepAliveTab(child: MessagesScreen()),
+              ],
             ),
           ),
         ],

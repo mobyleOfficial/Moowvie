@@ -159,14 +159,16 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          _ProfileInfoTab(
-                            user: user,
-                            isFollowing: _isFollowing,
-                            onFollowToggle: () =>
-                                setState(() => _isFollowing = !_isFollowing),
+                          MoovieKeepAliveTab(
+                            child: _ProfileInfoTab(
+                              user: user,
+                              isFollowing: _isFollowing,
+                              onFollowToggle: () =>
+                                  setState(() => _isFollowing = !_isFollowing),
+                            ),
                           ),
-                          const _DiaryTab(),
-                          const _ListsTab(),
+                          const MoovieKeepAliveTab(child: _DiaryTab()),
+                          const MoovieKeepAliveTab(child: _ListsTab()),
                         ],
                       ),
                     ),
