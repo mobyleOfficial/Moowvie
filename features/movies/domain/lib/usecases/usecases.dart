@@ -1,6 +1,7 @@
 /// Domain use cases barrel file.
 library;
 
+export 'delete_draft.dart';
 export 'get_movie_collections.dart';
 export 'get_movie_detail.dart';
 export 'get_movie_reviews.dart';

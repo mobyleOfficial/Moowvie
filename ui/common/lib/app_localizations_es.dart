@@ -183,4 +183,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get movieReviewSend => 'Enviar reseña';
+
+  @override
+  String get deleteDraftTitle => 'Eliminar borrador?';
+
+  @override
+  String get deleteDraftContent =>
+      'Este borrador se eliminará permanentemente.';
+
+  @override
+  String get delete => 'Eliminar';
+
+  @override
+  String get cancel => 'Cancelar';
 }

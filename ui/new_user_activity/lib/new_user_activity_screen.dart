@@ -130,16 +130,22 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
                                     :final subtitle,
                                     :final draft
                                   ) =>
-                                    _DraftTile(
-                                      title: title,
-                                      subtitle: subtitle,
-                                      onTap: () =>
-                                          context.router.root.push(
-                                        MovieReviewRoute(
-                                          movieId: draft.movieId,
-                                          movieTitle: draft.movieTitle,
-                                          posterPath: draft.posterPath,
-                                          initialDraft: draft,
+                                    _SwipeToDismissDraft(
+                                      movieId: draft.movieId,
+                                      onConfirmDelete: () => widget
+                                          .cubit
+                                          .deleteDraft(draft.movieId),
+                                      child: _DraftTile(
+                                        title: title,
+                                        subtitle: subtitle,
+                                        onTap: () =>
+                                            context.router.root.push(
+                                          MovieReviewRoute(
+                                            movieId: draft.movieId,
+                                            movieTitle: draft.movieTitle,
+                                            posterPath: draft.posterPath,
+                                            initialDraft: draft,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -313,6 +319,52 @@ class _MovieResultTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SwipeToDismissDraft extends StatelessWidget {
+  final int movieId;
+  final VoidCallback onConfirmDelete;
+  final Widget child;
+
+  const _SwipeToDismissDraft({
+    required this.movieId,
+    required this.onConfirmDelete,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Dismissible(
+      key: ValueKey('draft_$movieId'),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (_) async {
+        var confirmed = false;
+        await MoovieDialog.show(
+          context: context,
+          title: l10n.deleteDraftTitle,
+          content: l10n.deleteDraftContent,
+          confirmText: l10n.delete,
+          cancelText: l10n.cancel,
+          onConfirm: () => confirmed = true,
+        );
+        return confirmed;
+      },
+      onDismissed: (_) => onConfirmDelete(),
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 24),
+        color: colorScheme.error,
+        child: Icon(
+          Icons.delete_outline,
+          color: colorScheme.onError,
+        ),
+      ),
+      child: child,
     );
   }
 }

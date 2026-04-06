@@ -177,5 +177,13 @@
   "movieReviewTagEmotional": "Emotional",
   "@movieReviewTagEmotional": { "description": "Predefined tag for movie review" },
   "movieReviewSend": "Send review",
-  "@movieReviewSend": { "description": "Tooltip for the send review button in the app bar" }
+  "@movieReviewSend": { "description": "Tooltip for the send review button in the app bar" },
+  "deleteDraftTitle": "Delete draft?",
+  "@deleteDraftTitle": { "description": "Title for the delete draft confirmation dialog" },
+  "deleteDraftContent": "This draft will be permanently deleted.",
+  "@deleteDraftContent": { "description": "Content for the delete draft confirmation dialog" },
+  "delete": "Delete",
+  "@delete": { "description": "Delete action label" },
+  "cancel": "Cancel",
+  "@cancel": { "description": "Cancel action label" }
 }

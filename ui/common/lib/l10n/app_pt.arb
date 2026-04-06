@@ -55,5 +55,9 @@
   "movieReviewTagFeelGood": "Reconfortante",
   "movieReviewTagMindBending": "Intrigante",
   "movieReviewTagEmotional": "Emocionante",
-  "movieReviewSend": "Enviar avaliação"
+  "movieReviewSend": "Enviar avaliação",
+  "deleteDraftTitle": "Excluir rascunho?",
+  "deleteDraftContent": "Este rascunho será excluído permanentemente.",
+  "delete": "Excluir",
+  "cancel": "Cancelar"
 }

@@ -28,4 +28,16 @@ class MoviesLocalDataSourceImpl implements MoviesLocalDataSource {
       .order(LocalMovieReviewDraft_.updatedAt, flags: Order.descending)
       .watch(triggerImmediately: true)
       .map((query) => query.find());
+
+  @override
+  void deleteDraftByMovieId(int movieId) {
+    final existing = _box
+        .query(LocalMovieReviewDraft_.movieId.equals(movieId))
+        .build()
+        .findFirst();
+
+    if (existing != null) {
+      _box.remove(existing.id);
+    }
+  }
 }

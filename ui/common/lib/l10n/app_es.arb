@@ -55,5 +55,9 @@
   "movieReviewTagFeelGood": "Para sentirse bien",
   "movieReviewTagMindBending": "Desconcertante",
   "movieReviewTagEmotional": "Emotiva",
-  "movieReviewSend": "Enviar reseña"
+  "movieReviewSend": "Enviar reseña",
+  "deleteDraftTitle": "Eliminar borrador?",
+  "deleteDraftContent": "Este borrador se eliminará permanentemente.",
+  "delete": "Eliminar",
+  "cancel": "Cancelar"
 }

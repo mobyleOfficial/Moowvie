@@ -15,4 +15,5 @@ abstract interface class MoviesRepository {
   Future<Result<TrendingMovieListing>> searchMovies({required String query, required int page});
   Future<Result<void>> upsertMovieReview({required MovieReviewDraft draft, required MovieReviewStatus status});
   Stream<List<MovieReviewDraft>> observeMovieReviewDraftsList();
+  Future<Result<void>> deleteDraft({required int movieId});
 }

@@ -48,4 +48,8 @@ abstract class MoviesModule {
   @injectable
   ObserveMovieReviewDraftsList observeMovieReviewDraftsList(MoviesRepository repository) =>
       ObserveMovieReviewDraftsList(repository);
+
+  @injectable
+  DeleteDraft deleteDraft(MoviesRepository repository) =>
+      DeleteDraft(repository);
 }

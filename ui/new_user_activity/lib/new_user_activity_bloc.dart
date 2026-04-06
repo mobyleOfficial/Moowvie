@@ -9,6 +9,7 @@ import 'package:new_user_activity/new_user_activity_state.dart';
 class NewUserActivityCubit extends Cubit<NewUserActivityState> {
   final SearchMovies _searchMovies;
   final ObserveMovieReviewDraftsList _observeMovieReviewDraftsList;
+  final DeleteDraft _deleteDraft;
 
   final StreamController<String> _queryController = StreamController<String>();
   late final StreamSubscription<String> _querySubscription;
@@ -20,7 +21,7 @@ class NewUserActivityCubit extends Cubit<NewUserActivityState> {
   static const _debounceDuration = Duration(milliseconds: 300);
   static const _minQueryLength = 3;
 
-  NewUserActivityCubit(this._searchMovies, this._observeMovieReviewDraftsList)
+  NewUserActivityCubit(this._searchMovies, this._observeMovieReviewDraftsList, this._deleteDraft)
       : super(const NewUserActivityLoading()) {
     _querySubscription = _queryController.stream
         .distinct()
@@ -62,6 +63,8 @@ class NewUserActivityCubit extends Cubit<NewUserActivityState> {
         emit(NewUserActivityError(error.message));
     }
   }
+
+  Future<void> deleteDraft(int movieId) async => _deleteDraft(movieId);
 
   @override
   Future<void> close() {

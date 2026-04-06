@@ -183,4 +183,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get movieReviewSend => 'Enviar avaliação';
+
+  @override
+  String get deleteDraftTitle => 'Excluir rascunho?';
+
+  @override
+  String get deleteDraftContent =>
+      'Este rascunho será excluído permanentemente.';
+
+  @override
+  String get delete => 'Excluir';
+
+  @override
+  String get cancel => 'Cancelar';
 }

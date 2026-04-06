@@ -92,4 +92,14 @@ class MoviesRepositoryImpl implements MoviesRepository {
             (localDrafts) =>
                 localDrafts.map((draft) => draft.toDomain()).toList(),
           );
+
+  @override
+  Future<Result<void>> deleteDraft({required int movieId}) async {
+    try {
+      _localDataSource.deleteDraftByMovieId(movieId);
+      return const Success(null);
+    } catch (_) {
+      return const Failure(AppError.unknown);
+    }
+  }
 }

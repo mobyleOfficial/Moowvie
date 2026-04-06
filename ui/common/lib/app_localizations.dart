@@ -435,6 +435,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send review'**
   String get movieReviewSend;
+
+  /// Title for the delete draft confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete draft?'**
+  String get deleteDraftTitle;
+
+  /// Content for the delete draft confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This draft will be permanently deleted.'**
+  String get deleteDraftContent;
+
+  /// Delete action label
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Cancel action label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate
