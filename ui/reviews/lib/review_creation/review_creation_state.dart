@@ -8,6 +8,7 @@ class ReviewCreationLoading extends ReviewCreationState {
 
 class ReviewCreationReady extends ReviewCreationState {
   final String reviewTitle;
+  final String reviewBody;
   final double rating;
   final bool isFavorite;
   final bool isRewatch;
@@ -15,6 +16,7 @@ class ReviewCreationReady extends ReviewCreationState {
 
   const ReviewCreationReady({
     this.reviewTitle = '',
+    this.reviewBody = '',
     this.rating = 0,
     this.isFavorite = false,
     this.isRewatch = false,
@@ -23,6 +25,7 @@ class ReviewCreationReady extends ReviewCreationState {
 
   ReviewCreationReady copyWith({
     String? reviewTitle,
+    String? reviewBody,
     double? rating,
     bool? isFavorite,
     bool? isRewatch,
@@ -30,6 +33,7 @@ class ReviewCreationReady extends ReviewCreationState {
   }) =>
       ReviewCreationReady(
         reviewTitle: reviewTitle ?? this.reviewTitle,
+        reviewBody: reviewBody ?? this.reviewBody,
         rating: rating ?? this.rating,
         isFavorite: isFavorite ?? this.isFavorite,
         isRewatch: isRewatch ?? this.isRewatch,

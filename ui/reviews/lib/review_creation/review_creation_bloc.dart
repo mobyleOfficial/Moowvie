@@ -10,6 +10,7 @@ class ReviewCreationCubit extends Cubit<ReviewCreationState> {
   final MovieReviewDraft? initialDraft;
 
   late String _currentReviewTitle;
+  late String _currentReviewBody;
 
   ReviewCreationCubit({
     required UpsertMovieReview upsertMovieReview,
@@ -19,6 +20,7 @@ class ReviewCreationCubit extends Cubit<ReviewCreationState> {
     this.initialDraft,
   })  : _upsertMovieReview = upsertMovieReview,
         _currentReviewTitle = initialDraft?.reviewTitle ?? '',
+        _currentReviewBody = initialDraft?.reviewBody ?? '',
         super(const ReviewCreationLoading()) {
     _load();
   }
@@ -28,6 +30,7 @@ class ReviewCreationCubit extends Cubit<ReviewCreationState> {
     if (draft != null) {
       emit(ReviewCreationReady(
         reviewTitle: draft.reviewTitle,
+        reviewBody: draft.reviewBody,
         rating: draft.rating,
         isFavorite: draft.isFavorite,
         isRewatch: draft.isRewatch,
@@ -88,6 +91,16 @@ class ReviewCreationCubit extends Cubit<ReviewCreationState> {
     }
   }
 
+  void updateReviewBody(String? body) {
+    final currentState = state;
+    if (currentState is ReviewCreationReady) {
+      _currentReviewBody = body ?? '';
+      final updated = currentState.copyWith(reviewBody: _currentReviewBody);
+      emit(updated);
+      _saveDraft(updated);
+    }
+  }
+
   void _saveDraft(ReviewCreationReady reviewState) {
     final draft = MovieReviewDraft(
       id: 0,
@@ -95,6 +108,7 @@ class ReviewCreationCubit extends Cubit<ReviewCreationState> {
       movieTitle: movieTitle,
       posterPath: posterPath,
       reviewTitle: _currentReviewTitle,
+      reviewBody: _currentReviewBody,
       rating: reviewState.rating,
       isFavorite: reviewState.isFavorite,
       isRewatch: reviewState.isRewatch,
