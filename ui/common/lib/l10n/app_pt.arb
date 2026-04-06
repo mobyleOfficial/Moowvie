@@ -40,5 +40,19 @@
   "newUserActivityRecentSection": "Recentes",
   "profileFollow": "Seguir",
   "reviewDetailsBodyTitle": "Minha avaliação",
-  "noResults": "Nenhum resultado encontrado"
+  "noResults": "Nenhum resultado encontrado",
+  "movieReviewTitle": "Avaliação",
+  "movieReviewNameHint": "Título da avaliação",
+  "movieReviewAddReview": "Adicionar uma avaliação...",
+  "movieReviewRewatch": "Reassistindo",
+  "movieReviewFirstTime": "Primeira vez",
+  "movieReviewTags": "Tags",
+  "movieReviewTagMasterpiece": "Obra-prima",
+  "movieReviewTagOverrated": "Superestimado",
+  "movieReviewTagUnderrated": "Subestimado",
+  "movieReviewTagMustWatch": "Imperdível",
+  "movieReviewTagDisappointing": "Decepcionante",
+  "movieReviewTagFeelGood": "Reconfortante",
+  "movieReviewTagMindBending": "Intrigante",
+  "movieReviewTagEmotional": "Emocionante"
 }

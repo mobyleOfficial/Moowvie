@@ -16,3 +16,5 @@ export 'src/moovie_edit_text.dart';
 export 'src/moovie_close_button.dart';
 export 'src/app_bar_controller.dart';
 export 'src/stream_debounce.dart';
+export 'src/moovie_star_rating.dart';
+export 'src/moovie_tag.dart';

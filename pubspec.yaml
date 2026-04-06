@@ -55,6 +55,8 @@ dependencies:
     path: ui/movies_list
   movie_detail:
     path: ui/movie_detail
+  movie_review:
+    path: ui/movie_review
   home:
     path: ui/home
   common:

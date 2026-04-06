@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_review/movie_review_router.dart';
 import 'package:movies/movies.dart';
 import 'package:new_user_activity/model/tab_items.dart';
 import 'package:new_user_activity/new_user_activity_bloc.dart';
@@ -176,7 +178,12 @@ class _MovieResultTile extends StatelessWidget {
       label: '${movie.title}, ${movie.releaseDate}',
       button: true,
       child: InkWell(
-        onTap: () {},
+        onTap: () => context.router.root.push(
+          MovieReviewRoute(
+            movieTitle: movie.title,
+            posterPath: movie.posterPath,
+          ),
+        ),
         child: ExcludeSemantics(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

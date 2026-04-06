@@ -138,4 +138,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noResults => 'No results found';
+
+  @override
+  String get movieReviewTitle => 'Review';
+
+  @override
+  String get movieReviewNameHint => 'Review title';
+
+  @override
+  String get movieReviewAddReview => 'Add a review...';
+
+  @override
+  String get movieReviewRewatch => 'Rewatch';
+
+  @override
+  String get movieReviewFirstTime => 'First time';
+
+  @override
+  String get movieReviewTags => 'Tags';
+
+  @override
+  String get movieReviewTagMasterpiece => 'Masterpiece';
+
+  @override
+  String get movieReviewTagOverrated => 'Overrated';
+
+  @override
+  String get movieReviewTagUnderrated => 'Underrated';
+
+  @override
+  String get movieReviewTagMustWatch => 'Must Watch';
+
+  @override
+  String get movieReviewTagDisappointing => 'Disappointing';
+
+  @override
+  String get movieReviewTagFeelGood => 'Feel Good';
+
+  @override
+  String get movieReviewTagMindBending => 'Mind Bending';
+
+  @override
+  String get movieReviewTagEmotional => 'Emotional';
 }
