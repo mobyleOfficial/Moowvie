@@ -9,7 +9,7 @@ import 'package:movies/movies.dart';
 import 'package:movies_ui/movie_list_detail/movie_list_detail_bloc.dart';
 import 'package:movies_ui/movie_list_detail/movie_list_detail_state.dart';
 
-class MovieListDetailScreen extends StatelessWidget {
+class MovieListDetailScreen extends StatefulWidget {
   final MovieListDetailCubit cubit;
   final List<String> posterPaths;
   final void Function(int movieId, String movieTitle) onMovieTap;
@@ -25,21 +25,33 @@ class MovieListDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<MovieListDetailScreen> createState() => _MovieListDetailScreenState();
+}
+
+class _MovieListDetailScreenState extends State<MovieListDetailScreen> {
+  late final String? _headerPoster = widget.posterPaths.isNotEmpty
+      ? widget.posterPaths[Random().nextInt(widget.posterPaths.length)]
+      : null;
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: cubit,
+      value: widget.cubit,
       child: BlocBuilder<MovieListDetailCubit, MovieListDetailState>(
         builder: (context, state) => switch (state) {
-          MovieListDetailLoading() =>
-            const Center(child: CircularProgressIndicator()),
-          MovieListDetailError(:final message) => Center(child: Text(message)),
+          MovieListDetailLoading() => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          MovieListDetailError(:final message) => Scaffold(
+              body: Center(child: Text(message)),
+            ),
           MovieListDetailSuccess() => _Content(
               state: state,
-              cubit: cubit,
-              posterPaths: posterPaths,
-              onMovieTap: onMovieTap,
-              posterBaseUrl: _posterBaseUrl,
-              headerBaseUrl: _headerBaseUrl,
+              cubit: widget.cubit,
+              headerPoster: _headerPoster,
+              onMovieTap: widget.onMovieTap,
+              posterBaseUrl: MovieListDetailScreen._posterBaseUrl,
+              headerBaseUrl: MovieListDetailScreen._headerBaseUrl,
             ),
         },
       ),
@@ -50,7 +62,7 @@ class MovieListDetailScreen extends StatelessWidget {
 class _Content extends StatelessWidget {
   final MovieListDetailSuccess state;
   final MovieListDetailCubit cubit;
-  final List<String> posterPaths;
+  final String? headerPoster;
   final void Function(int movieId, String movieTitle) onMovieTap;
   final String posterBaseUrl;
   final String headerBaseUrl;
@@ -58,7 +70,7 @@ class _Content extends StatelessWidget {
   const _Content({
     required this.state,
     required this.cubit,
-    required this.posterPaths,
+    required this.headerPoster,
     required this.onMovieTap,
     required this.posterBaseUrl,
     required this.headerBaseUrl,
@@ -83,7 +95,7 @@ class _Content extends StatelessWidget {
                 _MoviesTab(
                   state: state,
                   cubit: cubit,
-                  posterPaths: posterPaths,
+                  headerPoster: headerPoster,
                   onMovieTap: onMovieTap,
                   posterBaseUrl: posterBaseUrl,
                   headerBaseUrl: headerBaseUrl,
@@ -108,7 +120,7 @@ class _Content extends StatelessWidget {
 class _MoviesTab extends StatelessWidget {
   final MovieListDetailSuccess state;
   final MovieListDetailCubit cubit;
-  final List<String> posterPaths;
+  final String? headerPoster;
   final void Function(int movieId, String movieTitle) onMovieTap;
   final String posterBaseUrl;
   final String headerBaseUrl;
@@ -116,7 +128,7 @@ class _MoviesTab extends StatelessWidget {
   const _MoviesTab({
     required this.state,
     required this.cubit,
-    required this.posterPaths,
+    required this.headerPoster,
     required this.onMovieTap,
     required this.posterBaseUrl,
     required this.headerBaseUrl,
@@ -133,7 +145,7 @@ class _MoviesTab extends StatelessWidget {
           SliverToBoxAdapter(
             child: _Header(
               detail: detail,
-              posterPaths: posterPaths,
+              headerPoster: headerPoster,
               headerBaseUrl: headerBaseUrl,
               isLiked: state.isLiked,
               likesCount: state.likesCount,
@@ -147,20 +159,23 @@ class _MoviesTab extends StatelessWidget {
             ),
           ),
           if (state.isGridView)
-            PagedSliverGrid<int, Movie>(
-              state: pagingState,
-              fetchNextPage: fetchNextPage,
-              gridDelegate: moovieGridDelegate,
-              builderDelegate: PagedChildBuilderDelegate<Movie>(
-                itemBuilder: (context, movie, index) =>
-                    _GridMovieItem(
-                      movie: movie,
-                      index: index,
-                      posterBaseUrl: posterBaseUrl,
-                      onTap: () => onMovieTap(movie.id, movie.title),
-                    ),
-                firstPageProgressIndicatorBuilder: (_) =>
-                    const Center(child: CircularProgressIndicator()),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: moovieGridPadding),
+              sliver: PagedSliverGrid<int, Movie>(
+                state: pagingState,
+                fetchNextPage: fetchNextPage,
+                gridDelegate: moovieGridDelegate,
+                builderDelegate: PagedChildBuilderDelegate<Movie>(
+                  animateTransitions: true,
+                  itemBuilder: (context, movie, index) => _GridMovieItem(
+                    movie: movie,
+                    index: index,
+                    posterBaseUrl: posterBaseUrl,
+                    onTap: () => onMovieTap(movie.id, movie.title),
+                  ),
+                  firstPageProgressIndicatorBuilder: (_) =>
+                      const Center(child: CircularProgressIndicator()),
+                ),
               ),
             )
           else
@@ -168,13 +183,13 @@ class _MoviesTab extends StatelessWidget {
               state: pagingState,
               fetchNextPage: fetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<Movie>(
-                itemBuilder: (context, movie, index) =>
-                    _ListMovieItem(
-                      movie: movie,
-                      index: index,
-                      posterBaseUrl: posterBaseUrl,
-                      onTap: () => onMovieTap(movie.id, movie.title),
-                    ),
+                animateTransitions: true,
+                itemBuilder: (context, movie, index) => _ListMovieItem(
+                  movie: movie,
+                  index: index,
+                  posterBaseUrl: posterBaseUrl,
+                  onTap: () => onMovieTap(movie.id, movie.title),
+                ),
                 firstPageProgressIndicatorBuilder: (_) =>
                     const Center(child: CircularProgressIndicator()),
               ),
@@ -187,7 +202,7 @@ class _MoviesTab extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   final MovieListDetail detail;
-  final List<String> posterPaths;
+  final String? headerPoster;
   final String headerBaseUrl;
   final bool isLiked;
   final int likesCount;
@@ -195,7 +210,7 @@ class _Header extends StatelessWidget {
 
   const _Header({
     required this.detail,
-    required this.posterPaths,
+    required this.headerPoster,
     required this.headerBaseUrl,
     required this.isLiked,
     required this.likesCount,
@@ -206,16 +221,13 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final randomPoster = posterPaths.isNotEmpty
-        ? posterPaths[Random().nextInt(posterPaths.length)]
-        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (randomPoster != null)
+        if (headerPoster != null)
           CachedNetworkImage(
-            imageUrl: '$headerBaseUrl$randomPoster',
+            imageUrl: '$headerBaseUrl$headerPoster',
             width: double.infinity,
             height: 200,
             fit: BoxFit.cover,
@@ -305,7 +317,15 @@ class _ViewModeToggle extends StatelessWidget {
         children: [
           IconButton(
             onPressed: onToggle,
-            icon: Icon(isGridView ? Icons.view_list : Icons.grid_view),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Icon(
+                isGridView ? Icons.view_list : Icons.grid_view,
+                key: ValueKey(isGridView),
+              ),
+            ),
             tooltip: isGridView ? 'List view' : 'Grid view',
           ),
         ],
