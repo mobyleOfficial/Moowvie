@@ -199,9 +199,9 @@ class _MoviesTabState extends State<_MoviesTab>
           SliverLayoutBuilder(
             builder: (context, constraints) {
               final screenWidth = constraints.crossAxisExtent;
-              final gridPadding = moovieGridPadding;
+              const gridPadding = moovieGridPadding;
               final gridAvailable = screenWidth - gridPadding * 2;
-              final columns = moovieGridCrossAxisCount;
+              const columns = moovieGridCrossAxisCount;
               final gridItemW = (gridAvailable -
                       moovieGridSpacing * (columns - 1)) /
                   columns;

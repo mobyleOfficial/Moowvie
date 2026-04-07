@@ -42,7 +42,7 @@ class MovieListDetailCubit extends Cubit<MovieListDetailState> {
         // Seed the paging controller with the first page
         pagingController.value = PagingState<int, Movie>(
           pages: [data.movies],
-          keys: [1],
+          keys: const [1],
         );
       case Failure(:final error):
         emit(MovieListDetailError(error.message));
