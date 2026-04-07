@@ -9,6 +9,7 @@ class MovieListDetailCubit extends Cubit<MovieListDetailState> {
   final int listId;
 
   int _totalPages = 1;
+  bool _initialLoaded = false;
 
   late final PagingController<int, Movie> pagingController = PagingController(
     getNextPageKey: (state) {
@@ -32,17 +33,26 @@ class MovieListDetailCubit extends Cubit<MovieListDetailState> {
     switch (result) {
       case Success(:final data):
         _totalPages = data.totalPages;
+        _initialLoaded = true;
         emit(MovieListDetailSuccess(
           detail: data,
           isLiked: data.isLiked,
           likesCount: data.likesCount,
         ));
+        // Seed the paging controller with the first page
+        pagingController.value = PagingState<int, Movie>(
+          pages: [data.movies],
+          keys: [1],
+        );
       case Failure(:final error):
         emit(MovieListDetailError(error.message));
     }
   }
 
   Future<List<Movie>> _fetchPage(int page) async {
+    // Skip page 1 if already loaded by _fetchInitial
+    if (page == 1 && _initialLoaded) return [];
+
     final result = await _getMovieListDetail(
       GetMovieListDetailParams(listId: listId, page: page),
     );
