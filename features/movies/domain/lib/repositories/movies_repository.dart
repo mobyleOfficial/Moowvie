@@ -11,17 +11,17 @@ import 'package:movies_domain/models/recent_search.dart';
 import 'package:movies_domain/models/country.dart';
 import 'package:movies_domain/models/genre.dart';
 import 'package:movies_domain/models/language.dart';
-import 'package:movies_domain/models/trending_movie_listing.dart';
+import 'package:movies_domain/models/movie_listing.dart';
 
 abstract interface class MoviesRepository {
-  Future<Result<TrendingMovieListing>> getTrendingMovieList({required int page});
+  Future<Result<MovieListing>> getTrendingMovieList({required int page});
   Future<Result<MovieDetail>> getMovieDetail({required int movieId});
   Future<Result<MovieReviewListing>> getMovieReviews({required int page});
   Future<Result<MovieCollectionListing>> getMovieCollections({required int page});
   Future<Result<MovieListListing>> getMovieLists({required int page});
   Future<Result<MovieListDetail>> getMovieListDetail({required int listId, required int page});
-  Future<Result<TrendingMovieListing>> searchMovies({required String query, required int page});
-  Future<Result<TrendingMovieListing>> discoverMovies({
+  Future<Result<MovieListing>> searchMovies({required String query, required int page});
+  Future<Result<MovieListing>> discoverMovies({
     required int page,
     int? primaryReleaseYear,
     String? releaseDateGte,

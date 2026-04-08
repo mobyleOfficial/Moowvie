@@ -14,7 +14,7 @@ class MoviesRepositoryImpl implements MoviesRepository {
   MoviesRepositoryImpl(this._dataSource, this._localDataSource);
 
   @override
-  Future<Result<TrendingMovieListing>> getTrendingMovieList({
+  Future<Result<MovieListing>> getTrendingMovieList({
     required int page,
   }) async {
     final result = await _dataSource.getTrendingMovieList(page: page);
@@ -85,7 +85,7 @@ class MoviesRepositoryImpl implements MoviesRepository {
   }
 
   @override
-  Future<Result<TrendingMovieListing>> searchMovies({
+  Future<Result<MovieListing>> searchMovies({
     required String query,
     required int page,
   }) async {
@@ -98,7 +98,7 @@ class MoviesRepositoryImpl implements MoviesRepository {
   }
 
   @override
-  Future<Result<TrendingMovieListing>> discoverMovies({
+  Future<Result<MovieListing>> discoverMovies({
     required int page,
     int? primaryReleaseYear,
     String? releaseDateGte,

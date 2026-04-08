@@ -1,17 +1,17 @@
 import 'package:core/core.dart';
 
 import 'package:movies_domain/models/discover_movies_params.dart';
-import 'package:movies_domain/models/trending_movie_listing.dart';
+import 'package:movies_domain/models/movie_listing.dart';
 import 'package:movies_domain/repositories/movies_repository.dart';
 
 class DiscoverMovies
-    extends UseCase<DiscoverMoviesParams, Result<TrendingMovieListing>> {
+    extends UseCase<DiscoverMoviesParams, Result<MovieListing>> {
   final MoviesRepository _moviesRepository;
 
   DiscoverMovies(this._moviesRepository);
 
   @override
-  Future<Result<TrendingMovieListing>> call([
+  Future<Result<MovieListing>> call([
     DiscoverMoviesParams? params,
   ]) async =>
       _moviesRepository.discoverMovies(
