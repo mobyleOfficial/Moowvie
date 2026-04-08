@@ -8,17 +8,17 @@ import 'package:movies_data/models/remote/remote_movie_review_listing.dart';
 import 'package:movies_data/models/remote/remote_country.dart';
 import 'package:movies_data/models/remote/remote_genre.dart';
 import 'package:movies_data/models/remote/remote_language.dart';
-import 'package:movies_data/models/remote/remote_trending_movie_listing.dart';
+import 'package:movies_data/models/remote/remote_movie_listing.dart';
 
 abstract interface class MoviesRemoteDataSource {
-  Future<Result<RemoteTrendingMovieListing>> getTrendingMovieList({required int page});
+  Future<Result<RemoteMovieListing>> getTrendingMovieList({required int page});
   Future<Result<RemoteMovieDetail>> getMovieDetail({required int movieId});
   Future<Result<RemoteMovieReviewListing>> getMovieReviews({required int page});
   Future<Result<RemoteMovieCollectionListing>> getMovieCollections({required int page});
   Future<Result<RemoteMovieListListing>> getMovieLists({required int page});
   Future<Result<RemoteMovieListDetail>> getMovieListDetail({required int listId, required int page});
-  Future<Result<RemoteTrendingMovieListing>> searchMovies({required String query, required int page});
-  Future<Result<RemoteTrendingMovieListing>> discoverMovies({
+  Future<Result<RemoteMovieListing>> searchMovies({required String query, required int page});
+  Future<Result<RemoteMovieListing>> discoverMovies({
     required int page,
     int? primaryReleaseYear,
     String? releaseDateGte,

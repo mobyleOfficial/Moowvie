@@ -14,7 +14,7 @@ import 'package:movies_data/models/remote/remote_movie_review_listing.dart';
 import 'package:movies_data/models/remote/remote_country.dart';
 import 'package:movies_data/models/remote/remote_genre.dart';
 import 'package:movies_data/models/remote/remote_language.dart';
-import 'package:movies_data/models/remote/remote_trending_movie_listing.dart';
+import 'package:movies_data/models/remote/remote_movie_listing.dart';
 
 @injectable
 class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
@@ -186,7 +186,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
   static const int _listDetailPageSize = 6;
 
   @override
-  Future<Result<RemoteTrendingMovieListing>> getTrendingMovieList({
+  Future<Result<RemoteMovieListing>> getTrendingMovieList({
     required int page,
   }) async {
     final result = await _httpClient.get<Map<String, dynamic>>(
@@ -196,7 +196,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
 
     return switch (result) {
       Success<Map<String, dynamic>>(:final data) =>
-        Success(RemoteTrendingMovieListing.fromJson(data)),
+        Success(RemoteMovieListing.fromJson(data)),
       Failure<Map<String, dynamic>>(:final error) => Failure(error),
     };
   }
@@ -315,7 +315,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
   }
 
   @override
-  Future<Result<RemoteTrendingMovieListing>> searchMovies({
+  Future<Result<RemoteMovieListing>> searchMovies({
     required String query,
     required int page,
   }) async {
@@ -326,13 +326,13 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
 
     return switch (result) {
       Success<Map<String, dynamic>>(:final data) =>
-        Success(RemoteTrendingMovieListing.fromJson(data)),
+        Success(RemoteMovieListing.fromJson(data)),
       Failure<Map<String, dynamic>>(:final error) => Failure(error),
     };
   }
 
   @override
-  Future<Result<RemoteTrendingMovieListing>> discoverMovies({
+  Future<Result<RemoteMovieListing>> discoverMovies({
     required int page,
     int? primaryReleaseYear,
     String? releaseDateGte,
@@ -372,7 +372,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
 
     return switch (result) {
       Success<Map<String, dynamic>>(:final data) =>
-        Success(RemoteTrendingMovieListing.fromJson(data)),
+        Success(RemoteMovieListing.fromJson(data)),
       Failure<Map<String, dynamic>>(:final error) => Failure(error),
     };
   }
@@ -403,7 +403,8 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
       Success<List<dynamic>>(:final data) => Success(
           data
               .map((c) => RemoteCountry.fromJson(c as Map<String, dynamic>))
-              .toList(),
+              .toList()
+            ..sort((a, b) => a.englishName.compareTo(b.englishName)),
         ),
       Failure<List<dynamic>>(:final error) => Failure(error),
     };
