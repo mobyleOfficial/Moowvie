@@ -3,8 +3,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:movies/movies.dart';
 import 'package:movies_ui/movie_detail/movie_detail_router.dart';
+import 'package:movies_ui/movie_list_detail/movie_list_detail_router.dart';
+import 'package:movies_ui/tabs/lists/movies_list_tile.dart';
+import 'package:movies_ui/tabs/lists/movies_lists_bloc.dart';
+import 'package:movies_ui/tabs/lists/movies_lists_state.dart';
+import 'package:reviews/review_details/review_details_router.dart';
+import 'package:reviews/reviews_list/reviews_bloc.dart';
+import 'package:reviews/reviews_list/reviews_state.dart';
 import 'package:search/search_bloc.dart';
 import 'package:search/search_router.dart';
 import 'package:search/search_state.dart';
@@ -48,8 +57,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _updateSearchVisibility() {
-    final shouldShow =
-        _focusNode.hasFocus && _searchController.text.isNotEmpty;
+    final hasText = _searchController.text.isNotEmpty;
+    final shouldShow = hasText && (_showSearchResults || _focusNode.hasFocus);
     if (shouldShow != _showSearchResults) {
       setState(() => _showSearchResults = shouldShow);
     }
@@ -145,16 +154,23 @@ class _SearchResultsSectionState extends State<_SearchResultsSection> {
         ),
         Divider(height: 1, color: colorScheme.outlineVariant),
         Expanded(
-          child: _selectedIndex == 0
-              ? _MoviesResultsTab(cubit: widget.cubit)
-              : Center(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              _MoviesResultsTab(cubit: widget.cubit),
+              const _ReviewsResultsTab(),
+              const _ListsResultsTab(),
+              for (var index = 3; index < _categories.length; index++)
+                Center(
                   child: Text(
-                    '${_categories[_selectedIndex]} coming soon',
+                    '${_categories[index]} coming soon',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ),
+            ],
+          ),
         ),
       ],
     );
@@ -200,6 +216,214 @@ class _MoviesResultsTab extends StatelessWidget {
         SearchError(:final message) => Center(child: Text(message)),
         SearchIdle() => const SizedBox.shrink(),
       },
+    );
+  }
+}
+
+class _ReviewsResultsTab extends StatefulWidget {
+  const _ReviewsResultsTab();
+
+  @override
+  State<_ReviewsResultsTab> createState() => _ReviewsResultsTabState();
+}
+
+class _ReviewsResultsTabState extends State<_ReviewsResultsTab> {
+  late final ReviewsCubit _cubit = ReviewsCubit(
+    GetIt.I<GetMovieReviews>(),
+  );
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final posterColors = [
+      colorScheme.tertiaryContainer,
+      colorScheme.primaryContainer,
+      colorScheme.secondaryContainer,
+      colorScheme.surfaceContainerHighest,
+    ];
+
+    return BlocProvider.value(
+      value: _cubit,
+      child: PagingListener(
+        controller: _cubit.pagingController,
+        builder: (context, pagingState, fetchNextPage) =>
+            PagedListView<int, MovieReview>(
+          state: pagingState,
+          fetchNextPage: fetchNextPage,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          builderDelegate: PagedChildBuilderDelegate<MovieReview>(
+            itemBuilder: (context, review, index) => Column(
+              children: [
+                if (index > 0)
+                  Divider(
+                    indent: 72,
+                    height: 1,
+                    color: colorScheme.outlineVariant,
+                  ),
+                _ReviewResultTile(
+                  review: review,
+                  posterColor: posterColors[index % posterColors.length],
+                ),
+              ],
+            ),
+            firstPageProgressIndicatorBuilder: (_) =>
+                const Center(child: CircularProgressIndicator()),
+            firstPageErrorIndicatorBuilder: (_) => Center(
+              child: Text(
+                AppLocalizations.of(context)?.unknownError ?? '',
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReviewResultTile extends StatelessWidget {
+  final MovieReview review;
+  final Color posterColor;
+
+  const _ReviewResultTile({
+    required this.review,
+    required this.posterColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return InkWell(
+      onTap: () => context.router.push(
+        ReviewDetailsRoute(
+          movieTitle: review.title,
+          reviewDate: review.date,
+          rating: review.rating,
+          posterColorIndex: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 64,
+              decoration: BoxDecoration(
+                color: posterColor,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    review.title,
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    review.date,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: List.generate(5, (starIndex) {
+                      final isFilled = starIndex < review.rating.floor();
+                      final isHalf = !isFilled && starIndex < review.rating;
+                      return Icon(
+                        isHalf
+                            ? Icons.star_half
+                            : (isFilled ? Icons.star : Icons.star_border),
+                        size: 14,
+                        color: colorScheme.onTertiaryContainer,
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ListsResultsTab extends StatefulWidget {
+  const _ListsResultsTab();
+
+  @override
+  State<_ListsResultsTab> createState() => _ListsResultsTabState();
+}
+
+class _ListsResultsTabState extends State<_ListsResultsTab> {
+  late final MoviesListsCubit _cubit = MoviesListsCubit(
+    GetIt.I<GetMovieLists>(),
+  );
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _cubit,
+      child: PagingListener(
+        controller: _cubit.pagingController,
+        builder: (context, pagingState, fetchNextPage) =>
+            PagedListView<int, MovieList>(
+          state: pagingState,
+          fetchNextPage: fetchNextPage,
+          padding: const EdgeInsets.all(16),
+          builderDelegate: PagedChildBuilderDelegate<MovieList>(
+            itemBuilder: (context, movieList, index) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: MoviesListTile(
+                title: movieList.name,
+                creator: movieList.creator,
+                description: movieList.description,
+                posterPaths: movieList.posterPaths,
+                onTap: () => context.router.push(
+                  MovieListDetailRoute(
+                    listId: movieList.id,
+                    listName: movieList.name,
+                    posterPaths: movieList.posterPaths,
+                  ),
+                ),
+              ),
+            ),
+            firstPageProgressIndicatorBuilder: (_) =>
+                const Center(child: CircularProgressIndicator()),
+            firstPageErrorIndicatorBuilder: (_) => Center(
+              child: Text(
+                AppLocalizations.of(context)?.unknownError ?? '',
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
