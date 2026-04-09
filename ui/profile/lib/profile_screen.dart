@@ -6,7 +6,7 @@ import 'package:profile_ui/tabs/profile_info/profile_info_screen.dart';
 import 'package:profile_ui/tabs/watchlist/watchlist_screen.dart' show WatchlistScreen;
 import 'package:reviews/reviews_list/reviews_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final GetMovieReviews getMovieReviews;
   final GetMovieCollections getMovieCollections;
 
@@ -17,33 +17,40 @@ class ProfileScreen extends StatelessWidget {
   });
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  int _selectedIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return DefaultTabController(
-      length: 4,
-      child: Column(
-        children: [
-          MoovieTabBar(
-            tabs: [
-              l10n?.profileTabProfile ?? '',
-              l10n?.profileTabDiary ?? '',
-              l10n?.profileTabLists ?? '',
-              l10n?.profileTabWatchlist ?? '',
+    return Column(
+      children: [
+        MoovieFilterChipBar(
+          labels: [
+            l10n?.profileTabProfile ?? '',
+            l10n?.profileTabDiary ?? '',
+            l10n?.profileTabLists ?? '',
+            l10n?.profileTabWatchlist ?? '',
+          ],
+          selectedIndex: _selectedIndex,
+          onSelected: (index) => setState(() => _selectedIndex = index),
+        ),
+        Expanded(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              const ProfileInfoScreen(),
+              ReviewsScreen(getMovieReviews: widget.getMovieReviews),
+              ListsScreen(getMovieCollections: widget.getMovieCollections),
+              const WatchlistScreen(),
             ],
           ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                const MoovieKeepAliveTab(child: ProfileInfoScreen()),
-                MoovieKeepAliveTab(child: ReviewsScreen(getMovieReviews: getMovieReviews)),
-                MoovieKeepAliveTab(child: ListsScreen(getMovieCollections: getMovieCollections)),
-                const MoovieKeepAliveTab(child: WatchlistScreen()),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
