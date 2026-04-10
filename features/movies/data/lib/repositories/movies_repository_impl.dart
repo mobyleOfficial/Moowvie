@@ -14,7 +14,7 @@ class MoviesRepositoryImpl implements MoviesRepository {
   MoviesRepositoryImpl(this._dataSource, this._localDataSource);
 
   @override
-  Future<Result<TrendingMovieListing>> getTrendingMovieList({
+  Future<Result<MovieListing>> getTrendingMovieList({
     required int page,
   }) async {
     final result = await _dataSource.getTrendingMovieList(page: page);
@@ -72,6 +72,18 @@ class MoviesRepositoryImpl implements MoviesRepository {
   }
 
   @override
+  Future<Result<MovieListListing>> getUserMovieLists({
+    required int page,
+  }) async {
+    final result = await _dataSource.getUserMovieLists(page: page);
+
+    return switch (result) {
+      Success(:final data) => Success(data.toDomain()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
   Future<Result<MovieListDetail>> getMovieListDetail({
     required int listId,
     required int page,
@@ -85,7 +97,7 @@ class MoviesRepositoryImpl implements MoviesRepository {
   }
 
   @override
-  Future<Result<TrendingMovieListing>> searchMovies({
+  Future<Result<MovieListing>> searchMovies({
     required String query,
     required int page,
   }) async {
@@ -93,6 +105,69 @@ class MoviesRepositoryImpl implements MoviesRepository {
 
     return switch (result) {
       Success(:final data) => Success(data.toDomain()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<MovieListing>> discoverMovies({
+    required int page,
+    int? primaryReleaseYear,
+    String? releaseDateGte,
+    String? releaseDateLte,
+    String? sortBy,
+    String? withGenres,
+    String? withOriginalLanguage,
+    String? withOriginCountry,
+    int? minimumVoteCount,
+  }) async {
+    final result = await _dataSource.discoverMovies(
+      page: page,
+      primaryReleaseYear: primaryReleaseYear,
+      releaseDateGte: releaseDateGte,
+      releaseDateLte: releaseDateLte,
+      sortBy: sortBy,
+      withGenres: withGenres,
+      withOriginalLanguage: withOriginalLanguage,
+      withOriginCountry: withOriginCountry,
+      minimumVoteCount: minimumVoteCount,
+    );
+
+    return switch (result) {
+      Success(:final data) => Success(data.toDomain()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<List<Genre>>> getGenres() async {
+    final result = await _dataSource.getGenres();
+
+    return switch (result) {
+      Success(:final data) =>
+        Success(data.map((genre) => genre.toDomain()).toList()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<List<Country>>> getCountries() async {
+    final result = await _dataSource.getCountries();
+
+    return switch (result) {
+      Success(:final data) =>
+        Success(data.map((country) => country.toDomain()).toList()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<List<Language>>> getLanguages() async {
+    final result = await _dataSource.getLanguages();
+
+    return switch (result) {
+      Success(:final data) =>
+        Success(data.map((language) => language.toDomain()).toList()),
       Failure(:final error) => Failure(error),
     };
   }

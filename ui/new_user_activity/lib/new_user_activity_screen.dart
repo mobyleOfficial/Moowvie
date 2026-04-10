@@ -37,13 +37,13 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
   }
 
   List<ActivityItem> _buildItems(
-    AppLocalizations l10n,
+    AppLocalizations? l10n,
     List<MovieReviewDraft> drafts,
     List<RecentSearch> recentSearches,
   ) =>
       [
         if (drafts.isNotEmpty) ...[
-          SectionHeader(l10n.newUserActivityDraftsSection),
+          SectionHeader(l10n?.newUserActivityDraftsSection ?? ''),
           ...drafts.map(
             (draft) => DraftItem(
               title: draft.movieTitle,
@@ -55,7 +55,7 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
           ),
         ],
         if (recentSearches.isNotEmpty) ...[
-          SectionHeader(l10n.newUserActivityRecentSection),
+          SectionHeader(l10n?.newUserActivityRecentSection ?? ''),
           ...recentSearches.map(
             (search) => SearchItem(
               query: search.query,
@@ -67,7 +67,7 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final searchField = Theme(
       data: Theme.of(context).copyWith(
@@ -81,7 +81,7 @@ class _NewUserActivityScreenState extends State<NewUserActivityScreen> {
       child: MoovieEditText(
         controller: _searchController,
         focusNode: _focusNode,
-        placeholder: l10n.searchHint,
+        placeholder: l10n?.searchHint ?? '',
         textInputAction: TextInputAction.search,
         onChanged: widget.cubit.onSearchChanged,
         onSubmitted: widget.cubit.onSearchSubmitted,
@@ -195,7 +195,6 @@ class _SearchResultsList extends StatelessWidget {
   final List<Movie> movies;
   final VoidCallback? onMovieSelected;
 
-  static const String _posterBaseUrl = 'https://image.tmdb.org/t/p/w92';
 
   const _SearchResultsList({required this.movies, this.onMovieSelected});
 
@@ -206,7 +205,7 @@ class _SearchResultsList extends StatelessWidget {
     if (movies.isEmpty) {
       return Center(
         child: Text(
-          AppLocalizations.of(context)!.noResults,
+          AppLocalizations.of(context)?.noResults ?? '',
           style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
       );
@@ -266,7 +265,7 @@ class _MovieResultTile extends StatelessWidget {
                     child: movie.posterPath.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl:
-                                '${_SearchResultsList._posterBaseUrl}${movie.posterPath}',
+                                '${TmdbImageUrl.posterSmall}${movie.posterPath}',
                             fit: BoxFit.cover,
                             placeholder: (_, __) => Container(
                               color: colorScheme.surfaceContainerHighest,
@@ -362,7 +361,7 @@ class _SwipeToDismissDraft extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Dismissible(
       key: ValueKey('draft_$movieId'),
@@ -371,10 +370,10 @@ class _SwipeToDismissDraft extends StatelessWidget {
         var confirmed = false;
         await MoovieDialog.show(
           context: context,
-          title: l10n.deleteDraftTitle,
-          content: l10n.deleteDraftContent,
-          confirmText: l10n.delete,
-          cancelText: l10n.cancel,
+          title: l10n?.deleteDraftTitle ?? '',
+          content: l10n?.deleteDraftContent ?? '',
+          confirmText: l10n?.delete ?? '',
+          cancelText: l10n?.cancel ?? '',
           onConfirm: () => confirmed = true,
         );
         return confirmed;
