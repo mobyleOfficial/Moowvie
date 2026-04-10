@@ -230,4 +230,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get reviewDetailsAddReview => 'Agregar una reseña...';
+
+  @override
+  String get movieListDetailShowGridView => 'Mostrar vista de cuadrícula';
+
+  @override
+  String get movieListDetailShowListView => 'Mostrar vista de lista';
 }
