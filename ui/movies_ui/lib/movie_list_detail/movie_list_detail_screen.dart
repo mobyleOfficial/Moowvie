@@ -14,8 +14,6 @@ class MovieListDetailScreen extends StatefulWidget {
   final List<String> posterPaths;
   final void Function(int movieId, String movieTitle) onMovieTap;
 
-  static const String _posterBaseUrl = 'https://image.tmdb.org/t/p/w342';
-  static const String _headerBaseUrl = 'https://image.tmdb.org/t/p/w780';
 
   const MovieListDetailScreen({
     super.key,
@@ -49,8 +47,8 @@ class _MovieListDetailScreenState extends State<MovieListDetailScreen> {
                 cubit: widget.cubit,
                 headerPoster: _headerPoster,
                 onMovieTap: widget.onMovieTap,
-                posterBaseUrl: MovieListDetailScreen._posterBaseUrl,
-                headerBaseUrl: MovieListDetailScreen._headerBaseUrl,
+              posterBaseUrl: TmdbImageUrl.posterLarge,
+              headerBaseUrl: TmdbImageUrl.backdrop,
               ),
           },
         ),
@@ -76,7 +74,7 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final detail = state.detail;
 
     return DefaultTabController(
@@ -84,8 +82,8 @@ class _Content extends StatelessWidget {
       child: Column(
         children: [
           MoovieTabBar(tabs: [
-            l10n.movieListDetailMoviesTab(detail.totalMovies),
-            l10n.movieListDetailCommentsTab(detail.commentsCount),
+            l10n?.movieListDetailMoviesTab(detail.totalMovies) ?? '',
+            l10n?.movieListDetailCommentsTab(detail.commentsCount) ?? '',
           ]),
           Expanded(
             child: TabBarView(
@@ -100,7 +98,7 @@ class _Content extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    l10n.movieListDetailCommentsPlaceholder,
+                    l10n?.movieListDetailCommentsPlaceholder ?? '',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -480,7 +478,7 @@ class _ViewModeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -489,8 +487,8 @@ class _ViewModeToggle extends StatelessWidget {
         children: [
           Tooltip(
             message: isGridView
-                ? l10n.movieListDetailShowListView
-                : l10n.movieListDetailShowGridView,
+                ? l10n?.movieListDetailShowListView
+                : l10n?.movieListDetailShowGridView,
             child: IconButton(
               onPressed: onToggle,
               icon: AnimatedSwitcher(

@@ -49,8 +49,28 @@ abstract class MoviesModule {
       GetMovieLists(repository);
 
   @injectable
+  GetUserMovieLists getUserMovieLists(MoviesRepository repository) =>
+      GetUserMovieLists(repository);
+
+  @injectable
   GetMovieListDetail getMovieListDetail(MoviesRepository repository) =>
       GetMovieListDetail(repository);
+
+  @injectable
+  DiscoverMovies discoverMovies(MoviesRepository repository) =>
+      DiscoverMovies(repository);
+
+  @injectable
+  GetGenres getGenres(MoviesRepository repository) =>
+      GetGenres(repository);
+
+  @injectable
+  GetCountries getCountries(MoviesRepository repository) =>
+      GetCountries(repository);
+
+  @injectable
+  GetLanguages getLanguages(MoviesRepository repository) =>
+      GetLanguages(repository);
 
   @injectable
   SearchMovies searchMovies(MoviesRepository repository) =>
