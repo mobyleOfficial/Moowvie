@@ -77,47 +77,43 @@ class _Content extends StatefulWidget {
 }
 
 class _ContentState extends State<_Content> {
-  int _selectedTab = 0;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final detail = widget.state.detail;
 
-    return Column(
-      children: [
-        MoovieFilterChipBar(
-          labels: [
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          MoovieTabBar(tabs: [
             l10n?.movieListDetailMoviesTab(detail.totalMovies) ?? '',
             l10n?.movieListDetailCommentsTab(detail.commentsCount) ?? '',
-          ],
-          selectedIndex: _selectedTab,
-          onSelected: (index) => setState(() => _selectedTab = index),
-        ),
-        Expanded(
-          child: IndexedStack(
-            index: _selectedTab,
-            children: [
-              _MoviesTab(
-                state: widget.state,
-                cubit: widget.cubit,
-                headerPoster: widget.headerPoster,
-                onMovieTap: widget.onMovieTap,
-                posterBaseUrl: widget.posterBaseUrl,
-                headerBaseUrl: widget.headerBaseUrl,
-              ),
-              Center(
-                child: Text(
-                  l10n?.movieListDetailCommentsPlaceholder ?? '',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+          ]),
+          Expanded(
+            child: TabBarView(
+              children: [
+                _MoviesTab(
+                  state: widget.state,
+                  cubit: widget.cubit,
+                  headerPoster: widget.headerPoster,
+                  onMovieTap: widget.onMovieTap,
+                  posterBaseUrl: widget.posterBaseUrl,
+                  headerBaseUrl: widget.headerBaseUrl,
                 ),
-              ),
-            ],
+                Center(
+                  child: Text(
+                    l10n?.movieListDetailCommentsPlaceholder ?? '',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -132,7 +132,6 @@ class PublicProfileScreen extends StatefulWidget {
 
 class _PublicProfileScreenState extends State<PublicProfileScreen> {
   bool _isFollowing = false;
-  int _selectedTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -151,36 +150,37 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                 child: CircularProgressIndicator(),
               ),
             PublicProfileError() => Center(child: Text(state.message)),
-            PublicProfileSuccess() => Column(
-                children: [
-                  MoovieFilterChipBar(
-                    labels: [
+            PublicProfileSuccess() => DefaultTabController(
+                length: 3,
+                child: Column(
+                  children: [
+                    MoovieTabBar(tabs: [
                       l10n?.profileTabProfile ?? '',
                       l10n?.profileTabReviews ?? '',
                       l10n?.profileTabLists ?? '',
-                    ],
-                    selectedIndex: _selectedTab,
-                    onSelected: (index) =>
-                        setState(() => _selectedTab = index),
-                  ),
-                  Expanded(
-                    child: IndexedStack(
-                      index: _selectedTab,
-                      children: [
-                        _ProfileInfoTab(
-                          user: user,
-                          isFollowing: _isFollowing,
-                          onFollowToggle: () =>
-                              setState(() => _isFollowing = !_isFollowing),
-                        ),
-                        UserReviewsScreen(
-                          getUserReviews: widget.getUserReviews,
-                        ),
-                        const _ListsTab(),
-                      ],
+                    ]),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          MoovieKeepAliveTab(
+                            child: _ProfileInfoTab(
+                              user: user,
+                              isFollowing: _isFollowing,
+                              onFollowToggle: () =>
+                                  setState(() => _isFollowing = !_isFollowing),
+                            ),
+                          ),
+                          MoovieKeepAliveTab(
+                            child: UserReviewsScreen(
+                              getUserReviews: widget.getUserReviews,
+                            ),
+                          ),
+                          const MoovieKeepAliveTab(child: _ListsTab()),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
           },
         ),
