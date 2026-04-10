@@ -24,26 +24,35 @@ class SocialScreen extends StatelessWidget {
   );
 }
 
-class _SocialContent extends StatelessWidget {
+class _SocialContent extends StatefulWidget {
+  @override
+  State<_SocialContent> createState() => _SocialContentState();
+}
+
+class _SocialContentState extends State<_SocialContent> {
+  int _selectedTab = 0;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          MoovieTabBar(tabs: [l10n?.socialFriendsTab ?? '', l10n?.socialMessagesTab ?? '']),
-          const Expanded(
-            child: TabBarView(
-              children: [
-                MoovieKeepAliveTab(child: FriendsScreen()),
-                MoovieKeepAliveTab(child: MessagesScreen()),
-              ],
-            ),
+    return Column(
+      children: [
+        MoovieFilterChipBar(
+          labels: [l10n?.socialFriendsTab ?? '', l10n?.socialMessagesTab ?? ''],
+          selectedIndex: _selectedTab,
+          onSelected: (index) => setState(() => _selectedTab = index),
+        ),
+        Expanded(
+          child: IndexedStack(
+            index: _selectedTab,
+            children: const [
+              FriendsScreen(),
+              MessagesScreen(),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
