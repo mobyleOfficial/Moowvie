@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_ui/favorite_movies/favorite_movies_router.dart';
 import 'package:movies_ui/movie_detail/movie_detail_router.dart';
-import 'package:movies_ui/movie_list_detail/movie_list_detail_router.dart';
+import 'package:movies_ui/tabs/lists/movies_lists_bloc.dart';
+import 'package:movies_ui/tabs/lists/movies_lists_screen.dart';
 import 'package:movies_ui/watch_list/watch_list_router.dart';
 import 'package:profile/profile.dart';
-import 'package:public_profile/public_profile_info/public_profile_bloc.dart';
-import 'package:public_profile/public_profile_info/public_profile_state.dart';
+import 'package:public_profile/public_profile_bloc.dart';
+import 'package:public_profile/public_profile_state.dart';
 import 'package:public_profile/user_review/user_reviews_screen.dart';
 
 class _MockUser {
@@ -121,12 +122,14 @@ class PublicProfileScreen extends StatefulWidget {
   final PublicProfileCubit cubit;
   final String userId;
   final GetUserReviews getUserReviews;
+  final MoviesListsCubit listsCubit;
 
   const PublicProfileScreen({
     super.key,
     required this.cubit,
     required this.userId,
     required this.getUserReviews,
+    required this.listsCubit,
   });
 
   @override
@@ -150,42 +153,47 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
         body: BlocBuilder<PublicProfileCubit, PublicProfileState>(
           builder: (context, state) => switch (state) {
             PublicProfileLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CircularProgressIndicator(),
+            ),
             PublicProfileError() => Center(child: Text(state.message)),
             PublicProfileSuccess() => DefaultTabController(
-                length: 3,
-                child: Column(
-                  children: [
-                    MoovieTabBar(tabs: [
-                      l10n?.profileTabProfile ?? '',
-                      l10n?.profileTabReviews ?? '',
-                      l10n?.profileTabLists ?? '',
-                    ]),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          MoovieKeepAliveTab(
-                            child: _ProfileInfoTab(
-                              user: user,
-                              userId: widget.userId,
-                              isFollowing: _isFollowing,
-                              onFollowToggle: () =>
-                                  setState(() => _isFollowing = !_isFollowing),
-                            ),
+              length: 3,
+              child: Column(
+                children: [
+                  MoovieTabBar(tabs: [
+                    l10n?.profileTabProfile ?? '',
+                    l10n?.profileTabReviews ?? '',
+                    l10n?.profileTabLists ?? '',
+                  ]),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        MoovieKeepAliveTab(
+                          child: _ProfileInfoTab(
+                            user: user,
+                            userId: widget.userId,
+                            isFollowing: _isFollowing,
+                            onFollowToggle: () =>
+                                setState(() => _isFollowing = !_isFollowing),
                           ),
-                          MoovieKeepAliveTab(
-                            child: UserReviewsScreen(
-                              getUserReviews: widget.getUserReviews,
-                            ),
+                        ),
+                        MoovieKeepAliveTab(
+                          child: UserReviewsScreen(
+                            getUserReviews: widget.getUserReviews,
                           ),
-                          const MoovieKeepAliveTab(child: _ListsTab()),
-                        ],
-                      ),
+                        ),
+                        MoovieKeepAliveTab(
+                          child: MoviesListsScreen(
+                            cubit: widget.listsCubit,
+                            showPopularHeader: false,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
           },
         ),
       ),
@@ -287,7 +295,7 @@ class _ProfileInfoTab extends StatelessWidget {
           const SizedBox(height: 24),
           Semantics(
             label:
-                '${user.moviesWatched} ${l10n?.profileMoviesWatched ?? ''}, ${user.following} ${l10n?.profileFollowing ?? ''}, ${user.followers} ${l10n?.profileFollowers ?? ''}',
+            '${user.moviesWatched} ${l10n?.profileMoviesWatched ?? ''}, ${user.following} ${l10n?.profileFollowing ?? ''}, ${user.followers} ${l10n?.profileFollowers ?? ''}',
             excludeSemantics: true,
             child: IntrinsicHeight(
               child: Row(
@@ -324,14 +332,14 @@ class _ProfileInfoTab extends StatelessWidget {
               onPressed: onFollowToggle,
               style: isFollowing
                   ? OutlinedButton.styleFrom(
-                      foregroundColor: colorScheme.onSurfaceVariant,
-                      side: BorderSide(color: colorScheme.outlineVariant),
-                    )
+                foregroundColor: colorScheme.onSurfaceVariant,
+                side: BorderSide(color: colorScheme.outlineVariant),
+              )
                   : OutlinedButton.styleFrom(
-                      foregroundColor: colorScheme.onSecondaryContainer,
-                      side:
-                          BorderSide(color: colorScheme.onSecondaryContainer),
-                    ),
+                foregroundColor: colorScheme.onSecondaryContainer,
+                side:
+                BorderSide(color: colorScheme.onSecondaryContainer),
+              ),
               child: Text(
                 isFollowing ? (l10n?.profileFollowing ?? '') : (l10n?.profileFollow ?? ''),
               ),
@@ -477,12 +485,12 @@ class _ProfileInfoTab extends StatelessWidget {
   }
 
   static IconData _activityIcon(String action) => switch (action) {
-        'Watched' => Icons.visibility,
-        'Reviewed' => Icons.rate_review,
-        'Added to watchlist' => Icons.bookmark_add,
-        'Liked review of' => Icons.favorite,
-        _ => Icons.movie,
-      };
+    'Watched' => Icons.visibility,
+    'Reviewed' => Icons.rate_review,
+    'Added to watchlist' => Icons.bookmark_add,
+    'Liked review of' => Icons.favorite,
+    _ => Icons.movie,
+  };
 }
 
 class _SectionHeader extends StatelessWidget {
@@ -552,229 +560,9 @@ class _ProfileStat extends StatelessWidget {
         Text(
           label,
           style:
-              textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+          textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
         ),
       ],
-    );
-  }
-}
-
-class _DiaryEntryTile extends StatelessWidget {
-  final String title;
-  final String date;
-  final double rating;
-  final Color posterColor;
-
-  const _DiaryEntryTile({
-    required this.title,
-    required this.date,
-    required this.rating,
-    required this.posterColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final ratingLabel = rating % 1 == 0
-        ? '${rating.toInt()} out of 5 stars'
-        : '$rating out of 5 stars';
-
-    return Semantics(
-      label: '$title, $date, $ratingLabel',
-      child: ExcludeSemantics(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: posterColor,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      date,
-                      style: textTheme.bodySmall
-                          ?.copyWith(color: colorScheme.onSurfaceVariant),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: List.generate(5, (starIndex) {
-                        final isFilled = starIndex < rating.floor();
-                        final isHalf = !isFilled && starIndex < rating;
-                        return Icon(
-                          isHalf
-                              ? Icons.star_half
-                              : (isFilled ? Icons.star : Icons.star_border),
-                          size: 14,
-                          color: colorScheme.onTertiaryContainer,
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class _ListsTab extends StatelessWidget {
-  const _ListsTab();
-
-  static const _lists = [
-    (id: 1, title: 'Favorites of 2025', count: 15, posterPaths: <String>['/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg', '/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg']),
-    (id: 2, title: 'Sci-Fi Must-Watch', count: 22, posterPaths: <String>['/53YWSo75mSaw1vd2YEeX5kwkRos.jpg', '/iOdcXYSVzBgmBJzNIlIMOZ6fz0F.jpg']),
-    (id: 3, title: 'Cozy Sunday Films', count: 11, posterPaths: <String>['/1OsQJEoSXBjduuCvDOlRhoEUaHu.jpg', '/yRRuLt7sMBEQkHsd1S3KaaofZn7.jpg']),
-    (id: 4, title: 'Director Spotlight: Wes Anderson', count: 9, posterPaths: <String>['/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', '/aNK6MA5EApIo0UJE7ZWSYcZBJKy.jpg']),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context);
-    final coverColors = [
-      colorScheme.primaryContainer,
-      colorScheme.tertiaryContainer,
-      colorScheme.secondaryContainer,
-      colorScheme.surfaceContainerHighest,
-    ];
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _lists.length,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: _ListItemTile(
-          listId: _lists[index].id,
-          title: _lists[index].title,
-          movieCount: _lists[index].count,
-          posterPaths: _lists[index].posterPaths,
-          coverColor: coverColors[index],
-          moviesLabel: l10n?.profileMoviesWatched.toLowerCase() ?? '',
-        ),
-      ),
-    );
-  }
-}
-
-class _ListItemTile extends StatelessWidget {
-  final int listId;
-  final String title;
-  final int movieCount;
-  final List<String> posterPaths;
-  final Color coverColor;
-  final String moviesLabel;
-
-  const _ListItemTile({
-    required this.listId,
-    required this.title,
-    required this.movieCount,
-    required this.posterPaths,
-    required this.coverColor,
-    required this.moviesLabel,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Semantics(
-      label: '$title, $movieCount $moviesLabel',
-      button: true,
-      child: InkWell(
-        onTap: () => context.router.push(
-          MovieListDetailRoute(
-            listId: listId,
-            listName: title,
-            posterPaths: posterPaths,
-          ),
-        ),
-        borderRadius: BorderRadius.circular(12),
-        child: ExcludeSemantics(
-          child: Container(
-            height: 80,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.outlineVariant),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 80,
-                  decoration: BoxDecoration(
-                    color: coverColor,
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        title,
-                        style: textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '$movieCount $moviesLabel',
-                          style: textTheme.labelSmall?.copyWith(
-                            color: colorScheme.onSecondaryContainer,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: colorScheme.onSurfaceVariant,
-                  semanticLabel: '',
-                ),
-                const SizedBox(width: 8),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
