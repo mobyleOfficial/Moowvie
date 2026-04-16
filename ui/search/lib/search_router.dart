@@ -8,6 +8,7 @@ import 'package:search/browse_categories/browse_categories_page.dart';
 import 'package:search/most_popular/most_popular_page.dart';
 import 'package:search/highest_rated/highest_rated_page.dart';
 import 'package:search/most_anticipated/most_anticipated_page.dart';
+import 'package:search/featured_lists/featured_lists_page.dart';
 import 'package:search/search_page.dart';
 
 part 'search_router.gr.dart';
@@ -24,5 +25,6 @@ class SearchRouter extends RootStackRouter {
         AutoRoute(page: MostPopularRoute.page),
         AutoRoute(page: HighestRatedRoute.page),
         AutoRoute(page: MostAnticipatedRoute.page),
+        AutoRoute(page: FeaturedListsRoute.page),
       ];
 }

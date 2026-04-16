@@ -27,6 +27,22 @@ class BrowseCategoriesRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [FeaturedListsPage]
+class FeaturedListsRoute extends PageRouteInfo<void> {
+  const FeaturedListsRoute({List<PageRouteInfo>? children})
+    : super(FeaturedListsRoute.name, initialChildren: children);
+
+  static const String name = 'FeaturedListsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const FeaturedListsPage();
+    },
+  );
+}
+
+/// generated route for
 /// [HighestRatedPage]
 class HighestRatedRoute extends PageRouteInfo<void> {
   const HighestRatedRoute({List<PageRouteInfo>? children})

@@ -17,5 +17,6 @@ String? resolveRouteTitle(RouteData<dynamic> routeData) => switch (routeData.nam
       MostPopularRoute.name => 'Most Popular',
       HighestRatedRoute.name => 'Highest Rated',
       MostAnticipatedRoute.name => 'Most Anticipated',
+      FeaturedListsRoute.name => 'Featured Lists',
       _ => null,
     };
