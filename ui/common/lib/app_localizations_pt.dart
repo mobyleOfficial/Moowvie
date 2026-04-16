@@ -24,7 +24,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get moviesTab => 'Filmes';
 
   @override
-  String get reviewsTab => 'Avaliações';
+  String get reviewsTab => 'Reviews';
 
   @override
   String get unknownError => 'Erro desconhecido';
@@ -36,7 +36,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String movieRating(String rating) {
-    return 'Avaliação: $rating';
+    return 'Nota: $rating';
   }
 
   @override
@@ -101,7 +101,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileTabDiary => 'Reviews';
 
   @override
-  String get profileTabReviews => 'Avaliações';
+  String get profileTabReviews => 'Reviews';
 
   @override
   String get profileTabLists => 'Listas';
@@ -134,7 +134,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileMoviesSection => 'Filmes';
 
   @override
-  String get profileReviewsSection => 'Avaliações';
+  String get profileReviewsSection => 'Reviews';
 
   @override
   String get profileWatchlistSection => 'Watchlist';
@@ -180,19 +180,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileFollow => 'Seguir';
 
   @override
-  String get reviewDetailsBodyTitle => 'Minha avaliação';
+  String get reviewDetailsBodyTitle => 'Meu Review';
 
   @override
   String get noResults => 'Nenhum resultado encontrado';
 
   @override
-  String get movieReviewTitle => 'Avaliação';
+  String get movieReviewTitle => 'Review';
 
   @override
-  String get movieReviewNameHint => 'Título da avaliação';
+  String get movieReviewNameHint => 'Título do Reiew';
 
   @override
-  String get movieReviewAddReview => 'Adicionar uma avaliação...';
+  String get movieReviewAddReview => 'Adicionar um review...';
 
   @override
   String get movieReviewRewatch => 'Reassistindo';
@@ -228,7 +228,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get movieReviewTagEmotional => 'Emocionante';
 
   @override
-  String get movieReviewSend => 'Enviar avaliação';
+  String get movieReviewSend => 'Enviar review';
 
   @override
   String get deleteDraftTitle => 'Excluir rascunho?';
@@ -244,22 +244,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String get cancel => 'Cancelar';
 
   @override
-  String get reviewEditorTitle => 'Escrever uma avaliação';
+  String get reviewEditorTitle => 'Escrever um review';
 
   @override
-  String get reviewEditorPlaceholder => 'Comece a escrever sua avaliação...';
+  String get reviewEditorPlaceholder => 'Comece a escrever seu review...';
 
   @override
   String get reviewEditorClear => 'Limpar tudo';
 
   @override
-  String get reviewEditorClearConfirmTitle => 'Limpar avaliação?';
+  String get reviewEditorClearConfirmTitle => 'Limpar review?';
 
   @override
   String get reviewEditorClearConfirmContent => 'Todo o texto será removido.';
 
   @override
-  String get reviewDetailsAddReview => 'Adicionar uma avaliação...';
+  String get reviewDetailsAddReview => 'Adicionar um review...';
 
   @override
   String get movieListDetailShowGridView => 'Mostrar visualização em grade';

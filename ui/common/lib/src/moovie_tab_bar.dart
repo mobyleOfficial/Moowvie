@@ -60,39 +60,6 @@ class _MoovieTabBarState extends State<MoovieTabBar> {
 
     if (tabController == null) return const SizedBox.shrink();
 
-    if (isIOS) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: CupertinoSlidingSegmentedControl<int>(
-          groupValue: tabController.index,
-          thumbColor: colorScheme.secondary,
-          backgroundColor: colorScheme.surfaceContainerHighest,
-          onValueChanged: (index) {
-            if (index != null) tabController.animateTo(index);
-          },
-          children: {
-            for (var tabIndex = 0; tabIndex < widget.tabs.length; tabIndex++)
-              tabIndex: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  widget.tabs[tabIndex],
-                  maxLines: 2,
-                  style: TextStyle(
-                    color: tabController.index == tabIndex
-                        ? colorScheme.onSecondary
-                        : colorScheme.onSurfaceVariant,
-                    fontSize: 13,
-                    fontWeight: tabController.index == tabIndex
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                  ),
-                ),
-              ),
-          },
-        ),
-      );
-    }
-
     return TabBar(
       controller: tabController,
       isScrollable: widget.isScrollable,
