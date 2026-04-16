@@ -35,4 +35,5 @@ abstract interface class MoviesRepository {
   Result<void> addRecentSearch({required String query});
   Stream<List<RecentSearch>> observeRecentSearches();
   Future<Result<MovieListing>> getUserWatchList({required String userId, required int page});
+  Future<Result<MovieListListing>> getFeaturedLists({required int page});
 }

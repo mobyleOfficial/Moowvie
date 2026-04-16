@@ -471,6 +471,75 @@ static const _mockedLists = [
     ));
   }
 
+  static const _mockedFeaturedLists = [
+    RemoteMovieList(
+      id: 101,
+      name: 'Staff Picks: Spring 2024',
+      creator: 'Moovie Editors',
+      description: 'Our editors\' hand-picked selection of the most exciting films this spring. From bold indie debuts to highly anticipated sequels, these are the movies we think deserve a spot on your watchlist right now.',
+      movieCount: 15,
+      posterPaths: ['/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg', '/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg', '/iOdcXYSVzBgmBJzNIlIMOZ6fz0F.jpg', '/1OsQJEoSXBjduuCvDOlRhoEUaHu.jpg'],
+    ),
+    RemoteMovieList(
+      id: 102,
+      name: 'Hidden Gems You Missed',
+      creator: 'Moovie Editors',
+      description: 'These under-the-radar films deserve far more attention than they got. From festival darlings that never found a wide audience to quiet dramas with powerhouse performances, this list celebrates the movies that slipped through the cracks.',
+      movieCount: 20,
+      posterPaths: ['/yRRuLt7sMBEQkHsd1S3KaaofZn7.jpg', '/xmFdNzbUiT5XmH6rbIVGYDQHGeo.jpg', '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg'],
+    ),
+    RemoteMovieList(
+      id: 103,
+      name: 'Best Directorial Debuts',
+      creator: 'Moovie Editors',
+      description: 'First-time directors who knocked it out of the park. These debut features showcase raw talent and bold vision that signal the arrival of exciting new voices in cinema.',
+      movieCount: 12,
+      posterPaths: ['/53YWSo75mSaw1vd2YEeX5kwkRos.jpg', '/aNK6MA5EApIo0UJE7ZWSYcZBJKy.jpg', '/iOdcXYSVzBgmBJzNIlIMOZ6fz0F.jpg', '/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg', '/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg'],
+    ),
+    RemoteMovieList(
+      id: 104,
+      name: 'Essential Documentaries',
+      creator: 'Moovie Editors',
+      description: 'Documentaries that will change how you see the world. These non-fiction masterpieces cover everything from environmental crises to personal triumphs, each one crafted with the storytelling power of the best fiction.',
+      movieCount: 18,
+      posterPaths: ['/1OsQJEoSXBjduuCvDOlRhoEUaHu.jpg', '/yRRuLt7sMBEQkHsd1S3KaaofZn7.jpg'],
+    ),
+    RemoteMovieList(
+      id: 105,
+      name: 'Soundtrack Standouts',
+      creator: 'Moovie Editors',
+      description: 'Films where the music is as memorable as the story. From sweeping orchestral scores to perfectly curated needle drops, these movies prove that great sound design and music can elevate cinema to an entirely different level.',
+      movieCount: 16,
+      posterPaths: ['/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', '/xmFdNzbUiT5XmH6rbIVGYDQHGeo.jpg', '/53YWSo75mSaw1vd2YEeX5kwkRos.jpg', '/aNK6MA5EApIo0UJE7ZWSYcZBJKy.jpg'],
+    ),
+    RemoteMovieList(
+      id: 106,
+      name: 'Animation Beyond Disney',
+      creator: 'Moovie Editors',
+      description: 'Animated films from studios around the world that push the boundaries of the medium. From Japanese anime to European stop-motion, these films prove that animation is not just for kids.',
+      movieCount: 14,
+      posterPaths: ['/aNK6MA5EApIo0UJE7ZWSYcZBJKy.jpg', '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', '/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg'],
+    ),
+    RemoteMovieList(
+      id: 107,
+      name: 'Performances of the Year',
+      creator: 'Moovie Editors',
+      description: 'The most unforgettable acting performances from the past year. These actors disappeared into their roles and delivered work that will be remembered for decades.',
+      movieCount: 10,
+      posterPaths: ['/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg', '/iOdcXYSVzBgmBJzNIlIMOZ6fz0F.jpg', '/1OsQJEoSXBjduuCvDOlRhoEUaHu.jpg', '/yRRuLt7sMBEQkHsd1S3KaaofZn7.jpg'],
+    ),
+    RemoteMovieList(
+      id: 108,
+      name: 'Modern Horror Essentials',
+      creator: 'Moovie Editors',
+      description: 'The best horror films of the 2020s. Elevated horror meets visceral scares in this collection of modern classics that redefine what the genre can achieve.',
+      movieCount: 22,
+      posterPaths: ['/xmFdNzbUiT5XmH6rbIVGYDQHGeo.jpg', '/53YWSo75mSaw1vd2YEeX5kwkRos.jpg', '/iOdcXYSVzBgmBJzNIlIMOZ6fz0F.jpg'],
+    ),
+  ];
+
+  static const int _featuredListsPageSize = 4;
+
   @override
   Future<Result<RemoteMovieListing>> getUserWatchList({
     required String userId,
@@ -491,6 +560,28 @@ static const _mockedLists = [
       totalPages: totalPages,
       totalResults: _mockedWatchList.length,
       movies: pageMovies,
+    ));
+  }
+
+  @override
+  Future<Result<RemoteMovieListListing>> getFeaturedLists({
+    required int page,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    final totalPages =
+        (_mockedFeaturedLists.length / _featuredListsPageSize).ceil();
+    final startIndex = (page - 1) * _featuredListsPageSize;
+    final endIndex = startIndex + _featuredListsPageSize;
+    final pageLists = _mockedFeaturedLists.sublist(
+      startIndex.clamp(0, _mockedFeaturedLists.length),
+      endIndex.clamp(0, _mockedFeaturedLists.length),
+    );
+
+    return Success(RemoteMovieListListing(
+      totalPages: totalPages,
+      totalResults: _mockedFeaturedLists.length,
+      lists: pageLists,
     ));
   }
 }

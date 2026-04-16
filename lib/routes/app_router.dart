@@ -50,6 +50,7 @@ class AppRouter extends RootStackRouter {
                 AutoRoute(page: MostPopularRoute.page),
                 AutoRoute(page: HighestRatedRoute.page),
                 AutoRoute(page: MostAnticipatedRoute.page),
+                AutoRoute(page: FeaturedListsRoute.page),
                 AutoRoute(page: MovieDetailRoute.page),
                 AutoRoute(page: ReviewDetailsRoute.page),
                 AutoRoute(page: MovieListDetailRoute.page),

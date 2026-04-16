@@ -15,3 +15,4 @@ export 'get_countries.dart';
 export 'get_languages.dart';
 export 'get_user_movie_lists.dart';
 export 'get_user_watch_list.dart';
+export 'get_featured_lists.dart';

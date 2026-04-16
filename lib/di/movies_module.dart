@@ -81,4 +81,8 @@ abstract class MoviesModule {
   @injectable
   GetUserWatchList getUserWatchList(MoviesRepository repository) =>
       GetUserWatchList(repository);
+
+  @injectable
+  GetFeaturedLists getFeaturedLists(MoviesRepository repository) =>
+      GetFeaturedLists(repository);
 }

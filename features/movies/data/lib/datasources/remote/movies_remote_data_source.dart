@@ -33,4 +33,5 @@ abstract interface class MoviesRemoteDataSource {
   Future<Result<List<RemoteLanguage>>> getLanguages();
   Future<Result<RemoteMovieListing>> getUserFavoriteMovies({required String userId, required int page});
   Future<Result<RemoteMovieListing>> getUserWatchList({required String userId, required int page});
+  Future<Result<RemoteMovieListListing>> getFeaturedLists({required int page});
 }

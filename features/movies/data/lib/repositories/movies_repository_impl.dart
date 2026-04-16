@@ -187,4 +187,16 @@ class MoviesRepositoryImpl implements MoviesRepository {
       Failure(:final error) => Failure(error),
     };
   }
+
+  @override
+  Future<Result<MovieListListing>> getFeaturedLists({
+    required int page,
+  }) async {
+    final result = await _dataSource.getFeaturedLists(page: page);
+
+    return switch (result) {
+      Success(:final data) => Success(data.toDomain()),
+      Failure(:final error) => Failure(error),
+    };
+  }
 }

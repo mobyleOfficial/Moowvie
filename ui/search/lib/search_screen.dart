@@ -601,6 +601,9 @@ class _BrowseSection extends StatelessWidget {
               _BrowseItem(
                 icon: Icons.list_alt,
                 label: l10n?.searchBrowseFeaturedLists ?? '',
+                onTap: () => context.router.push(
+                  const FeaturedListsRoute(),
+                ),
               ),
             ],
           ),
