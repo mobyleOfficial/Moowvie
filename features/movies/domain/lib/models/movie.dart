@@ -1,25 +1,15 @@
+import 'package:movies_domain/models/movie_info.dart';
+
 class Movie {
   final int id;
   final String title;
-  final String overview;
   final String posterPath;
-  final String backdropPath;
-  final double voteAverage;
-  final String releaseDate;
-  final String? tagline;
-  final int? runtime;
-  final List<String>? genres;
+  final MovieInfo? info;
 
   const Movie({
     required this.id,
     required this.title,
-    required this.overview,
     required this.posterPath,
-    required this.backdropPath,
-    required this.voteAverage,
-    required this.releaseDate,
-    this.tagline,
-    this.runtime,
-    this.genres,
+    this.info,
   });
 }

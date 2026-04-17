@@ -1,3 +1,5 @@
+import 'package:movies_data/models/remote/remote_movie.dart';
+import 'package:movies_data/models/remote/remote_movie_review.dart';
 import 'package:movies_domain/domain.dart';
 
 class RemoteMovieDetail {
@@ -11,6 +13,14 @@ class RemoteMovieDetail {
   final String tagline;
   final int? runtime;
   final List<String> genres;
+  final String? director;
+  final List<String>? cast;
+  final List<RemoteWatchProvider>? watchProviders;
+  final List<RemoteMovie>? similarMovies;
+  final List<RemoteMovieReview>? popularReviews;
+  final int? reviewCount;
+  final int? listCount;
+  final int? likeCount;
 
   const RemoteMovieDetail({
     required this.id,
@@ -23,6 +33,14 @@ class RemoteMovieDetail {
     required this.tagline,
     required this.runtime,
     required this.genres,
+    this.director,
+    this.cast,
+    this.watchProviders,
+    this.similarMovies,
+    this.popularReviews,
+    this.reviewCount,
+    this.listCount,
+    this.likeCount,
   });
 
   factory RemoteMovieDetail.fromJson(Map<String, dynamic> json) =>
@@ -45,13 +63,35 @@ class RemoteMovieDetail {
   Movie toDomain() => Movie(
         id: id,
         title: title,
-        overview: overview,
         posterPath: posterPath,
-        backdropPath: backdropPath,
-        voteAverage: voteAverage,
-        releaseDate: releaseDate,
-        tagline: tagline,
-        runtime: runtime,
-        genres: genres,
+        info: MovieInfo(
+          overview: overview,
+          backdropPath: backdropPath,
+          voteAverage: voteAverage,
+          releaseDate: releaseDate,
+          tagline: tagline,
+          runtime: runtime ?? 0,
+          genres: genres,
+          director: director ?? '',
+          cast: cast ?? const [],
+          watchProviders:
+              watchProviders?.map((provider) => provider.toDomain()).toList() ?? const [],
+          similarMovies:
+              similarMovies?.map((movie) => movie.toDomain()).toList() ?? const [],
+          popularReviews:
+              popularReviews?.map((review) => review.toDomain()).toList() ?? const [],
+          reviewCount: reviewCount ?? 0,
+          listCount: listCount ?? 0,
+          likeCount: likeCount ?? 0,
+        ),
       );
+}
+
+class RemoteWatchProvider {
+  final String name;
+  final String logoPath;
+
+  const RemoteWatchProvider({required this.name, required this.logoPath});
+
+  WatchProvider toDomain() => WatchProvider(name: name, logoPath: logoPath);
 }

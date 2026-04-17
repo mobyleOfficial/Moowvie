@@ -58,12 +58,12 @@ class _UserMovieListsScreenState extends State<UserMovieListsScreen> {
                       title: movieList.name,
                       creator: movieList.creator,
                       description: movieList.description,
-                      posterPaths: movieList.posterPaths,
+                      posterPaths: movieList.info?.posterPaths ?? const [],
                       onTap: () => context.router.push(
                         MovieListDetailRoute(
                           listId: movieList.id,
                           listName: movieList.name,
-                          posterPaths: movieList.posterPaths,
+                          posterPaths: movieList.info?.posterPaths ?? const [],
                         ),
                       ),
                     ),

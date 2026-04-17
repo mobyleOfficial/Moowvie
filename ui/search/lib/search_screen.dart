@@ -395,12 +395,12 @@ class _ListsResultsTabState extends State<_ListsResultsTab> {
                 title: movieList.name,
                 creator: movieList.creator,
                 description: movieList.description,
-                posterPaths: movieList.posterPaths,
+                posterPaths: movieList.info?.posterPaths ?? const [],
                 onTap: () => context.router.push(
                   MovieListDetailRoute(
                     listId: movieList.id,
                     listName: movieList.name,
-                    posterPaths: movieList.posterPaths,
+                    posterPaths: movieList.info?.posterPaths ?? const [],
                   ),
                 ),
               ),
@@ -488,12 +488,12 @@ class _MovieResultTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (movie.releaseDate.isNotEmpty) ...[
+                  if (movie.info?.releaseDate.isNotEmpty ?? false) ...[
                     const SizedBox(height: 4),
                     Text(
-                      movie.releaseDate.length >= 4
-                          ? movie.releaseDate.substring(0, 4)
-                          : movie.releaseDate,
+                      movie.info!.releaseDate.length >= 4
+                          ? movie.info!.releaseDate.substring(0, 4)
+                          : movie.info!.releaseDate,
                       style: textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -502,7 +502,7 @@ class _MovieResultTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (movie.voteAverage > 0) ...[
+            if ((movie.info?.voteAverage ?? 0) > 0) ...[
               const SizedBox(width: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -514,7 +514,7 @@ class _MovieResultTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 2),
                   Text(
-                    movie.voteAverage.toStringAsFixed(1),
+                    movie.info!.voteAverage.toStringAsFixed(1),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
