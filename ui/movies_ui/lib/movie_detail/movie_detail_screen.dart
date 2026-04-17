@@ -53,19 +53,19 @@ class _MovieDetailBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _MovieInfoSection(detail: detail),
-                if (detail.info?.watchProviders?.isNotEmpty ?? false)
+                if (detail.info?.watchProviders.isNotEmpty ?? false)
                   _WatchProvidersSection(
-                      providers: detail.info!.watchProviders!),
+                      providers: detail.info!.watchProviders),
                 if (detail.info != null)
                   _SynopsisSection(overview: detail.info!.overview),
                 _RatingSection(detail: detail),
                 _StatsSection(detail: detail),
-                if (detail.info?.popularReviews?.isNotEmpty ?? false)
+                if (detail.info?.popularReviews.isNotEmpty ?? false)
                   _PopularReviewsSection(
-                      reviews: detail.info!.popularReviews!),
-                if (detail.info?.similarMovies?.isNotEmpty ?? false)
+                      reviews: detail.info!.popularReviews),
+                if (detail.info?.similarMovies.isNotEmpty ?? false)
                   _SimilarMoviesSection(
-                      movies: detail.info!.similarMovies!),
+                      movies: detail.info!.similarMovies),
                 const SizedBox(height: 32),
               ],
             ),
@@ -166,10 +166,10 @@ class _MovieInfoSection extends StatelessWidget {
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    if (info?.runtime != null) ...[
+                    if ((info?.runtime ?? 0) > 0) ...[
                       _Dot(color: colorScheme.onSurfaceVariant),
                       Text(
-                        l10n?.movieDetailMinutes(info!.runtime!) ?? '',
+                        l10n?.movieDetailMinutes(info!.runtime) ?? '',
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -177,16 +177,16 @@ class _MovieInfoSection extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (info?.genres?.isNotEmpty ?? false) ...[
+                if (info?.genres.isNotEmpty ?? false) ...[
                   const SizedBox(height: 6),
                   Text(
-                    info!.genres!.join(', '),
+                    info!.genres.join(', '),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
-                if (info?.director != null) ...[
+                if (info?.director.isNotEmpty ?? false) ...[
                   const SizedBox(height: 10),
                   Text(
                     l10n?.movieDetailDirectedBy ?? '',
@@ -195,7 +195,7 @@ class _MovieInfoSection extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    info!.director!,
+                    info!.director,
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,

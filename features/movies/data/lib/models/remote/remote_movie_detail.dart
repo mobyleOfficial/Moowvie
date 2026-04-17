@@ -70,19 +70,19 @@ class RemoteMovieDetail {
           voteAverage: voteAverage,
           releaseDate: releaseDate,
           tagline: tagline,
-          runtime: runtime,
+          runtime: runtime ?? 0,
           genres: genres,
-          director: director,
-          cast: cast,
+          director: director ?? '',
+          cast: cast ?? const [],
           watchProviders:
-              watchProviders?.map((provider) => provider.toDomain()).toList(),
+              watchProviders?.map((provider) => provider.toDomain()).toList() ?? const [],
           similarMovies:
-              similarMovies?.map((movie) => movie.toDomain()).toList(),
+              similarMovies?.map((movie) => movie.toDomain()).toList() ?? const [],
           popularReviews:
-              popularReviews?.map((review) => review.toDomain()).toList(),
-          reviewCount: reviewCount,
-          listCount: listCount,
-          likeCount: likeCount,
+              popularReviews?.map((review) => review.toDomain()).toList() ?? const [],
+          reviewCount: reviewCount ?? 0,
+          listCount: listCount ?? 0,
+          likeCount: likeCount ?? 0,
         ),
       );
 }
