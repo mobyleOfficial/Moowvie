@@ -2,6 +2,8 @@
 library;
 
 export 'movie.dart';
+export 'popular_review.dart';
+export 'watch_provider.dart';
 export 'movie_review_draft.dart';
 export 'movie_review_status.dart';
 export 'movie_list.dart';

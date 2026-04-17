@@ -747,6 +747,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please select at least one tag'**
   String get tagsRequired;
+
+  /// Section title for streaming services
+  ///
+  /// In en, this message translates to:
+  /// **'Where to Watch'**
+  String get movieDetailWhereToWatch;
+
+  /// Section title for movie description
+  ///
+  /// In en, this message translates to:
+  /// **'Synopsis'**
+  String get movieDetailSynopsis;
+
+  /// Section title for popular reviews
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get movieDetailReviews;
+
+  /// Section title for similar movies
+  ///
+  /// In en, this message translates to:
+  /// **'Similar Movies'**
+  String get movieDetailSimilar;
+
+  /// Number of likes
+  ///
+  /// In en, this message translates to:
+  /// **'{count} likes'**
+  String movieDetailLikes(int count);
+
+  /// Number of reviews
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String movieDetailReviewCount(int count);
+
+  /// Number of lists
+  ///
+  /// In en, this message translates to:
+  /// **'{count} lists'**
+  String movieDetailListCount(int count);
+
+  /// Label before director name
+  ///
+  /// In en, this message translates to:
+  /// **'Directed by'**
+  String get movieDetailDirectedBy;
+
+  /// Runtime in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String movieDetailMinutes(int minutes);
 }
 
 class _AppLocalizationsDelegate

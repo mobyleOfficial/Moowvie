@@ -107,5 +107,14 @@
   "fieldRequired": "Este campo é obrigatório",
   "ratingRequired": "Por favor selecione uma avaliação",
   "reviewBodyRequired": "Por favor escreva uma avaliação",
-  "tagsRequired": "Por favor selecione pelo menos uma tag"
+  "tagsRequired": "Por favor selecione pelo menos uma tag",
+  "movieDetailWhereToWatch": "Onde Assistir",
+  "movieDetailSynopsis": "Sinopse",
+  "movieDetailReviews": "Avaliações",
+  "movieDetailSimilar": "Filmes Similares",
+  "movieDetailLikes": "{count} curtidas",
+  "movieDetailReviewCount": "{count} avaliações",
+  "movieDetailListCount": "{count} listas",
+  "movieDetailDirectedBy": "Dirigido por",
+  "movieDetailMinutes": "{minutes} min"
 }
