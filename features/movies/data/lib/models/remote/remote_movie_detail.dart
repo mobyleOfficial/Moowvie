@@ -1,4 +1,5 @@
 import 'package:movies_data/models/remote/remote_movie.dart';
+import 'package:movies_data/models/remote/remote_movie_review.dart';
 import 'package:movies_domain/domain.dart';
 
 class RemoteMovieDetail {
@@ -16,7 +17,7 @@ class RemoteMovieDetail {
   final List<String>? cast;
   final List<RemoteWatchProvider>? watchProviders;
   final List<RemoteMovie>? similarMovies;
-  final List<RemotePopularReview>? popularReviews;
+  final List<RemoteMovieReview>? popularReviews;
   final int? reviewCount;
   final int? listCount;
   final int? likeCount;
@@ -62,25 +63,27 @@ class RemoteMovieDetail {
   Movie toDomain() => Movie(
         id: id,
         title: title,
-        overview: overview,
         posterPath: posterPath,
-        backdropPath: backdropPath,
-        voteAverage: voteAverage,
-        releaseDate: releaseDate,
-        tagline: tagline,
-        runtime: runtime,
-        genres: genres,
-        director: director,
-        cast: cast,
-        watchProviders:
-            watchProviders?.map((provider) => provider.toDomain()).toList(),
-        similarMovies:
-            similarMovies?.map((movie) => movie.toDomain()).toList(),
-        popularReviews:
-            popularReviews?.map((review) => review.toDomain()).toList(),
-        reviewCount: reviewCount,
-        listCount: listCount,
-        likeCount: likeCount,
+        info: MovieInfo(
+          overview: overview,
+          backdropPath: backdropPath,
+          voteAverage: voteAverage,
+          releaseDate: releaseDate,
+          tagline: tagline,
+          runtime: runtime,
+          genres: genres,
+          director: director,
+          cast: cast,
+          watchProviders:
+              watchProviders?.map((provider) => provider.toDomain()).toList(),
+          similarMovies:
+              similarMovies?.map((movie) => movie.toDomain()).toList(),
+          popularReviews:
+              popularReviews?.map((review) => review.toDomain()).toList(),
+          reviewCount: reviewCount,
+          listCount: listCount,
+          likeCount: likeCount,
+        ),
       );
 }
 
@@ -91,25 +94,4 @@ class RemoteWatchProvider {
   const RemoteWatchProvider({required this.name, required this.logoPath});
 
   WatchProvider toDomain() => WatchProvider(name: name, logoPath: logoPath);
-}
-
-class RemotePopularReview {
-  final String author;
-  final double rating;
-  final String content;
-  final String date;
-
-  const RemotePopularReview({
-    required this.author,
-    required this.rating,
-    required this.content,
-    required this.date,
-  });
-
-  PopularReview toDomain() => PopularReview(
-        author: author,
-        rating: rating,
-        content: content,
-        date: date,
-      );
 }

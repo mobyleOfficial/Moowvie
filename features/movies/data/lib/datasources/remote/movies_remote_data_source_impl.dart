@@ -225,23 +225,29 @@ static const _mockedLists = [
   ];
 
   static const _mockedPopularReviews = [
-    RemotePopularReview(
-      author: 'CinephileAna',
-      rating: 4.5,
-      content: 'A visually stunning masterpiece that stays with you long after the credits roll. The performances are extraordinary and the direction is impeccable.',
+    RemoteMovieReview(
+      id: 0,
+      title: '',
       date: 'Mar 12, 2024',
+      rating: 4.5,
+      author: 'CinephileAna',
+      content: 'A visually stunning masterpiece that stays with you long after the credits roll. The performances are extraordinary and the direction is impeccable.',
     ),
-    RemotePopularReview(
-      author: 'MovieBuff42',
-      rating: 4.0,
-      content: 'Impressive storytelling with a few pacing issues in the second act, but the finale more than makes up for it. One of the best of the year.',
+    RemoteMovieReview(
+      id: 0,
+      title: '',
       date: 'Mar 8, 2024',
+      rating: 4.0,
+      author: 'MovieBuff42',
+      content: 'Impressive storytelling with a few pacing issues in the second act, but the finale more than makes up for it. One of the best of the year.',
     ),
-    RemotePopularReview(
-      author: 'FilmCriticLeo',
-      rating: 3.5,
-      content: 'Well-crafted but doesn\'t quite reach the heights of its predecessor. Still, the cinematography alone makes it worth watching on the big screen.',
+    RemoteMovieReview(
+      id: 0,
+      title: '',
       date: 'Feb 28, 2024',
+      rating: 3.5,
+      author: 'FilmCriticLeo',
+      content: 'Well-crafted but doesn\'t quite reach the heights of its predecessor. Still, the cinematography alone makes it worth watching on the big screen.',
     ),
   ];
 

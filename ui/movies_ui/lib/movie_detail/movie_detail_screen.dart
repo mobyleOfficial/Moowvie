@@ -53,18 +53,19 @@ class _MovieDetailBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _MovieInfoSection(detail: detail),
-                if (detail.watchProviders?.isNotEmpty ?? false)
+                if (detail.info?.watchProviders?.isNotEmpty ?? false)
                   _WatchProvidersSection(
-                      providers: detail.watchProviders!),
-                _SynopsisSection(overview: detail.overview),
+                      providers: detail.info!.watchProviders!),
+                if (detail.info != null)
+                  _SynopsisSection(overview: detail.info!.overview),
                 _RatingSection(detail: detail),
                 _StatsSection(detail: detail),
-                if (detail.popularReviews?.isNotEmpty ?? false)
+                if (detail.info?.popularReviews?.isNotEmpty ?? false)
                   _PopularReviewsSection(
-                      reviews: detail.popularReviews!),
-                if (detail.similarMovies?.isNotEmpty ?? false)
+                      reviews: detail.info!.popularReviews!),
+                if (detail.info?.similarMovies?.isNotEmpty ?? false)
                   _SimilarMoviesSection(
-                      movies: detail.similarMovies!),
+                      movies: detail.info!.similarMovies!),
                 const SizedBox(height: 32),
               ],
             ),
@@ -89,13 +90,13 @@ class _HeroAppBar extends StatelessWidget {
       backgroundColor: Colors.black,
       foregroundColor: Colors.white,
       flexibleSpace: FlexibleSpaceBar(
-        background: detail.backdropPath.isNotEmpty
+        background: (detail.info?.backdropPath.isNotEmpty ?? false)
             ? Stack(
                 fit: StackFit.expand,
                 children: [
                   CachedNetworkImage(
                     imageUrl:
-                        '${TmdbImageUrl.backdrop}${detail.backdropPath}',
+                        '${TmdbImageUrl.backdrop}${detail.info!.backdropPath}',
                     fit: BoxFit.cover,
                     placeholder: (_, __) => Container(
                       color: colorScheme.surfaceContainerHighest,
@@ -134,9 +135,11 @@ class _MovieInfoSection extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
-    final releaseYear = detail.releaseDate.length >= 4
-        ? detail.releaseDate.substring(0, 4)
-        : detail.releaseDate;
+    final info = detail.info;
+    final releaseDate = info?.releaseDate ?? '';
+    final releaseYear = releaseDate.length >= 4
+        ? releaseDate.substring(0, 4)
+        : releaseDate;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -163,10 +166,10 @@ class _MovieInfoSection extends StatelessWidget {
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    if (detail.runtime != null) ...[
+                    if (info?.runtime != null) ...[
                       _Dot(color: colorScheme.onSurfaceVariant),
                       Text(
-                        l10n?.movieDetailMinutes(detail.runtime!) ?? '',
+                        l10n?.movieDetailMinutes(info!.runtime!) ?? '',
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -174,16 +177,16 @@ class _MovieInfoSection extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (detail.genres?.isNotEmpty ?? false) ...[
+                if (info?.genres?.isNotEmpty ?? false) ...[
                   const SizedBox(height: 6),
                   Text(
-                    detail.genres!.join(', '),
+                    info!.genres!.join(', '),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
-                if (detail.director != null) ...[
+                if (info?.director != null) ...[
                   const SizedBox(height: 10),
                   Text(
                     l10n?.movieDetailDirectedBy ?? '',
@@ -192,7 +195,7 @@ class _MovieInfoSection extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    detail.director!,
+                    info!.director!,
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
@@ -369,7 +372,7 @@ class _RatingSection extends StatelessWidget {
               color: colorScheme.onTertiaryContainer, size: 32),
           const SizedBox(width: 8),
           Text(
-            detail.voteAverage.toStringAsFixed(1),
+            (detail.info?.voteAverage ?? 0).toStringAsFixed(1),
             style: textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
@@ -404,7 +407,7 @@ class _StatsSection extends StatelessWidget {
         children: [
           _StatItem(
             icon: Icons.favorite_rounded,
-            label: l10n?.movieDetailLikes(detail.likeCount ?? 0) ?? '',
+            label: l10n?.movieDetailLikes(detail.info?.likeCount ?? 0) ?? '',
             iconColor: colorScheme.error,
             textTheme: textTheme,
             colorScheme: colorScheme,
@@ -412,7 +415,7 @@ class _StatsSection extends StatelessWidget {
           const SizedBox(width: 24),
           _StatItem(
             icon: Icons.rate_review_rounded,
-            label: l10n?.movieDetailReviewCount(detail.reviewCount ?? 0) ?? '',
+            label: l10n?.movieDetailReviewCount(detail.info?.reviewCount ?? 0) ?? '',
             iconColor: colorScheme.primary,
             textTheme: textTheme,
             colorScheme: colorScheme,
@@ -420,7 +423,7 @@ class _StatsSection extends StatelessWidget {
           const SizedBox(width: 24),
           _StatItem(
             icon: Icons.list_rounded,
-            label: l10n?.movieDetailListCount(detail.listCount ?? 0) ?? '',
+            label: l10n?.movieDetailListCount(detail.info?.listCount ?? 0) ?? '',
             iconColor: colorScheme.tertiary,
             textTheme: textTheme,
             colorScheme: colorScheme,
@@ -464,7 +467,7 @@ class _StatItem extends StatelessWidget {
 }
 
 class _PopularReviewsSection extends StatelessWidget {
-  final List<PopularReview> reviews;
+  final List<MovieReview> reviews;
 
   const _PopularReviewsSection({required this.reviews});
 
@@ -506,7 +509,7 @@ class _PopularReviewsSection extends StatelessWidget {
                           radius: 14,
                           backgroundColor: colorScheme.primaryContainer,
                           child: Text(
-                            review.author[0].toUpperCase(),
+                            (review.author ?? '?')[0].toUpperCase(),
                             style: textTheme.labelSmall?.copyWith(
                               color: colorScheme.onPrimaryContainer,
                               fontWeight: FontWeight.w600,
@@ -516,7 +519,7 @@ class _PopularReviewsSection extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            review.author,
+                            review.author ?? '',
                             style: textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: colorScheme.onSurface,
@@ -538,7 +541,7 @@ class _PopularReviewsSection extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      review.content,
+                      review.content ?? '',
                       style: textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                         height: 1.4,

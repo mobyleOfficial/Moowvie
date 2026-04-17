@@ -32,7 +32,9 @@ class RemoteMovieList {
         name: name,
         creator: creator,
         description: description,
-        movieCount: movieCount,
-        posterPaths: posterPaths,
+        info: MovieListInfo(
+          movieCount: movieCount,
+          posterPaths: posterPaths,
+        ),
       );
 }
