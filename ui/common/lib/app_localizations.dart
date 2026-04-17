@@ -687,6 +687,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There are no items to display.'**
   String get emptyStateNoItemsMessage;
+
+  /// Tooltip for the clear search text button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearSearch;
 }
 
 class _AppLocalizationsDelegate
