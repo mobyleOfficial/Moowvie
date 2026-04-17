@@ -467,11 +467,11 @@ class _Header extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (detail.info?.tags?.isNotEmpty ?? false) ...[
+              if (detail.info?.tags.isNotEmpty ?? false) ...[
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: detail.info!.tags!
+                  children: detail.info!.tags
                       .map((tag) => MoovieTag(label: tag))
                       .toList(),
                 ),

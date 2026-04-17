@@ -43,6 +43,7 @@ class MovieListDetailCubit extends Cubit<MovieListDetailState> {
           detail: data,
           isLiked: data.info?.isLiked ?? false,
           likesCount: data.info?.likesCount ?? 0,
+
         ));
         // Seed the paging controller with the first page
         pagingController.value = PagingState<int, Movie>(
