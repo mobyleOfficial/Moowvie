@@ -37,16 +37,17 @@ class MovieListDetailCubit extends Cubit<MovieListDetailState> {
 
     switch (result) {
       case Success(:final data):
-        _totalPages = data.totalPages ?? 1;
+        _totalPages = data.info?.totalPages ?? 1;
         _initialLoaded = true;
         emit(MovieListDetailSuccess(
           detail: data,
-          isLiked: data.isLiked ?? false,
-          likesCount: data.likesCount ?? 0,
+          isLiked: data.info?.isLiked ?? false,
+          likesCount: data.info?.likesCount ?? 0,
+
         ));
         // Seed the paging controller with the first page
         pagingController.value = PagingState<int, Movie>(
-          pages: [data.movies ?? const []],
+          pages: [data.movies],
           keys: const [1],
         );
       case Failure(:final error):
@@ -64,8 +65,8 @@ class MovieListDetailCubit extends Cubit<MovieListDetailState> {
 
     switch (result) {
       case Success(:final data):
-        _totalPages = data.totalPages ?? 1;
-        return data.movies ?? const [];
+        _totalPages = data.info?.totalPages ?? 1;
+        return data.movies;
       case Failure(:final error):
         throw Exception(error.message);
     }

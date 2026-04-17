@@ -32,10 +32,12 @@ class RemoteMovie {
   Movie toDomain() => Movie(
         id: id,
         title: title,
-        overview: overview,
         posterPath: posterPath,
-        backdropPath: backdropPath,
-        voteAverage: voteAverage,
-        releaseDate: releaseDate,
+        info: MovieInfo(
+          overview: overview,
+          backdropPath: backdropPath,
+          voteAverage: voteAverage,
+          releaseDate: releaseDate,
+        ),
       );
 }

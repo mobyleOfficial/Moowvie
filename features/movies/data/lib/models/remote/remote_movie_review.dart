@@ -5,12 +5,16 @@ class RemoteMovieReview {
   final String title;
   final String date;
   final double rating;
+  final String? author;
+  final String? content;
 
   const RemoteMovieReview({
     required this.id,
     required this.title,
     required this.date,
     required this.rating,
+    this.author,
+    this.content,
   });
 
   factory RemoteMovieReview.fromJson(Map<String, dynamic> json) =>
@@ -26,5 +30,7 @@ class RemoteMovieReview {
         title: title,
         date: date,
         rating: rating,
+        author: author,
+        content: content,
       );
 }

@@ -345,4 +345,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tagsRequired => 'Please select at least one tag';
+
+  @override
+  String get movieDetailWhereToWatch => 'Where to Watch';
+
+  @override
+  String get movieDetailSynopsis => 'Synopsis';
+
+  @override
+  String get movieDetailReviews => 'Reviews';
+
+  @override
+  String get movieDetailSimilar => 'Similar Movies';
+
+  @override
+  String movieDetailLikes(int count) {
+    return '$count likes';
+  }
+
+  @override
+  String movieDetailReviewCount(int count) {
+    return '$count reviews';
+  }
+
+  @override
+  String movieDetailListCount(int count) {
+    return '$count lists';
+  }
+
+  @override
+  String get movieDetailDirectedBy => 'Directed by';
+
+  @override
+  String movieDetailMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get movieDetailSeeAll => 'See all';
+
+  @override
+  String movieDetailMovieReviews(String title) {
+    return '$title Reviews';
+  }
 }
