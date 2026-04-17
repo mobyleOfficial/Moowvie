@@ -216,6 +216,35 @@ static const _mockedLists = [
     };
   }
 
+  static const _mockedWatchProviders = [
+    RemoteWatchProvider(name: 'Netflix', logoPath: '/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg'),
+    RemoteWatchProvider(name: 'Amazon Prime Video', logoPath: '/emthp39XA2YScoYL1p0sdbAH2WA.jpg'),
+    RemoteWatchProvider(name: 'Disney+', logoPath: '/7rwgEs15tFwyR9NPQ5vpzxTj19Q.jpg'),
+    RemoteWatchProvider(name: 'Apple TV+', logoPath: '/6uhKBfmtzFqOcLousHwZuzcrScK.jpg'),
+    RemoteWatchProvider(name: 'Max', logoPath: '/aS2zvJUn9gFOjVEgogbAPHAOPKx.jpg'),
+  ];
+
+  static const _mockedPopularReviews = [
+    RemotePopularReview(
+      author: 'CinephileAna',
+      rating: 4.5,
+      content: 'A visually stunning masterpiece that stays with you long after the credits roll. The performances are extraordinary and the direction is impeccable.',
+      date: 'Mar 12, 2024',
+    ),
+    RemotePopularReview(
+      author: 'MovieBuff42',
+      rating: 4.0,
+      content: 'Impressive storytelling with a few pacing issues in the second act, but the finale more than makes up for it. One of the best of the year.',
+      date: 'Mar 8, 2024',
+    ),
+    RemotePopularReview(
+      author: 'FilmCriticLeo',
+      rating: 3.5,
+      content: 'Well-crafted but doesn\'t quite reach the heights of its predecessor. Still, the cinematography alone makes it worth watching on the big screen.',
+      date: 'Feb 28, 2024',
+    ),
+  ];
+
   @override
   Future<Result<RemoteMovieDetail>> getMovieDetail({
     required int movieId,
@@ -225,8 +254,30 @@ static const _mockedLists = [
     );
 
     return switch (result) {
-      Success<Map<String, dynamic>>(:final data) =>
-        Success(RemoteMovieDetail.fromJson(data)),
+      Success<Map<String, dynamic>>(:final data) => () {
+          final detail = RemoteMovieDetail.fromJson(data);
+          final similarCount = _mockedListMovies.length.clamp(0, 6);
+          return Success(RemoteMovieDetail(
+            id: detail.id,
+            title: detail.title,
+            overview: detail.overview,
+            posterPath: detail.posterPath,
+            backdropPath: detail.backdropPath,
+            voteAverage: detail.voteAverage,
+            releaseDate: detail.releaseDate,
+            tagline: detail.tagline,
+            runtime: detail.runtime,
+            genres: detail.genres,
+            director: 'Denis Villeneuve',
+            cast: const ['Timothée Chalamet', 'Zendaya', 'Rebecca Ferguson', 'Josh Brolin', 'Austin Butler'],
+            watchProviders: _mockedWatchProviders.take(3).toList(),
+            similarMovies: _mockedListMovies.take(similarCount).toList(),
+            popularReviews: _mockedPopularReviews,
+            reviewCount: (movieId % 50) + 12,
+            listCount: (movieId % 30) + 5,
+            likeCount: (movieId % 500) + 80,
+          ));
+        }(),
       Failure<Map<String, dynamic>>(:final error) => Failure(error),
     };
   }

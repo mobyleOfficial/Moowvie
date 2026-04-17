@@ -1,3 +1,4 @@
+import 'package:movies_data/models/remote/remote_movie.dart';
 import 'package:movies_domain/domain.dart';
 
 class RemoteMovieDetail {
@@ -11,6 +12,14 @@ class RemoteMovieDetail {
   final String tagline;
   final int? runtime;
   final List<String> genres;
+  final String? director;
+  final List<String>? cast;
+  final List<RemoteWatchProvider>? watchProviders;
+  final List<RemoteMovie>? similarMovies;
+  final List<RemotePopularReview>? popularReviews;
+  final int? reviewCount;
+  final int? listCount;
+  final int? likeCount;
 
   const RemoteMovieDetail({
     required this.id,
@@ -23,6 +32,14 @@ class RemoteMovieDetail {
     required this.tagline,
     required this.runtime,
     required this.genres,
+    this.director,
+    this.cast,
+    this.watchProviders,
+    this.similarMovies,
+    this.popularReviews,
+    this.reviewCount,
+    this.listCount,
+    this.likeCount,
   });
 
   factory RemoteMovieDetail.fromJson(Map<String, dynamic> json) =>
@@ -53,5 +70,46 @@ class RemoteMovieDetail {
         tagline: tagline,
         runtime: runtime,
         genres: genres,
+        director: director,
+        cast: cast,
+        watchProviders:
+            watchProviders?.map((provider) => provider.toDomain()).toList(),
+        similarMovies:
+            similarMovies?.map((movie) => movie.toDomain()).toList(),
+        popularReviews:
+            popularReviews?.map((review) => review.toDomain()).toList(),
+        reviewCount: reviewCount,
+        listCount: listCount,
+        likeCount: likeCount,
+      );
+}
+
+class RemoteWatchProvider {
+  final String name;
+  final String logoPath;
+
+  const RemoteWatchProvider({required this.name, required this.logoPath});
+
+  WatchProvider toDomain() => WatchProvider(name: name, logoPath: logoPath);
+}
+
+class RemotePopularReview {
+  final String author;
+  final double rating;
+  final String content;
+  final String date;
+
+  const RemotePopularReview({
+    required this.author,
+    required this.rating,
+    required this.content,
+    required this.date,
+  });
+
+  PopularReview toDomain() => PopularReview(
+        author: author,
+        rating: rating,
+        content: content,
+        date: date,
       );
 }

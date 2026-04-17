@@ -346,4 +346,39 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tagsRequired => 'Por favor selecione pelo menos uma tag';
+
+  @override
+  String get movieDetailWhereToWatch => 'Onde Assistir';
+
+  @override
+  String get movieDetailSynopsis => 'Sinopse';
+
+  @override
+  String get movieDetailReviews => 'Avaliações';
+
+  @override
+  String get movieDetailSimilar => 'Filmes Similares';
+
+  @override
+  String movieDetailLikes(int count) {
+    return '$count curtidas';
+  }
+
+  @override
+  String movieDetailReviewCount(int count) {
+    return '$count avaliações';
+  }
+
+  @override
+  String movieDetailListCount(int count) {
+    return '$count listas';
+  }
+
+  @override
+  String get movieDetailDirectedBy => 'Dirigido por';
+
+  @override
+  String movieDetailMinutes(int minutes) {
+    return '$minutes min';
+  }
 }
