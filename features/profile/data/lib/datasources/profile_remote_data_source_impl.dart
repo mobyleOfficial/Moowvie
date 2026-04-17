@@ -1,5 +1,5 @@
 import 'package:core/core.dart';
-import 'package:movies_domain/models/movie.dart';
+import 'package:movies_domain/domain.dart';
 import 'package:profile_data/datasources/profile_remote_data_source.dart';
 import 'package:profile_domain/models/user_profile.dart';
 import 'package:profile_domain/models/user_summary.dart';
@@ -29,78 +29,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 }
 
 const _mockedMoviesWatched = <Movie>[
-  Movie(
-    id: 693134,
-    title: 'Dune: Part Two',
-    overview: '',
-    posterPath: '/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
-    backdropPath: '',
-    voteAverage: 8.2,
-    releaseDate: '2024-02-27',
-  ),
-  Movie(
-    id: 872585,
-    title: 'Oppenheimer',
-    overview: '',
-    posterPath: '/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-    backdropPath: '',
-    voteAverage: 8.1,
-    releaseDate: '2023-07-19',
-  ),
-  Movie(
-    id: 792307,
-    title: 'Poor Things',
-    overview: '',
-    posterPath: '/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg',
-    backdropPath: '',
-    voteAverage: 7.9,
-    releaseDate: '2023-12-07',
-  ),
-  Movie(
-    id: 929590,
-    title: 'The Zone of Interest',
-    overview: '',
-    posterPath: '/hUu9zyZmDd8VZegKi1iK1Vk0RYS.jpg',
-    backdropPath: '',
-    voteAverage: 7.2,
-    releaseDate: '2023-12-15',
-  ),
-  Movie(
-    id: 876969,
-    title: 'Society of the Snow',
-    overview: '',
-    posterPath: '/2e853FDVSIso600RqAMunPxiZjq.jpg',
-    backdropPath: '',
-    voteAverage: 7.9,
-    releaseDate: '2023-12-13',
-  ),
-  Movie(
-    id: 872906,
-    title: 'The Holdovers',
-    overview: '',
-    posterPath: '/VCL6JEvXqR4n3OYejaOnOL2xsm.jpg',
-    backdropPath: '',
-    voteAverage: 7.8,
-    releaseDate: '2023-10-27',
-  ),
-  Movie(
-    id: 507089,
-    title: 'Five Nights at Freddy\'s',
-    overview: '',
-    posterPath: '/3uawmPVd8Ws7hOXbFpnTpvbsvV7.jpg',
-    backdropPath: '',
-    voteAverage: 7.7,
-    releaseDate: '2023-10-25',
-  ),
-  Movie(
-    id: 1029575,
-    title: 'The Family Plan',
-    overview: '',
-    posterPath: '/ih3aZ6oTkRt4hMzZDZzyl2iQxsE.jpg',
-    backdropPath: '',
-    voteAverage: 7.5,
-    releaseDate: '2023-12-15',
-  ),
+  Movie(id: 693134, title: 'Dune: Part Two', posterPath: '/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 8.2, releaseDate: '2024-02-27')),
+  Movie(id: 872585, title: 'Oppenheimer', posterPath: '/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 8.1, releaseDate: '2023-07-19')),
+  Movie(id: 792307, title: 'Poor Things', posterPath: '/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 7.9, releaseDate: '2023-12-07')),
+  Movie(id: 929590, title: 'The Zone of Interest', posterPath: '/hUu9zyZmDd8VZegKi1iK1Vk0RYS.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 7.2, releaseDate: '2023-12-15')),
+  Movie(id: 876969, title: 'Society of the Snow', posterPath: '/2e853FDVSIso600RqAMunPxiZjq.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 7.9, releaseDate: '2023-12-13')),
+  Movie(id: 872906, title: 'The Holdovers', posterPath: '/VCL6JEvXqR4n3OYejaOnOL2xsm.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 7.8, releaseDate: '2023-10-27')),
+  Movie(id: 507089, title: 'Five Nights at Freddy\'s', posterPath: '/3uawmPVd8Ws7hOXbFpnTpvbsvV7.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 7.7, releaseDate: '2023-10-25')),
+  Movie(id: 1029575, title: 'The Family Plan', posterPath: '/ih3aZ6oTkRt4hMzZDZzyl2iQxsE.jpg', info: MovieInfo(overview: '', backdropPath: '', voteAverage: 7.5, releaseDate: '2023-12-15')),
 ];
 
 const _mockedFollowing = <UserSummary>[

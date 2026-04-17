@@ -96,8 +96,8 @@ class _ContentState extends State<_Content> {
       child: Column(
         children: [
           MoovieTabBar(tabs: [
-            l10n?.movieListDetailMoviesTab(detail.totalMovies ?? 0) ?? '',
-            l10n?.movieListDetailCommentsTab(detail.commentsCount ?? 0) ?? '',
+            l10n?.movieListDetailMoviesTab(detail.info?.totalMovies ?? 0) ?? '',
+            l10n?.movieListDetailCommentsTab(detail.info?.commentsCount ?? 0) ?? '',
           ]),
           Expanded(
             child: TabBarView(
@@ -381,10 +381,10 @@ class _MovieListItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (movie.releaseDate.isNotEmpty) ...[
+                      if (movie.info?.releaseDate.isNotEmpty ?? false) ...[
                         const SizedBox(height: 4),
                         Text(
-                          movie.releaseDate,
+                          movie.info!.releaseDate,
                           style: textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -467,11 +467,11 @@ class _Header extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (detail.tags?.isNotEmpty ?? false) ...[
+              if (detail.info?.tags?.isNotEmpty ?? false) ...[
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: detail.tags!
+                  children: detail.info!.tags!
                       .map((tag) => MoovieTag(label: tag))
                       .toList(),
                 ),
