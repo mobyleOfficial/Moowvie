@@ -315,4 +315,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get emptyStateNoItemsMessage => 'Não há itens para exibir.';
+
+  @override
+  String get clearSearch => 'Limpar';
 }

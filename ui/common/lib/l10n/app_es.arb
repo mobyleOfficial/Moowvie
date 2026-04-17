@@ -97,5 +97,6 @@
   "emptyStateErrorMessage": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.",
   "emptyStateRetry": "Reintentar",
   "emptyStateNoItemsTitle": "Nada aquí todavía",
-  "emptyStateNoItemsMessage": "No hay elementos para mostrar."
+  "emptyStateNoItemsMessage": "No hay elementos para mostrar.",
+  "clearSearch": "Limpiar"
 }
