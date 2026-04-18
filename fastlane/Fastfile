@@ -1,5 +1,23 @@
 default_platform(:ios)
 
+# Valid deployment environments
+VALID_ENVS = ['dev', 'prod'].freeze
+
+# Helper method to validate and resolve environment to flavor
+def resolve_env_to_flavor(env)
+  unless VALID_ENVS.include?(env)
+    UI.error("Invalid environment: #{env}")
+    UI.user_error!("Environment must be one of: #{VALID_ENVS.join(', ')}")
+  end
+
+  env_to_flavor = {
+    'dev' => 'dev',
+    'prod' => 'prod'
+  }
+
+  env_to_flavor[env]
+end
+
 # Common lanes (available for all platforms)
 desc "Setup IDE run configurations"
 lane :setup_ide do
@@ -116,7 +134,10 @@ platform :ios do
 
   desc "Deploy iOS to TestFlight"
   lane :deploy_testflight do |options|
-    env = options[:env] || "prod"
+    env = options[:env]
+    UI.user_error!("Environment is required. Use: fastlane ios deploy_testflight env:dev or env:prod") unless env
+
+    flavor = resolve_env_to_flavor(env)
     dry_run = options[:dry_run].nil? || options[:dry_run] == true || options[:dry_run] == "true"
 
     if dry_run
@@ -124,8 +145,6 @@ platform :ios do
     else
       UI.important("⚠️  PRODUCTION MODE - Submitting to TestFlight")
     end
-
-    flavor = env == "prod" ? "prod" : "dev"
 
     # Build IPA
     build_app(
@@ -189,7 +208,10 @@ platform :android do
 
   desc "Deploy Android to Google Play"
   lane :deploy_play do |options|
-    env = options[:env] || "prod"
+    env = options[:env]
+    UI.user_error!("Environment is required. Use: fastlane android deploy_play env:dev or env:prod") unless env
+
+    flavor = resolve_env_to_flavor(env)
     dry_run = options[:dry_run].nil? || options[:dry_run] == true || options[:dry_run] == "true"
 
     if dry_run
@@ -197,8 +219,6 @@ platform :android do
     else
       UI.important("⚠️  PRODUCTION MODE - Submitting to Google Play Beta")
     end
-
-    flavor = env == "prod" ? "prod" : "dev"
 
     if dry_run
       UI.success("✓ DRY RUN succeeded - Build is ready for upload")
