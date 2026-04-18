@@ -16,9 +16,9 @@
 # Note: macos_version should match the macOS version supported by the Xcode version specified.
 
 # CI Tests - Toggle test execution
-run_ios_tests: false
-run_android_tests: false
-run_linter: false
+run_ios_tests: true
+run_android_tests: true
+run_linter: true
 
 # Test Devices/Emulators
 # Run `xcrun simctl list devices` to find available simulators
