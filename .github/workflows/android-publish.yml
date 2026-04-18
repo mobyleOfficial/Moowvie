@@ -117,8 +117,11 @@ jobs:
       - name: Determine flavor
         id: flavor
         run: |
-          if [[ "${{ inputs.environment }}" == "prod" ]]; then
+          ENV="${{ github.event_name == 'push' && 'prod' || inputs.environment }}"
+          if [[ "$ENV" == "prod" ]]; then
             echo "flavor=prod" >> $GITHUB_OUTPUT
+          elif [[ "$ENV" == "staging" ]]; then
+            echo "flavor=staging" >> $GITHUB_OUTPUT
           else
             echo "flavor=dev" >> $GITHUB_OUTPUT
           fi
