@@ -18,7 +18,7 @@
 # CI Tests - Toggle test execution
 run_ios_tests: false
 run_android_tests: false
-run_linter: false
+run_linter: true
 
 # Test Devices/Emulators
 # Run `xcrun simctl list devices` to find available simulators
