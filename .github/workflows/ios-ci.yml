@@ -38,10 +38,9 @@ jobs:
     outputs:
       run_ios_tests: ${{ steps.config.outputs.run_ios_tests }}
       run_linter: ${{ steps.config.outputs.run_linter }}
-      ios_test_device: ${{ steps.config.outputs.ios_test_device }}
+      flutter_version: ${{ steps.config.outputs.flutter_version }}
       xcode_version: ${{ steps.config.outputs.xcode_version }}
       macos_version: ${{ steps.config.outputs.macos_version }}
-      flutter_version: ${{ steps.config.outputs.flutter_version }}
 
     steps:
       - name: Checkout code

@@ -39,6 +39,8 @@ jobs:
       run_android_tests: ${{ steps.config.outputs.run_android_tests }}
       run_linter: ${{ steps.config.outputs.run_linter }}
       flutter_version: ${{ steps.config.outputs.flutter_version }}
+      android_java_version: ${{ steps.config.outputs.android_java_version }}
+      android_java_distribution: ${{ steps.config.outputs.android_java_distribution }}
 
     steps:
       - name: Checkout code
@@ -57,12 +59,16 @@ jobs:
           run_android_tests=$(grep -E '^\s*run_android_tests:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
           run_linter=$(grep -E '^\s*run_linter:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
           flutter_version=$(grep -E '^\s*flutter_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
+          android_java_version=$(grep -E '^\s*android_java_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
+          android_java_distribution=$(grep -E '^\s*android_java_distribution:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
 
           # Validate required values are not empty
-          if [ -z "$run_android_tests" ] || [ -z "$flutter_version" ]; then
+          if [ -z "$run_android_tests" ] || [ -z "$flutter_version" ] || [ -z "$android_java_version" ] || [ -z "$android_java_distribution" ]; then
             echo "ERROR: Missing required values in .actions.yml"
             echo "  run_android_tests: $run_android_tests"
             echo "  flutter_version: $flutter_version"
+            echo "  android_java_version: $android_java_version"
+            echo "  android_java_distribution: $android_java_distribution"
             exit 1
           fi
 
@@ -70,12 +76,16 @@ jobs:
           echo "run_android_tests=$run_android_tests" >> $GITHUB_OUTPUT
           echo "run_linter=$run_linter" >> $GITHUB_OUTPUT
           echo "flutter_version=$flutter_version" >> $GITHUB_OUTPUT
+          echo "android_java_version=$android_java_version" >> $GITHUB_OUTPUT
+          echo "android_java_distribution=$android_java_distribution" >> $GITHUB_OUTPUT
 
           # Debug output
           echo "Configuration loaded:"
           echo "  run_android_tests=$run_android_tests"
           echo "  run_linter=$run_linter"
           echo "  flutter_version=$flutter_version"
+          echo "  android_java_version=$android_java_version"
+          echo "  android_java_distribution=$android_java_distribution"
 
   test:
     name: Android Tests
@@ -90,8 +100,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: ${{ needs.config.outputs.android_java_version }}
+          distribution: ${{ needs.config.outputs.android_java_distribution }}
           cache: gradle
 
       - name: Setup Flutter
