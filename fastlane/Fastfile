@@ -157,14 +157,24 @@ platform :ios do
         UI.user_error!("Set APP_STORE_CONNECT_API_KEY_* environment variables")
       end
 
-      upload_to_testflight(
-        api_key_path: "#{Dir.pwd}/build/ios/authkey.p8",
-        ipa: "build/ios/ipa/Runner.ipa",
-        skip_waiting_for_build_processing: false,
-        changelog: "#{env.capitalize} build from #{Time.now}"
-      )
+      # Write API key to file
+      api_key_path = "#{Dir.pwd}/build/ios/authkey.p8"
+      FileUtils.mkdir_p(File.dirname(api_key_path))
+      File.write(api_key_path, api_key_content)
 
-      UI.success("✓ iOS app uploaded to TestFlight successfully!")
+      begin
+        upload_to_testflight(
+          api_key_path: api_key_path,
+          ipa: "build/ios/ipa/Runner.ipa",
+          skip_waiting_for_build_processing: false,
+          changelog: "#{env.capitalize} build from #{Time.now}"
+        )
+
+        UI.success("✓ iOS app uploaded to TestFlight successfully!")
+      ensure
+        # Clean up the temporary API key file
+        File.delete(api_key_path) if File.exist?(api_key_path)
+      end
     end
   end
 end
@@ -203,6 +213,7 @@ platform :android do
 
       # Write API JSON to temp file
       api_json_path = "#{Dir.pwd}/build/android/google-play-api.json"
+      FileUtils.mkdir_p(File.dirname(api_json_path))
       File.write(api_json_path, api_json)
 
       # Upload to Google Play
