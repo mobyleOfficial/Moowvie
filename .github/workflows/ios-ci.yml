@@ -1,0 +1,111 @@
+name: iOS CI - Build and Test
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+    paths:
+      - 'lib/**'
+      - 'ios/**'
+      - 'test/**'
+      - 'fastlane/**'
+      - '.github/workflows/ios-ci.yml'
+      - '.actions.yml'
+      - 'pubspec.yaml'
+  pull_request:
+    branches:
+      - dev
+      - main
+    paths:
+      - 'lib/**'
+      - 'ios/**'
+      - 'test/**'
+      - 'fastlane/**'
+      - '.github/workflows/ios-ci.yml'
+      - '.actions.yml'
+      - 'pubspec.yaml'
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  config:
+    name: Load Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      run_ios_tests: ${{ steps.config.outputs.run_ios_tests }}
+      run_linter: ${{ steps.config.outputs.run_linter }}
+      ios_test_device: ${{ steps.config.outputs.ios_test_device }}
+      xcode_version: ${{ steps.config.outputs.xcode_version }}
+      macos_version: ${{ steps.config.outputs.macos_version }}
+      flutter_version: ${{ steps.config.outputs.flutter_version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read .actions.yml
+        id: config
+        run: |
+          run_ios_tests=$(grep -E '^\s*run_ios_tests:\s*' .actions.yml | sed 's/.*:\s*//')
+          run_linter=$(grep -E '^\s*run_linter:\s*' .actions.yml | sed 's/.*:\s*//')
+          ios_test_device=$(grep -E '^\s*ios_test_device:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"')
+          xcode_version=$(grep -E '^\s*xcode_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"')
+          macos_version=$(grep -E '^\s*macos_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"')
+          flutter_version=$(grep -E '^\s*flutter_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"')
+
+          echo "run_ios_tests=$run_ios_tests" >> $GITHUB_OUTPUT
+          echo "run_linter=$run_linter" >> $GITHUB_OUTPUT
+          echo "ios_test_device=$ios_test_device" >> $GITHUB_OUTPUT
+          echo "xcode_version=$xcode_version" >> $GITHUB_OUTPUT
+          echo "macos_version=$macos_version" >> $GITHUB_OUTPUT
+          echo "flutter_version=$flutter_version" >> $GITHUB_OUTPUT
+
+  test:
+    name: iOS Tests
+    needs: config
+    if: needs.config.outputs.run_ios_tests == 'true'
+    runs-on: macos-${{ needs.config.outputs.macos_version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ needs.config.outputs.flutter_version }}
+          cache: true
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run linter
+        if: needs.config.outputs.run_linter == 'true'
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build iOS (dry run)
+        run: flutter build ios --flavor=dev --simulator
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: coverage/
+          retention-days: 7
