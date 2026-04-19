@@ -80,9 +80,7 @@ jobs:
         run: bundle exec fastlane android build flavor:${{ steps.flavor.outputs.flavor }}
 
       - name: Deploy to Google Play (${{ github.event_name == 'push' && 'prod' || inputs.environment }})
-        run: |
-          cd android
-          bundle exec fastlane deploy_play env:${{ github.event_name == 'push' && 'prod' || inputs.environment }} dry_run:false
+        run: bundle exec fastlane android deploy_play env:${{ github.event_name == 'push' && 'prod' || inputs.environment }} dry_run:false
         env:
           GOOGLE_PLAY_API_JSON_DEV: ${{ secrets.GOOGLE_PLAY_API_JSON_DEV }}
           GOOGLE_PLAY_API_JSON_STAGING: ${{ secrets.GOOGLE_PLAY_API_JSON_STAGING }}
