@@ -54,6 +54,7 @@ jobs:
         with:
           flutter-version: ${{ needs.config.outputs.flutter_version }}
           ruby-version: ${{ needs.config.outputs.ruby_version }}
+          xcode-version: ${{ needs.config.outputs.xcode_version }}
           setup-ci-env: 'false'
 
       - name: Analyze Dart
@@ -80,11 +81,12 @@ jobs:
         with:
           flutter-version: ${{ needs.config.outputs.flutter_version }}
           ruby-version: ${{ needs.config.outputs.ruby_version }}
+          xcode-version: ${{ needs.config.outputs.xcode_version }}
           tmdb-api-key: ${{ secrets.TMDB_API_KEY }}
           backend-url: ${{ secrets.BACKEND_URL }}
 
       - name: Run tests
-        run: bundle exec fastlane test
+        run: bundle exec fastlane test device:${{ needs.config.outputs.ios_test_device }}
 
       - name: Upload coverage
         if: always()
@@ -95,7 +97,7 @@ jobs:
           retention-days: 7
 
       - name: Build iOS
-        run: bundle exec fastlane ios build flavor:dev simulator:true
+        run: bundle exec fastlane ios build flavor:dev simulator:true device:${{ needs.config.outputs.ios_test_device }}
 
       - name: Upload build artifacts
         if: always()
@@ -176,7 +178,24 @@ jobs:
       - name: Merge coverage reports
         run: |
           mkdir -p testResults
-          cp coverage-ios/lcov.info testResults/lcov.info || true
+
+          # Check if we have coverage files
+          if [ -f coverage-ios/lcov.info ]; then
+            cp coverage-ios/lcov.info testResults/lcov-ios.info
+          fi
+
+          if [ -f coverage-android/lcov.info ]; then
+            cp coverage-android/lcov.info testResults/lcov-android.info
+          fi
+
+          # Use iOS coverage if available, otherwise Android
+          if [ -f testResults/lcov-ios.info ]; then
+            cp testResults/lcov-ios.info testResults/lcov.info
+          elif [ -f testResults/lcov-android.info ]; then
+            cp testResults/lcov-android.info testResults/lcov.info
+          else
+            echo "WARNING: No coverage files found"
+          fi
 
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
