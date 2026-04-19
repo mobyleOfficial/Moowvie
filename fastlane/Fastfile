@@ -64,7 +64,7 @@ lane :setup_env do
 end
 
 desc "Setup environment for CI builds (from environment variables)"
-lane :setup_ci do
+lane :setup_ci_env do
   tmdb_key = ENV["TMDB_API_KEY"]
   backend_url = ENV["BACKEND_URL"]
 
