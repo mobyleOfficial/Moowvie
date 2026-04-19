@@ -29,7 +29,7 @@ jobs:
       - name: Check branch
         run: |
           BRANCH=${{ github.ref_name }}
-          if [[ "$BRANCH" != "dev" && "$BRANCH" != "main" ]]; then
+          if [[ "$BRANCH" != "dev" ]] && [[ "$BRANCH" != "main" ]]; then
             echo "❌ Error: Can only deploy from 'dev' or 'main' branches"
             echo "Current branch: $BRANCH"
             exit 1
