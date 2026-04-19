@@ -114,7 +114,12 @@ lane :test do |options|
   report_dir = "#{root}/testResults"
   FileUtils.mkdir_p(report_dir)
 
-  sh("cd #{root} && flutter test --coverage --machine > #{report_dir}/flutter-test-results.json")
+  device = options[:device]
+  cmd = "cd #{root} && flutter test --coverage --machine"
+  cmd += " -d '#{device}'" if device
+  cmd += " > #{report_dir}/flutter-test-results.json"
+
+  sh(cmd)
   sh("cd #{root} && mv coverage/lcov.info #{report_dir}/lcov.info 2>/dev/null || true")
 end
 
