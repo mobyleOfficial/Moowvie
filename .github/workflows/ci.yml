@@ -109,6 +109,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Run code generation
+        run: bundle exec fastlane codegen
+
       - name: Analyze Dart
         uses: zgosalvez/github-actions-analyze-dart@v4
         with:
@@ -221,3 +224,37 @@ jobs:
           name: android-apk
           path: build/app/outputs/apk/
           retention-days: 7
+
+  report:
+    name: Report Coverage & Tests
+    needs: [test-ios, test-android]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download iOS coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-coverage
+          path: coverage-ios/
+
+      - name: Download Android coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: android-coverage
+          path: coverage-android/
+
+      - name: Merge coverage reports
+        run: |
+          mkdir -p testResults
+          cp coverage-ios/lcov.info testResults/lcov.info || true
+
+      - name: Report Coverage
+        uses: zgosalvez/github-actions-report-lcov@v4
+        with:
+          coverage-files: testResults/lcov.info
+          minimum-coverage: ${{ github.event_name == 'pull_request' && '80' || '0' }}
+          artifact-retention-days: 7
