@@ -70,6 +70,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup yq
+        uses: mikefarah/yq@v4
+
       - name: Read .actions.yml
         id: config
         run: |
@@ -78,23 +81,24 @@ jobs:
             exit 1
           fi
 
-          run_ios_tests=$(grep -E '^\s*run_ios_tests:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
-          run_android_tests=$(grep -E '^\s*run_android_tests:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
-          run_linter=$(grep -E '^\s*run_linter:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
-          deploy_ios=$(grep -E '^\s*deploy_ios:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
-          deploy_android=$(grep -E '^\s*deploy_android:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
-          flutter_version=$(grep -E '^\s*flutter_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          ruby_version=$(grep -E '^\s*ruby_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          android_java_version=$(grep -E '^\s*android_java_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          android_java_distribution=$(grep -E '^\s*android_java_distribution:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          macos_version=$(grep -E '^\s*macos_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          test_coverage_minimum=$(grep -E '^\s*test_coverage_minimum:\s*' .actions.yml | sed 's/.*:\s*//' | xargs)
-          ios_test_device=$(grep -E '^\s*ios_test_device:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          android_test_emulator=$(grep -E '^\s*android_test_emulator:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
-          xcode_version=$(grep -E '^\s*xcode_version:\s*' .actions.yml | sed 's/.*:\s*//' | tr -d '"' | xargs)
+          run_ios_tests=$(yq '.run_ios_tests' .actions.yml)
+          run_android_tests=$(yq '.run_android_tests' .actions.yml)
+          run_linter=$(yq '.run_linter' .actions.yml)
+          deploy_ios=$(yq '.deploy_ios' .actions.yml)
+          deploy_android=$(yq '.deploy_android' .actions.yml)
+          flutter_version=$(yq '.flutter_version' .actions.yml)
+          ruby_version=$(yq '.ruby_version' .actions.yml)
+          android_java_version=$(yq '.android_java_version' .actions.yml)
+          android_java_distribution=$(yq '.android_java_distribution' .actions.yml)
+          macos_version=$(yq '.macos_version' .actions.yml)
+          test_coverage_minimum=$(yq '.test_coverage_minimum' .actions.yml)
+          ios_test_device=$(yq '.ios_test_device' .actions.yml)
+          android_test_emulator=$(yq '.android_test_emulator' .actions.yml)
+          xcode_version=$(yq '.xcode_version' .actions.yml)
 
-          if [ -z "$run_ios_tests" ] || [ -z "$run_android_tests" ] || [ -z "$flutter_version" ]; then
+          if [ "$run_ios_tests" = "null" ] || [ "$run_android_tests" = "null" ] || [ "$flutter_version" = "null" ] || [ "$ruby_version" = "null" ] || [ "$macos_version" = "null" ]; then
             echo "ERROR: Missing required values in .actions.yml"
+            echo "Required: run_ios_tests, run_android_tests, flutter_version, ruby_version, macos_version"
             exit 1
           fi
 
@@ -113,4 +117,4 @@ jobs:
           echo "android_test_emulator=$android_test_emulator" >> $GITHUB_OUTPUT
           echo "xcode_version=$xcode_version" >> $GITHUB_OUTPUT
 
-          echo "Configuration loaded: ios=$run_ios_tests, android=$run_android_tests, linter=$run_linter, deploy_ios=$deploy_ios, deploy_android=$deploy_android, coverage_min=$test_coverage_minimum"
+          echo "Configuration loaded: ios=$run_ios_tests, android=$run_android_tests, linter=$run_linter, deploy_ios=$deploy_ios, deploy_android=$deploy_android, coverage_min=$test_coverage_minimum, xcode=$xcode_version"

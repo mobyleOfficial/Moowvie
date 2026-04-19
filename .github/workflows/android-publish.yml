@@ -66,33 +66,14 @@ jobs:
 
       - name: Determine flavor
         id: flavor
-        run: |
-          ENV="${{ github.event_name == 'push' && 'prod' || inputs.environment }}"
-          if [[ "$ENV" == "prod" ]]; then
-            echo "flavor=prod" >> $GITHUB_OUTPUT
-          elif [[ "$ENV" == "staging" ]]; then
-            echo "flavor=staging" >> $GITHUB_OUTPUT
-          else
-            echo "flavor=dev" >> $GITHUB_OUTPUT
-          fi
+        uses: ./.github/actions/determine-flavor
+        with:
+          environment: ${{ inputs.environment }}
 
       - name: Setup Android signing
-        run: |
-          mkdir -p android/app/signing
-          ENV_UPPER=${{ inputs.environment }}
-          ENV_UPPER=${ENV_UPPER^^}
-          SECRET_KEYSTORE="ANDROID_KEYSTORE_BASE64_${ENV_UPPER}"
-          SECRET_PASS="ANDROID_KEYSTORE_PASSWORD_${ENV_UPPER}"
-          SECRET_ALIAS="ANDROID_KEY_ALIAS_${ENV_UPPER}"
-          SECRET_KEY_PASS="ANDROID_KEY_PASSWORD_${ENV_UPPER}"
-
-          echo "${!SECRET_KEYSTORE}" | base64 -d > android/app/signing/upload-keystore.jks
-          cat > android/key.properties << EOF
-          storeFile=app/signing/upload-keystore.jks
-          storePassword=${!SECRET_PASS}
-          keyAlias=${!SECRET_ALIAS}
-          keyPassword=${!SECRET_KEY_PASS}
-          EOF
+        uses: ./.github/actions/setup-android-signing
+        with:
+          environment: ${{ github.event_name == 'push' && 'prod' || inputs.environment }}
 
       - name: Build Android (${{ steps.flavor.outputs.flavor }})
         run: bundle exec fastlane android build flavor:${{ steps.flavor.outputs.flavor }}
