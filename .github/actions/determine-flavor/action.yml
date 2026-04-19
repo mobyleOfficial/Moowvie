@@ -22,14 +22,12 @@ runs:
         ENV="${{ github.event_name == 'push' && 'prod' || inputs.environment }}"
 
         case "$ENV" in
-          prod)
-            echo "flavor=prod" >> $GITHUB_OUTPUT
-            ;;
-          staging)
-            echo "flavor=staging" >> $GITHUB_OUTPUT
+          prod|staging|dev)
+            echo "flavor=$ENV" >> $GITHUB_OUTPUT
             ;;
           *)
-            echo "flavor=dev" >> $GITHUB_OUTPUT
+            echo "ERROR: Invalid environment '$ENV'. Must be one of: prod, staging, dev"
+            exit 1
             ;;
         esac
       shell: bash

@@ -73,9 +73,7 @@ jobs:
         run: bundle exec fastlane ios build flavor:${{ steps.flavor.outputs.flavor }}
 
       - name: Deploy to TestFlight (${{ github.event_name == 'push' && 'prod' || inputs.environment }})
-        run: |
-          cd ios
-          bundle exec fastlane deploy_testflight env:${{ github.event_name == 'push' && 'prod' || inputs.environment }} dry_run:false
+        run: bundle exec fastlane ios deploy_testflight env:${{ github.event_name == 'push' && 'prod' || inputs.environment }} dry_run:false
         env:
           APP_STORE_CONNECT_API_KEY_ID_DEV: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID_DEV }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID_DEV: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID_DEV }}
