@@ -36,12 +36,11 @@ permissions:
 jobs:
   config:
     name: Config
-    needs: check-coauthors
     uses: ./.github/workflows/load-config.yml
 
   lint:
     name: Lint
-    needs: [check-coauthors, config]
+    needs: config
     runs-on: ubuntu-latest
     if: needs.config.outputs.run_linter == 'true'
     env:
@@ -66,7 +65,7 @@ jobs:
 
   test-ios:
     name: iOS - Test & Build
-    needs: [check-coauthors, config]
+    needs: config
     if: needs.config.outputs.run_ios_tests == 'true'
     runs-on: macos-${{ needs.config.outputs.macos_version }}
     environment: dev
@@ -110,7 +109,7 @@ jobs:
 
   test-android:
     name: Android - Test & Build
-    needs: [check-coauthors, config]
+    needs: config
     if: needs.config.outputs.run_android_tests == 'true'
     runs-on: ubuntu-latest
     environment: dev
@@ -156,7 +155,7 @@ jobs:
 
   report:
     name: Report Coverage & Tests
-    needs: [check-coauthors, config, test-ios, test-android]
+    needs: [config, test-ios, test-android]
     runs-on: ubuntu-latest
     if: always() && (needs.config.outputs.run_ios_tests == 'true' || needs.config.outputs.run_android_tests == 'true')
 
