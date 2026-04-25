@@ -25,12 +25,15 @@ jobs:
           set +e
 
           # Get list of commits in this PR
-          commits=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits --jq '.[].commit.message' 2>/dev/null || echo "")
+          commits=$(gh api repos/"${{ github.repository }}"/pulls/"${{ github.event.pull_request.number }}"/commits --jq '.[].commit.message' 2>/dev/null || echo "")
 
           # Check for Co-Authored-By footer (case-insensitive)
           if echo "$commits" | grep -qi "co-authored-by:"; then
             echo "found=true" >> $GITHUB_OUTPUT
-            echo "$commits" | grep -i "co-authored-by:" > /tmp/violations.txt || true
+            violations=$(echo "$commits" | grep -i "co-authored-by:" || true)
+            # Use delimited string for multiline output
+            violations_encoded="${violations//$'\n'/'%0A'}"
+            echo "violations=${violations_encoded}" >> $GITHUB_OUTPUT
             exit 1
           else
             echo "found=false" >> $GITHUB_OUTPUT
@@ -44,8 +47,17 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const violations = fs.readFileSync('/tmp/violations.txt', 'utf8').trim();
+            // Get violations from previous step output
+            const violationsEncoded = '${{ steps.check.outputs.violations }}';
+
+            // Validate that violations are present
+            if (!violationsEncoded) {
+              console.warn('Warning: No violations output found');
+              return;
+            }
+
+            // Decode the violations (replace URL-encoded newlines)
+            const violations = violationsEncoded.replace(/%0A/g, '\n').trim();
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
