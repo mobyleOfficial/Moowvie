@@ -9,8 +9,6 @@ import 'package:movies_data/models/remote/remote_movie_list_detail.dart';
 import 'package:movies_data/models/remote/remote_movie_list_listing.dart';
 import 'package:movies_data/models/remote/remote_movie_detail.dart';
 import 'package:movies_data/models/remote/remote_movie_review.dart';
-import 'package:movies_data/models/remote/remote_movie_review_comment.dart';
-import 'package:movies_data/models/remote/remote_movie_review_comment_listing.dart';
 import 'package:movies_data/models/remote/remote_movie_review_listing.dart';
 import 'package:movies_data/models/remote/remote_country.dart';
 import 'package:movies_data/models/remote/remote_genre.dart';
@@ -311,7 +309,6 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
   static const int _favoriteMoviesPageSize = 6;
   static const int _watchListPageSize = 6;
   static const int _listDetailPageSize = 6;
-  static const int _commentsPageSize = 20;
 
   @override
   Future<Result<RemoteMovieListing>> getTrendingMovieList({
@@ -423,51 +420,6 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
       }
     }
     return const Failure(AppError.notFound);
-  }
-
-  @override
-  Future<Result<RemoteMovieReviewCommentListing>> getReviewComments({
-    required String reviewId,
-    required int page,
-  }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-
-    // Find the review's commentCount via the deterministic mocked list.
-    final allReviews = _mockedReviews;
-    final matchingReview = allReviews
-        .where((review) => review.reviewId == reviewId)
-        .toList();
-    final commentCount =
-        matchingReview.isNotEmpty ? matchingReview.first.commentCount : 0;
-
-    final allComments = List.generate(
-      commentCount,
-      (index) => RemoteMovieReviewComment(
-        id: '$reviewId-c-$index',
-        reviewId: reviewId,
-        authorId: 'u-${(index % 7) + 1}',
-        authorName: 'Commenter ${index + 1}',
-        body: 'Mocked comment $index for $reviewId.',
-        createdAt: 'Mar ${10 - (index % 10)}, 2024',
-      ),
-    );
-
-    final totalPages = allComments.isEmpty
-        ? 1
-        : (allComments.length / _commentsPageSize).ceil();
-    final startIndex = (page - 1) * _commentsPageSize;
-    final endIndex = startIndex + _commentsPageSize;
-    final pageComments = allComments.sublist(
-      startIndex.clamp(0, allComments.length),
-      endIndex.clamp(0, allComments.length),
-    );
-
-    return Success(RemoteMovieReviewCommentListing(
-      page: page,
-      totalPages: totalPages,
-      totalResults: allComments.length,
-      comments: pageComments,
-    ));
   }
 
   @override

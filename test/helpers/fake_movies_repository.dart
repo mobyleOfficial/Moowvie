@@ -7,16 +7,12 @@ import 'package:movies_domain/domain.dart';
 class FakeMoviesRepository implements MoviesRepository {
   Result<MovieReview> reviewDetailsResult =
       const Failure(AppError.unknown);
-  Result<MovieReviewCommentListing> reviewCommentsResult =
-      const Failure(AppError.unknown);
   Result<void> likeReviewResult = const Success(null);
   Result<void> unlikeReviewResult = const Success(null);
   Result<MovieReviewListing> movieReviewsResult =
       const Failure(AppError.unknown);
 
   String? lastGetReviewDetailsId;
-  String? lastGetReviewCommentsId;
-  int? lastGetReviewCommentsPage;
   String? lastLikeReviewId;
   String? lastUnlikeReviewId;
 
@@ -24,16 +20,6 @@ class FakeMoviesRepository implements MoviesRepository {
   Future<Result<MovieReview>> getReviewDetails({required String reviewId}) async {
     lastGetReviewDetailsId = reviewId;
     return reviewDetailsResult;
-  }
-
-  @override
-  Future<Result<MovieReviewCommentListing>> getReviewComments({
-    required String reviewId,
-    required int page,
-  }) async {
-    lastGetReviewCommentsId = reviewId;
-    lastGetReviewCommentsPage = page;
-    return reviewCommentsResult;
   }
 
   @override

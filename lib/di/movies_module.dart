@@ -43,10 +43,6 @@ abstract class MoviesModule {
       GetReviewDetails(repository);
 
   @injectable
-  GetReviewComments getReviewComments(MoviesRepository repository) =>
-      GetReviewComments(repository);
-
-  @injectable
   LikeReview likeReview(MoviesRepository repository) =>
       LikeReview(repository);
 

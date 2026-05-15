@@ -1,3 +1,4 @@
+import 'package:comments/comments.dart';
 import 'package:common/common.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:movies_domain/domain.dart';
 import 'package:reviews/review_details/review_details_bloc.dart';
 import 'package:reviews/review_details/review_details_screen.dart';
 
+import '../../../helpers/fake_comments_repository.dart';
 import '../../../helpers/fake_movies_repository.dart';
 
 class _FakeShareService implements ShareService {
@@ -33,11 +35,21 @@ const _sampleReview = MovieReview(
 void main() {
   setUp(() {
     final shareService = _FakeShareService();
+    final commentsRepository = FakeCommentsRepository();
+    final getCommentsUseCase = GetCommentsUseCase(commentsRepository);
     final getIt = GetIt.instance;
+
+    // Clear existing registrations
     if (getIt.isRegistered<ShareService>()) {
       getIt.unregister<ShareService>();
     }
+    if (getIt.isRegistered<GetCommentsUseCase>()) {
+      getIt.unregister<GetCommentsUseCase>();
+    }
+
+    // Register dependencies
     getIt.registerLazySingleton<ShareService>(() => shareService);
+    getIt.registerLazySingleton<GetCommentsUseCase>(() => getCommentsUseCase);
   });
 
   tearDown(() async {
@@ -48,14 +60,6 @@ void main() {
       (tester) async {
     final repository = FakeMoviesRepository()
       ..reviewDetailsResult = const Success(_sampleReview)
-      ..reviewCommentsResult = const Success(
-        MovieReviewCommentListing(
-          page: 1,
-          totalPages: 1,
-          totalResults: 0,
-          comments: [],
-        ),
-      )
       ..movieReviewsResult = const Success(
         MovieReviewListing(totalPages: 1, totalResults: 0, reviews: []),
       );
@@ -63,7 +67,6 @@ void main() {
     final cubit = ReviewDetailsCubit(
       reviewId: 'r-1-0',
       getReviewDetails: GetReviewDetails(repository),
-      getReviewComments: GetReviewComments(repository),
       getMovieReviews: GetMovieReviews(repository),
       likeReview: LikeReview(repository),
       unlikeReview: UnlikeReview(repository),

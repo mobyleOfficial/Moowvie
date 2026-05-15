@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:comments_ui/comments_screen.dart';
 import 'package:common/common.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ import 'package:public_profile/public_profile_router.dart';
 import 'package:reviews/review_details/review_details_bloc.dart';
 import 'package:reviews/review_details/review_details_router.dart';
 import 'package:reviews/review_details/review_details_state.dart';
-import 'package:reviews/review_details/widgets/comments_bottom_sheet.dart';
 
 class ReviewDetailsScreen extends StatefulWidget {
   final ReviewDetailsCubit cubit;
@@ -130,11 +130,7 @@ class _ReviewDetailsSuccessView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _CommentsSection(
-              comments: state.comments,
-              review: review,
-              onRetry: cubit.retryComments,
-            ),
+            CommentsScreen(contentId: review.id),
             const SizedBox(height: 16),
             _OtherReviewsSection(
               data: state.otherReviewsForMovie,
@@ -395,159 +391,6 @@ class _LikeCountRow extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _CommentsSection extends StatelessWidget {
-  final Result<MovieReviewCommentListing>? comments;
-  final MovieReview review;
-  final Future<void> Function() onRetry;
-
-  const _CommentsSection({
-    required this.comments,
-    required this.review,
-    required this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    final headerWidget = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Text(
-        l10n?.reviewDetailsCommentsTitle ?? '',
-        style: textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: colorScheme.onSurface,
-        ),
-      ),
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        headerWidget,
-        const SizedBox(height: 12),
-        if (comments == null)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(child: CircularProgressIndicator()),
-          )
-        else
-          switch (comments!) {
-            Failure() => _InlineRetryRow(
-                message: l10n?.reviewDetailsLoadCommentsError ?? '',
-                onRetry: onRetry,
-              ),
-            Success(:final data) => _CommentsPreview(
-                listing: data,
-                review: review,
-              ),
-          },
-      ],
-    );
-  }
-}
-
-class _CommentsPreview extends StatelessWidget {
-  final MovieReviewCommentListing listing;
-  final MovieReview review;
-
-  const _CommentsPreview({required this.listing, required this.review});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    if (listing.comments.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        child: Text(
-          l10n?.reviewDetailsNoComments ?? '',
-          style: textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
-    }
-
-    final preview = listing.comments.take(3).toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...preview.map((comment) => _CommentTile(comment: comment)),
-        if (listing.totalResults > 3)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: TextButton(
-              onPressed: () => MoovieBottomSheet.show<void>(
-                context: context,
-                builder: (_) => CommentsBottomSheet(reviewId: review.id),
-              ),
-              child: Text(
-                l10n?.reviewDetailsViewAllComments(listing.totalResults) ?? '',
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _CommentTile extends StatelessWidget {
-  final MovieReviewComment comment;
-
-  const _CommentTile({required this.comment});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    return Semantics(
-      label: '${comment.authorName}: ${comment.body}',
-      child: ExcludeSemantics(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    comment.authorName,
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    comment.createdAt,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                comment.body,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
