@@ -12,7 +12,8 @@ String? resolveRouteTitle(RouteData<dynamic> routeData) => switch (routeData.nam
         final title = args.movieTitle;
         return title != null ? '$title Reviews' : 'Reviews';
       }(),
-      ReviewDetailsRoute.name => routeData.argsAs<ReviewDetailsRouteArgs>().movieTitle,
+      ReviewDetailsRoute.name =>
+          routeData.argsAs<ReviewDetailsRouteArgs>().movieTitle,
       MovieDetailRoute.name => routeData.argsAs<MovieDetailRouteArgs>().movieTitle,
       MovieListDetailRoute.name => routeData.argsAs<MovieListDetailRouteArgs>().listName,
       PublicProfileRoute.name => routeData.argsAs<PublicProfileRouteArgs>().userId,

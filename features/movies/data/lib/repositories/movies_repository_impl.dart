@@ -47,6 +47,53 @@ class MoviesRepositoryImpl implements MoviesRepository {
     };
   }
 
+  @override
+  Future<Result<MovieReview>> getReviewDetails({
+    required String reviewId,
+  }) async {
+    final result = await _dataSource.getReviewDetails(reviewId: reviewId);
+
+    return switch (result) {
+      Success(:final data) => Success(data.toDomain()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<MovieReviewCommentListing>> getReviewComments({
+    required String reviewId,
+    required int page,
+  }) async {
+    final result = await _dataSource.getReviewComments(
+      reviewId: reviewId,
+      page: page,
+    );
+
+    return switch (result) {
+      Success(:final data) => Success(data.toDomain()),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<void>> likeReview({required String reviewId}) async {
+    final result = await _dataSource.likeReview(reviewId: reviewId);
+
+    return switch (result) {
+      Success() => const Success(null),
+      Failure(:final error) => Failure(error),
+    };
+  }
+
+  @override
+  Future<Result<void>> unlikeReview({required String reviewId}) async {
+    final result = await _dataSource.unlikeReview(reviewId: reviewId);
+
+    return switch (result) {
+      Success() => const Success(null),
+      Failure(:final error) => Failure(error),
+    };
+  }
 
   @override
   Future<Result<MovieListListing>> getMovieLists({

@@ -388,4 +388,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String movieDetailMovieReviews(String title) {
     return '$title Reviews';
   }
+
+  @override
+  String get reviewDetailsShare => 'Share review';
+
+  @override
+  String get reviewDetailsLike => 'Like review';
+
+  @override
+  String get reviewDetailsUnlike => 'Unlike review';
+
+  @override
+  String get reviewDetailsLikeError => 'Couldn\'t update like. Try again.';
+
+  @override
+  String reviewDetailsLikeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count likes',
+      one: '1 like',
+      zero: 'No likes yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDetailsCommentsTitle => 'Comments';
+
+  @override
+  String reviewDetailsViewAllComments(int count) {
+    return 'View all ($count)';
+  }
+
+  @override
+  String get reviewDetailsNoComments => 'No comments yet';
+
+  @override
+  String get reviewDetailsOtherReviewsForMovie =>
+      'Other reviews for this movie';
+
+  @override
+  String reviewDetailsMoreFromAuthor(String author) {
+    return 'More reviews from $author';
+  }
+
+  @override
+  String reviewDetailsBy(String author) {
+    return 'by $author';
+  }
+
+  @override
+  String get reviewDetailsAnonymousAuthor => 'Anonymous';
+
+  @override
+  String get reviewDetailsNoBody => 'No review text';
+
+  @override
+  String get reviewDetailsLoadCommentsError => 'Couldn\'t load comments';
+
+  @override
+  String get reviewDetailsLoadRelatedError => 'Couldn\'t load related reviews';
 }

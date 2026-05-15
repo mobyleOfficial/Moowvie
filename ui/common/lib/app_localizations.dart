@@ -813,6 +813,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{title} Reviews'**
   String movieDetailMovieReviews(String title);
+
+  /// Tooltip and semantic label for the share review action in the AppBar
+  ///
+  /// In en, this message translates to:
+  /// **'Share review'**
+  String get reviewDetailsShare;
+
+  /// Tooltip and semantic label when the review is not yet liked
+  ///
+  /// In en, this message translates to:
+  /// **'Like review'**
+  String get reviewDetailsLike;
+
+  /// Tooltip and semantic label when the review has been liked
+  ///
+  /// In en, this message translates to:
+  /// **'Unlike review'**
+  String get reviewDetailsUnlike;
+
+  /// SnackBar message shown when toggling the like state fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update like. Try again.'**
+  String get reviewDetailsLikeError;
+
+  /// Localized plural label rendered next to the like icon
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No likes yet} =1{1 like} other{{count} likes}}'**
+  String reviewDetailsLikeCount(int count);
+
+  /// Section header for the comments preview
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get reviewDetailsCommentsTitle;
+
+  /// Button label to open the full comments bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'View all ({count})'**
+  String reviewDetailsViewAllComments(int count);
+
+  /// Empty state shown when a review has no comments
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet'**
+  String get reviewDetailsNoComments;
+
+  /// Header for the carousel of other reviews for the same movie
+  ///
+  /// In en, this message translates to:
+  /// **'Other reviews for this movie'**
+  String get reviewDetailsOtherReviewsForMovie;
+
+  /// Header for the carousel of more reviews from the same author
+  ///
+  /// In en, this message translates to:
+  /// **'More reviews from {author}'**
+  String reviewDetailsMoreFromAuthor(String author);
+
+  /// Inline author label on carousel cards
+  ///
+  /// In en, this message translates to:
+  /// **'by {author}'**
+  String reviewDetailsBy(String author);
+
+  /// Fallback label when a review's author is null
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get reviewDetailsAnonymousAuthor;
+
+  /// Fallback body shown when a review has no content
+  ///
+  /// In en, this message translates to:
+  /// **'No review text'**
+  String get reviewDetailsNoBody;
+
+  /// Inline error row label when the comments section fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load comments'**
+  String get reviewDetailsLoadCommentsError;
+
+  /// Inline error row label when a related-reviews carousel fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load related reviews'**
+  String get reviewDetailsLoadRelatedError;
 }
 
 class _AppLocalizationsDelegate

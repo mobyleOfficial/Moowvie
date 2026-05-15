@@ -118,5 +118,20 @@
   "movieDetailDirectedBy": "Dirigida por",
   "movieDetailMinutes": "{minutes} min",
   "movieDetailSeeAll": "Ver todo",
-  "movieDetailMovieReviews": "Reseñas de {title}"
+  "movieDetailMovieReviews": "Reseñas de {title}",
+  "reviewDetailsShare": "Compartir reseña",
+  "reviewDetailsLike": "Me gusta",
+  "reviewDetailsUnlike": "Quitar me gusta",
+  "reviewDetailsLikeError": "No se pudo actualizar el me gusta. Inténtalo de nuevo.",
+  "reviewDetailsLikeCount": "{count, plural, =0{Aún no hay me gusta} =1{1 me gusta} other{{count} me gusta}}",
+  "reviewDetailsCommentsTitle": "Comentarios",
+  "reviewDetailsViewAllComments": "Ver todos ({count})",
+  "reviewDetailsNoComments": "Aún no hay comentarios",
+  "reviewDetailsOtherReviewsForMovie": "Otras reseñas de esta película",
+  "reviewDetailsMoreFromAuthor": "Más reseñas de {author}",
+  "reviewDetailsBy": "por {author}",
+  "reviewDetailsAnonymousAuthor": "Anónimo",
+  "reviewDetailsNoBody": "Sin texto de reseña",
+  "reviewDetailsLoadCommentsError": "No se pudieron cargar los comentarios",
+  "reviewDetailsLoadRelatedError": "No se pudieron cargar las reseñas relacionadas"
 }

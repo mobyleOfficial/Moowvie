@@ -389,4 +389,67 @@ class AppLocalizationsPt extends AppLocalizations {
   String movieDetailMovieReviews(String title) {
     return 'Avaliações de $title';
   }
+
+  @override
+  String get reviewDetailsShare => 'Compartilhar review';
+
+  @override
+  String get reviewDetailsLike => 'Curtir review';
+
+  @override
+  String get reviewDetailsUnlike => 'Descurtir review';
+
+  @override
+  String get reviewDetailsLikeError =>
+      'Não foi possível atualizar a curtida. Tente novamente.';
+
+  @override
+  String reviewDetailsLikeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count curtidas',
+      one: '1 curtida',
+      zero: 'Sem curtidas ainda',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDetailsCommentsTitle => 'Comentários';
+
+  @override
+  String reviewDetailsViewAllComments(int count) {
+    return 'Ver todos ($count)';
+  }
+
+  @override
+  String get reviewDetailsNoComments => 'Sem comentários ainda';
+
+  @override
+  String get reviewDetailsOtherReviewsForMovie => 'Outros reviews deste filme';
+
+  @override
+  String reviewDetailsMoreFromAuthor(String author) {
+    return 'Mais reviews de $author';
+  }
+
+  @override
+  String reviewDetailsBy(String author) {
+    return 'por $author';
+  }
+
+  @override
+  String get reviewDetailsAnonymousAuthor => 'Anônimo';
+
+  @override
+  String get reviewDetailsNoBody => 'Sem texto do review';
+
+  @override
+  String get reviewDetailsLoadCommentsError =>
+      'Não foi possível carregar os comentários';
+
+  @override
+  String get reviewDetailsLoadRelatedError =>
+      'Não foi possível carregar os reviews relacionados';
 }

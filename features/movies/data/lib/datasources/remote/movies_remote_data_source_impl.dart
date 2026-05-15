@@ -1,3 +1,4 @@
+// Mock implementation — replace with real endpoints when backend is available.
 import 'package:core/core.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,6 +9,8 @@ import 'package:movies_data/models/remote/remote_movie_list_detail.dart';
 import 'package:movies_data/models/remote/remote_movie_list_listing.dart';
 import 'package:movies_data/models/remote/remote_movie_detail.dart';
 import 'package:movies_data/models/remote/remote_movie_review.dart';
+import 'package:movies_data/models/remote/remote_movie_review_comment.dart';
+import 'package:movies_data/models/remote/remote_movie_review_comment_listing.dart';
 import 'package:movies_data/models/remote/remote_movie_review_listing.dart';
 import 'package:movies_data/models/remote/remote_country.dart';
 import 'package:movies_data/models/remote/remote_genre.dart';
@@ -20,26 +23,135 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
 
   MoviesRemoteDataSourceImpl(@Named('tmdb') this._httpClient);
 
-  static const _mockedReviews = [
-    RemoteMovieReview(id: 693134, title: 'Dune: Part Two', date: 'Mar 15, 2024', rating: 4.5),
-    RemoteMovieReview(id: 872585, title: 'Oppenheimer', date: 'Mar 10, 2024', rating: 5.0),
-    RemoteMovieReview(id: 792307, title: 'Poor Things', date: 'Mar 5, 2024', rating: 4.0),
-    RemoteMovieReview(id: 929590, title: 'The Zone of Interest', date: 'Feb 28, 2024', rating: 3.5),
-    RemoteMovieReview(id: 876969, title: 'Society of the Snow', date: 'Feb 20, 2024', rating: 4.0),
-    RemoteMovieReview(id: 976573, title: 'Past Lives', date: 'Feb 14, 2024', rating: 4.5),
-    RemoteMovieReview(id: 913209, title: 'Anatomy of a Fall', date: 'Feb 10, 2024', rating: 4.0),
-    RemoteMovieReview(id: 840430, title: 'The Holdovers', date: 'Feb 5, 2024', rating: 4.5),
-    RemoteMovieReview(id: 346698, title: 'Barbie', date: 'Jan 28, 2024', rating: 3.5),
-    RemoteMovieReview(id: 507089, title: 'Five Nights at Freddy\'s', date: 'Jan 20, 2024', rating: 3.0),
-    RemoteMovieReview(id: 609681, title: 'The Beekeeper', date: 'Jan 15, 2024', rating: 3.5),
-    RemoteMovieReview(id: 940551, title: 'Migration', date: 'Jan 10, 2024', rating: 4.0),
-    RemoteMovieReview(id: 866398, title: 'The Brutalist', date: 'Jan 5, 2024', rating: 4.5),
-    RemoteMovieReview(id: 1064028, title: 'Anora', date: 'Dec 28, 2023', rating: 5.0),
-    RemoteMovieReview(id: 558449, title: 'Animal', date: 'Dec 20, 2023', rating: 3.0),
-    RemoteMovieReview(id: 753342, title: 'Napoleon', date: 'Dec 15, 2023', rating: 3.5),
+  // Mutable in-memory set tracking which review ids the current user has liked.
+  // Mock implementation — replace when a real backend is available.
+  final Set<String> _likedReviewIds = <String>{};
+
+  // Deterministic content snippets seeded per review index so callers can
+  // render meaningful preview text without a real backend.
+  static const List<String> _mockedReviewContents = [
+    'A visually stunning masterpiece that stays with you long after the credits roll. '
+        'The performances are extraordinary and the direction is impeccable.',
+    'Impressive storytelling with a few pacing issues in the second act, but the finale '
+        'more than makes up for it. One of the best of the year.',
+    'Well-crafted but does not quite reach the heights of its predecessor. Still, the '
+        'cinematography alone makes it worth watching on the big screen.',
+    'A bold and uncompromising vision that will divide audiences. Some will be mesmerized, '
+        'others alienated, but no one will forget it.',
+    'Beautifully shot and patiently paced. It rewards viewers willing to sit with its silences.',
   ];
 
-static const _mockedLists = [
+  static const List<String> _mockedAuthorNames = [
+    'CinephileAna',
+    'MovieBuff42',
+    'FilmCriticLeo',
+    'PopcornPaula',
+    'ScreenJunkieSam',
+    'MidnightWatcher',
+    'AuteurFan99',
+  ];
+
+  // Base list of movie/review tuples. The actual RemoteMovieReview is built
+  // lazily via _buildReview so we can mix in formula-derived fields.
+  static const List<_BaseReview> _baseReviews = [
+    _BaseReview(movieId: 693134, title: 'Dune: Part Two', date: 'Mar 15, 2024', rating: 4.5),
+    _BaseReview(movieId: 872585, title: 'Oppenheimer', date: 'Mar 10, 2024', rating: 5.0),
+    _BaseReview(movieId: 792307, title: 'Poor Things', date: 'Mar 5, 2024', rating: 4.0),
+    _BaseReview(movieId: 929590, title: 'The Zone of Interest', date: 'Feb 28, 2024', rating: 3.5),
+    _BaseReview(movieId: 876969, title: 'Society of the Snow', date: 'Feb 20, 2024', rating: 4.0),
+    _BaseReview(movieId: 976573, title: 'Past Lives', date: 'Feb 14, 2024', rating: 4.5),
+    _BaseReview(movieId: 913209, title: 'Anatomy of a Fall', date: 'Feb 10, 2024', rating: 4.0),
+    _BaseReview(movieId: 840430, title: 'The Holdovers', date: 'Feb 5, 2024', rating: 4.5),
+    _BaseReview(movieId: 346698, title: 'Barbie', date: 'Jan 28, 2024', rating: 3.5),
+    _BaseReview(movieId: 507089, title: "Five Nights at Freddy's", date: 'Jan 20, 2024', rating: 3.0),
+    _BaseReview(movieId: 609681, title: 'The Beekeeper', date: 'Jan 15, 2024', rating: 3.5),
+    _BaseReview(movieId: 940551, title: 'Migration', date: 'Jan 10, 2024', rating: 4.0),
+    _BaseReview(movieId: 866398, title: 'The Brutalist', date: 'Jan 5, 2024', rating: 4.5),
+    _BaseReview(movieId: 1064028, title: 'Anora', date: 'Dec 28, 2023', rating: 5.0),
+    _BaseReview(movieId: 558449, title: 'Animal', date: 'Dec 20, 2023', rating: 3.0),
+    _BaseReview(movieId: 753342, title: 'Napoleon', date: 'Dec 15, 2023', rating: 3.5),
+  ];
+
+  // Builds a deterministic RemoteMovieReview from a base entry + its index.
+  // Reviewing the in-memory like set lets like/unlike toggles survive across
+  // subsequent getReviewDetails calls.
+  RemoteMovieReview _buildReview(_BaseReview base, int index) {
+    final reviewId = 'r-${base.movieId}-$index';
+    final defaultLiked = base.movieId % 5 == 0;
+    final overriddenLike = _likedReviewIds.contains(reviewId);
+    final isLiked = overriddenLike ? true : (defaultLiked && !_likedExplicitlyUnliked(reviewId));
+    final baseLikeCount = (base.movieId % 47) + 3;
+    final likeCount = isLiked
+        ? (defaultLiked ? baseLikeCount : baseLikeCount + 1)
+        : (defaultLiked ? baseLikeCount - 1 : baseLikeCount);
+    return RemoteMovieReview(
+      reviewId: reviewId,
+      movieId: base.movieId,
+      title: base.title,
+      date: base.date,
+      rating: base.rating,
+      author: _mockedAuthorNames[index % _mockedAuthorNames.length],
+      authorId: 'u-${(base.movieId % 7) + 1}',
+      content: _mockedReviewContents[index % _mockedReviewContents.length],
+      likeCount: likeCount < 0 ? 0 : likeCount,
+      likedByMe: isLiked,
+      commentCount: base.movieId % 9,
+    );
+  }
+
+  // Tracks review ids that the user has explicitly unliked when the default
+  // state was liked. Mock-only: any unlike call adds the id here so the
+  // baseline default of likedByMe is overridden.
+  final Set<String> _explicitlyUnlikedReviewIds = <String>{};
+
+  bool _likedExplicitlyUnliked(String reviewId) =>
+      _explicitlyUnlikedReviewIds.contains(reviewId);
+
+  List<RemoteMovieReview> get _mockedReviews => List.generate(
+        _baseReviews.length,
+        (index) => _buildReview(_baseReviews[index], index),
+      );
+
+  // _mockedPopularReviews are short anonymous-looking reviews used by the
+  // movie detail screen. Built with stable ids that do not collide with
+  // _mockedReviews.
+  List<RemoteMovieReview> get _mockedPopularReviews => [
+        RemoteMovieReview(
+          reviewId: 'rp-0',
+          movieId: 0,
+          title: '',
+          date: 'Mar 12, 2024',
+          rating: 4.5,
+          author: 'CinephileAna',
+          content:
+              'A visually stunning masterpiece that stays with you long after the credits roll. '
+              'The performances are extraordinary and the direction is impeccable.',
+        ),
+        RemoteMovieReview(
+          reviewId: 'rp-1',
+          movieId: 0,
+          title: '',
+          date: 'Mar 8, 2024',
+          rating: 4.0,
+          author: 'MovieBuff42',
+          content:
+              'Impressive storytelling with a few pacing issues in the second act, but the finale '
+              'more than makes up for it. One of the best of the year.',
+        ),
+        RemoteMovieReview(
+          reviewId: 'rp-2',
+          movieId: 0,
+          title: '',
+          date: 'Feb 28, 2024',
+          rating: 3.5,
+          author: 'FilmCriticLeo',
+          content:
+              'Well-crafted but does not quite reach the heights of its predecessor. Still, the '
+              'cinematography alone makes it worth watching on the big screen.',
+        ),
+      ];
+
+  static const _mockedLists = [
     RemoteMovieList(
       id: 1,
       name: 'Weekend Watchlist',
@@ -74,9 +186,9 @@ static const _mockedLists = [
     ),
     RemoteMovieList(
       id: 5,
-      name: 'Director\'s Cut',
+      name: "Director's Cut",
       creator: 'Mia Tanaka',
-      description: 'Essential films from legendary directors. A journey through the filmographies of cinema\'s greatest visionaries, from Kubrick to Villeneuve. This list spans decades of filmmaking excellence, highlighting the defining works of auteurs who shaped the language of cinema itself. You will find everything from Hitchcock\'s masterful suspense to Scorsese\'s gritty character studies, from Spielberg\'s sense of wonder to Nolan\'s architectural storytelling. Each film is not just entertainment but a masterclass in the craft of directing.',
+      description: "Essential films from legendary directors. A journey through the filmographies of cinema's greatest visionaries, from Kubrick to Villeneuve. This list spans decades of filmmaking excellence, highlighting the defining works of auteurs who shaped the language of cinema itself. You will find everything from Hitchcock's masterful suspense to Scorsese's gritty character studies, from Spielberg's sense of wonder to Nolan's architectural storytelling. Each film is not just entertainment but a masterclass in the craft of directing.",
       movieCount: 30,
       posterPaths: ['/xmFdNzbUiT5XmH6rbIVGYDQHGeo.jpg', '/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg', '/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg', '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', '/aNK6MA5EApIo0UJE7ZWSYcZBJKy.jpg'],
     ),
@@ -100,7 +212,7 @@ static const _mockedLists = [
       id: 8,
       name: 'Date Night Picks',
       creator: 'Olivia Hart',
-      description: 'Romantic and fun movies for two. Whether you\'re in the mood for a sweeping romance or a quirky comedy, these films set the perfect tone.',
+      description: "Romantic and fun movies for two. Whether you're in the mood for a sweeping romance or a quirky comedy, these films set the perfect tone.",
       movieCount: 16,
       posterPaths: ['/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', '/aNK6MA5EApIo0UJE7ZWSYcZBJKy.jpg', '/53YWSo75mSaw1vd2YEeX5kwkRos.jpg'],
     ),
@@ -116,7 +228,7 @@ static const _mockedLists = [
       id: 10,
       name: 'Award Season Contenders',
       creator: 'Priya Sharma',
-      description: 'This year\'s Oscar hopefuls. The most talked-about performances, directing achievements, and screenplays competing for gold.',
+      description: "This year's Oscar hopefuls. The most talked-about performances, directing achievements, and screenplays competing for gold.",
       movieCount: 14,
       posterPaths: ['/1OsQJEoSXBjduuCvDOlRhoEUaHu.jpg', '/yRRuLt7sMBEQkHsd1S3KaaofZn7.jpg', '/xmFdNzbUiT5XmH6rbIVGYDQHGeo.jpg', '/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg'],
     ),
@@ -132,9 +244,9 @@ static const _mockedLists = [
     RemoteMovie(id: 346698, title: 'Barbie', overview: 'Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land.', posterPath: '/yRRuLt7sMBEQkHsd1S3KaaofZn7.jpg', backdropPath: '/nHf61UzkfFno5X1ofIhugCPus2R.jpg', voteAverage: 7.0, releaseDate: '2023-07-19'),
     RemoteMovie(id: 1064213, title: 'The Brutalist', overview: 'A visionary architect escapes the horrors of post-war Europe for the promise of America.', posterPath: '/xmFdNzbUiT5XmH6rbIVGYDQHGeo.jpg', backdropPath: '/6DYFBb8Rf3Z7OqBCqtdzgFbEpxR.jpg', voteAverage: 7.6, releaseDate: '2024-12-20'),
     RemoteMovie(id: 1064028, title: 'Anora', overview: 'A young sex worker from Brooklyn gets her chance at a Cinderella story.', posterPath: '/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg', backdropPath: '/4cp40IyTpFfsT2IKpl0YlUkMBIR.jpg', voteAverage: 7.5, releaseDate: '2024-10-18'),
-    RemoteMovie(id: 913209, title: 'Anatomy of a Fall', overview: 'A woman is suspected of her husband\'s murder, and their blind son faces a moral dilemma.', posterPath: '/AsEc6EPLtKKAH1JogIczK8QSPLW.jpg', backdropPath: '/7uv7PsMbSEgTBkYQce9N0m2Gsps.jpg', voteAverage: 7.7, releaseDate: '2023-08-23'),
-    RemoteMovie(id: 507089, title: 'Five Nights at Freddy\'s', overview: 'A troubled security guard begins working at Freddy Fazbear\'s Pizza.', posterPath: '/1yUbmAiw2cUSpyXNIaiST7JzCtG.jpg', backdropPath: '/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg', voteAverage: 7.0, releaseDate: '2023-10-25'),
-    RemoteMovie(id: 866398, title: 'The Beekeeper', overview: 'One man\'s brutal campaign for vengeance takes on national stakes.', posterPath: '/raNfPn7DGbh1Ffwq4Y9BO1Iektv.jpg', backdropPath: '/cedbbhXosPuEfkrq8cjWcnKFnjK.jpg', voteAverage: 7.1, releaseDate: '2024-01-08'),
+    RemoteMovie(id: 913209, title: 'Anatomy of a Fall', overview: "A woman is suspected of her husband's murder, and their blind son faces a moral dilemma.", posterPath: '/AsEc6EPLtKKAH1JogIczK8QSPLW.jpg', backdropPath: '/7uv7PsMbSEgTBkYQce9N0m2Gsps.jpg', voteAverage: 7.7, releaseDate: '2023-08-23'),
+    RemoteMovie(id: 507089, title: "Five Nights at Freddy's", overview: "A troubled security guard begins working at Freddy Fazbear's Pizza.", posterPath: '/1yUbmAiw2cUSpyXNIaiST7JzCtG.jpg', backdropPath: '/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg', voteAverage: 7.0, releaseDate: '2023-10-25'),
+    RemoteMovie(id: 866398, title: 'The Beekeeper', overview: "One man's brutal campaign for vengeance takes on national stakes.", posterPath: '/raNfPn7DGbh1Ffwq4Y9BO1Iektv.jpg', backdropPath: '/cedbbhXosPuEfkrq8cjWcnKFnjK.jpg', voteAverage: 7.1, releaseDate: '2024-01-08'),
     RemoteMovie(id: 940551, title: 'Migration', overview: 'A family of ducks try to convince their overprotective father to go on the vacation of a lifetime.', posterPath: '/wXWnUhdnSuADRp9w7aAZNHx682v.jpg', backdropPath: '/2KGxQFV9Wp1MshPBf8BuqWUgVAz.jpg', voteAverage: 7.4, releaseDate: '2023-12-22'),
     RemoteMovie(id: 753342, title: 'Napoleon', overview: 'An epic that details the checkered rise and fall of French Emperor Napoleon Bonaparte.', posterPath: '/2UY2xfkgw9EgOOyA7ro3eyGJ9V9.jpg', backdropPath: '/jWXrQstj7p3Wl5MfYWY6IHqRpDb.jpg', voteAverage: 6.5, releaseDate: '2023-11-22'),
     RemoteMovie(id: 848538, title: 'Argylle', overview: 'When the plots of a spy novelist begin to mirror real-life events, she is thrust into the world of espionage.', posterPath: '/1ojCiMpYmCciIFuEcgLOOGLbUND.jpg', backdropPath: '/6lE2e6j8qbtQR8aHxQNJlUxpGGO.jpg', voteAverage: 6.1, releaseDate: '2024-01-31'),
@@ -145,7 +257,7 @@ static const _mockedLists = [
     RemoteMovie(id: 929590, title: 'Civil War', overview: 'A journey across a dystopian future America following a team of military-embedded journalists.', posterPath: '/fIEjqQnnkxwUH102XU9R3QwRGEu.jpg', backdropPath: '/z121dSTR7PY9KxKuvwiIFSYW8cf.jpg', voteAverage: 7.0, releaseDate: '2024-04-11'),
     RemoteMovie(id: 1096197, title: 'No Way Up', overview: 'Characters trapped in an underwater plane wreckage must fight for survival as sharks close in.', posterPath: '/iJgY7pFXAs2PKhoA1g9jeoqUmQd.jpg', backdropPath: '/4woSOUD0equAYzvwhWBHIJDCM88.jpg', voteAverage: 6.3, releaseDate: '2024-01-18'),
     RemoteMovie(id: 786892, title: 'Furiosa: A Mad Max Saga', overview: 'The origin story of the mighty warrior Furiosa before she joined forces with Mad Max.', posterPath: '/7qOSKoOAPgemYhBwbJgBWcCxPWZ.jpg', backdropPath: '/shrwC6U8Bkst9V9IKPmGMof8aS5.jpg', voteAverage: 7.6, releaseDate: '2024-05-22'),
-    RemoteMovie(id: 1022789, title: 'Inside Out 2', overview: 'A new set of emotions join Riley\'s mind as she enters her teenage years.', posterPath: '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', backdropPath: '/xg27NrXi7VXCGUr7MN75UqLl6Vg.jpg', voteAverage: 7.6, releaseDate: '2024-06-11'),
+    RemoteMovie(id: 1022789, title: 'Inside Out 2', overview: "A new set of emotions join Riley's mind as she enters her teenage years.", posterPath: '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', backdropPath: '/xg27NrXi7VXCGUr7MN75UqLl6Vg.jpg', voteAverage: 7.6, releaseDate: '2024-06-11'),
     RemoteMovie(id: 945961, title: 'Alien: Romulus', overview: 'A group of young space colonists come face to face with the most terrifying life form in the universe.', posterPath: '/jB0W9tn4w07MFn7sTfqRTBLVytF.jpg', backdropPath: '/9SSEUrSqhljBMzRe4aBTh17wUjd.jpg', voteAverage: 7.2, releaseDate: '2024-08-14'),
     RemoteMovie(id: 533535, title: 'Deadpool & Wolverine', overview: 'Deadpool is offered a place in the Marvel Cinematic Universe by the TVA.', posterPath: '/53YWSo75mSaw1vd2YEeX5kwkRos.jpg', backdropPath: '/yDHYTfA3R0jFYba16jBB1ef8oIt.jpg', voteAverage: 7.7, releaseDate: '2024-07-24'),
     RemoteMovie(id: 573435, title: 'Bad Boys: Ride or Die', overview: 'Miami detectives Mike and Marcus uncover a conspiracy involving their late captain.', posterPath: '/vnFFZ6Y1sudcrfNCioQW4e8NW5X.jpg', backdropPath: '/tncbMvfV0V07UZozXdBEfKTvCe2.jpg', voteAverage: 7.4, releaseDate: '2024-06-05'),
@@ -166,9 +278,9 @@ static const _mockedLists = [
   };
 
   static const _mockedFavoriteMovies = [
-    RemoteMovie(id: 157336, title: 'Interstellar', overview: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival.', posterPath: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', backdropPath: '/xJHokMbljXjADYdit5fK1B4Q2Nk.jpg', voteAverage: 8.7, releaseDate: '2014-11-05'),
+    RemoteMovie(id: 157336, title: 'Interstellar', overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.", posterPath: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', backdropPath: '/xJHokMbljXjADYdit5fK1B4Q2Nk.jpg', voteAverage: 8.7, releaseDate: '2014-11-05'),
     RemoteMovie(id: 238, title: 'The Godfather', overview: 'Spanning the years 1945 to 1955, a chronicle of the fictional Italian-American Corleone crime family.', posterPath: '/3bhkrj58Vtu7enYsRolD1fZdja1.jpg', backdropPath: '/tmU7GeKVybMWFButWEGl2M4GeiP.jpg', voteAverage: 8.7, releaseDate: '1972-03-14'),
-    RemoteMovie(id: 496243, title: 'Parasite', overview: 'All unemployed, Ki-taek\'s family takes peculiar interest in the wealthy and glamorous Parks.', posterPath: '/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg', backdropPath: '/TU9aKQfPr1eiNkTOKHMm4azMkpO.jpg', voteAverage: 8.5, releaseDate: '2019-05-30'),
+    RemoteMovie(id: 496243, title: 'Parasite', overview: "All unemployed, Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks.", posterPath: '/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg', backdropPath: '/TU9aKQfPr1eiNkTOKHMm4azMkpO.jpg', voteAverage: 8.5, releaseDate: '2019-05-30'),
     RemoteMovie(id: 129, title: 'Spirited Away', overview: 'A young girl wanders into a world ruled by gods, witches, and spirits.', posterPath: '/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg', backdropPath: '/Ab8mkHmkYADjU7wQiOkia9BzGvS.jpg', voteAverage: 8.5, releaseDate: '2001-07-20'),
     RemoteMovie(id: 155, title: 'The Dark Knight', overview: 'Batman raises the stakes in his war on crime in Gotham City.', posterPath: '/qJ2tW6WMUDux911BTUOlhi7GCPY.jpg', backdropPath: '/nMKdUUepR0i5zn0y1T4CsSB5ber.jpg', voteAverage: 8.5, releaseDate: '2008-07-16'),
     RemoteMovie(id: 278, title: 'The Shawshank Redemption', overview: 'Framed in the 1940s for the double murder of his wife and her lover, Andy Dufresne begins a new life at the Shawshank prison.', posterPath: '/9cjIGRQL98cG3INaDB8Myjhqzjy.jpg', backdropPath: '/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg', voteAverage: 8.7, releaseDate: '1994-09-23'),
@@ -176,7 +288,7 @@ static const _mockedLists = [
     RemoteMovie(id: 550, title: 'Fight Club', overview: 'A ticking-Loss bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy.', posterPath: '/pB8BM7pdSp6B6Ih7QI4S2t0GvHd.jpg', backdropPath: '/hZkgoQYus5dXo3H8T7Uef6DNknx.jpg', voteAverage: 8.4, releaseDate: '1999-10-15'),
     RemoteMovie(id: 13, title: 'Forrest Gump', overview: 'A man with a low IQ has accomplished great things in his life and been present during significant historic events.', posterPath: '/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg', backdropPath: '/7c9UVPPiTPltouxRVY6N9uugaVA.jpg', voteAverage: 8.5, releaseDate: '1994-06-23'),
     RemoteMovie(id: 120, title: 'The Lord of the Rings: The Fellowship of the Ring', overview: 'Young hobbit Frodo Baggins must destroy a powerful ring to stop the Dark Lord Sauron.', posterPath: '/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg', backdropPath: '/pIUvQ9Ed35wlWhY2oU6OmwEgzx8.jpg', voteAverage: 8.4, releaseDate: '2001-12-18'),
-    RemoteMovie(id: 424, title: 'Schindler\'s List', overview: 'The true story of how businessman Oskar Schindler saved over a thousand Jewish lives during the Holocaust.', posterPath: '/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg', backdropPath: '/loRmRzQXZC0TGAzVeMpC6FjE8MR.jpg', voteAverage: 8.6, releaseDate: '1993-11-30'),
+    RemoteMovie(id: 424, title: "Schindler's List", overview: 'The true story of how businessman Oskar Schindler saved over a thousand Jewish lives during the Holocaust.', posterPath: '/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg', backdropPath: '/loRmRzQXZC0TGAzVeMpC6FjE8MR.jpg', voteAverage: 8.6, releaseDate: '1993-11-30'),
     RemoteMovie(id: 694, title: 'The Shining', overview: 'Jack Torrance accepts a caretaker job at the Overlook Hotel, where he and his family become isolated.', posterPath: '/nRj5511mZdTl4saWEPoj9QroTIu.jpg', backdropPath: '/mmd1HnuvAzFc4iuVJcnBrhDNEKr.jpg', voteAverage: 8.2, releaseDate: '1980-05-23'),
   ];
 
@@ -188,7 +300,7 @@ static const _mockedLists = [
     RemoteMovie(id: 974453, title: 'Nickel Boys', overview: 'Based on the Pulitzer Prize-winning novel, two boys forge an unlikely bond at a brutal reform school.', posterPath: '/oJzayQz8jPycZuAvBIFdlPJRmce.jpg', backdropPath: '/pRhlaYLHHaso7V9fHhRN1qy6y40.jpg', voteAverage: 7.1, releaseDate: '2024-10-25'),
     RemoteMovie(id: 823464, title: 'Godzilla x Kong: The New Empire', overview: 'Two ancient titans, Godzilla and Kong, clash in an epic battle as humans unravel their origins.', posterPath: '/fWSGD2yrzz6hscocnMD8AEXIThk.jpg', backdropPath: '/xRd1eJIDe7JHO5u4gtEYwGn5wtf.jpg', voteAverage: 7.2, releaseDate: '2024-03-27'),
     RemoteMovie(id: 786892, title: 'Furiosa: A Mad Max Saga', overview: 'The origin story of the mighty warrior Furiosa before she joined forces with Mad Max.', posterPath: '/7qOSKoOAPgemYhBwbJgBWcCxPWZ.jpg', backdropPath: '/shrwC6U8Bkst9V9IKPmGMof8aS5.jpg', voteAverage: 7.6, releaseDate: '2024-05-22'),
-    RemoteMovie(id: 1022789, title: 'Inside Out 2', overview: 'A new set of emotions join Riley\'s mind as she enters her teenage years.', posterPath: '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', backdropPath: '/xg27NrXi7VXCGUr7MN75UqLl6Vg.jpg', voteAverage: 7.6, releaseDate: '2024-06-11'),
+    RemoteMovie(id: 1022789, title: 'Inside Out 2', overview: "A new set of emotions join Riley's mind as she enters her teenage years.", posterPath: '/lHKNS35r4RTa9GO72vdadMLxoiV.jpg', backdropPath: '/xg27NrXi7VXCGUr7MN75UqLl6Vg.jpg', voteAverage: 7.6, releaseDate: '2024-06-11'),
     RemoteMovie(id: 945961, title: 'Alien: Romulus', overview: 'A group of young space colonists come face to face with the most terrifying life form in the universe.', posterPath: '/jB0W9tn4w07MFn7sTfqRTBLVytF.jpg', backdropPath: '/9SSEUrSqhljBMzRe4aBTh17wUjd.jpg', voteAverage: 7.2, releaseDate: '2024-08-14'),
     RemoteMovie(id: 533535, title: 'Deadpool & Wolverine', overview: 'Deadpool is offered a place in the Marvel Cinematic Universe by the TVA.', posterPath: '/53YWSo75mSaw1vd2YEeX5kwkRos.jpg', backdropPath: '/yDHYTfA3R0jFYba16jBB1ef8oIt.jpg', voteAverage: 7.7, releaseDate: '2024-07-24'),
     RemoteMovie(id: 653346, title: 'Kingdom of the Planet of the Apes', overview: 'Generations after Caesar, a young ape embarks on a journey that will determine the future of both apes and humans.', posterPath: '/hBGnLm2A1TapONoPo7QrMpj2B6B.jpg', backdropPath: '/fqv8v6AycXKsivp1T5yKtLbGXce.jpg', voteAverage: 7.1, releaseDate: '2024-05-08'),
@@ -199,6 +311,7 @@ static const _mockedLists = [
   static const int _favoriteMoviesPageSize = 6;
   static const int _watchListPageSize = 6;
   static const int _listDetailPageSize = 6;
+  static const int _commentsPageSize = 20;
 
   @override
   Future<Result<RemoteMovieListing>> getTrendingMovieList({
@@ -222,33 +335,6 @@ static const _mockedLists = [
     RemoteWatchProvider(name: 'Disney+', logoPath: '/7rwgEs15tFwyR9NPQ5vpzxTj19Q.jpg'),
     RemoteWatchProvider(name: 'Apple TV+', logoPath: '/6uhKBfmtzFqOcLousHwZuzcrScK.jpg'),
     RemoteWatchProvider(name: 'Max', logoPath: '/aS2zvJUn9gFOjVEgogbAPHAOPKx.jpg'),
-  ];
-
-  static const _mockedPopularReviews = [
-    RemoteMovieReview(
-      id: 0,
-      title: '',
-      date: 'Mar 12, 2024',
-      rating: 4.5,
-      author: 'CinephileAna',
-      content: 'A visually stunning masterpiece that stays with you long after the credits roll. The performances are extraordinary and the direction is impeccable.',
-    ),
-    RemoteMovieReview(
-      id: 0,
-      title: '',
-      date: 'Mar 8, 2024',
-      rating: 4.0,
-      author: 'MovieBuff42',
-      content: 'Impressive storytelling with a few pacing issues in the second act, but the finale more than makes up for it. One of the best of the year.',
-    ),
-    RemoteMovieReview(
-      id: 0,
-      title: '',
-      date: 'Feb 28, 2024',
-      rating: 3.5,
-      author: 'FilmCriticLeo',
-      content: 'Well-crafted but doesn\'t quite reach the heights of its predecessor. Still, the cinematography alone makes it worth watching on the big screen.',
-    ),
   ];
 
   @override
@@ -296,21 +382,109 @@ static const _mockedLists = [
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
-    final totalPages = (_mockedReviews.length / _pageSize).ceil();
+    final allReviews = _mockedReviews;
+    final filtered = movieId != null
+        ? allReviews.where((review) => review.movieId == movieId).toList()
+        : userId != null
+            ? allReviews.where((review) => review.authorId == userId).toList()
+            : allReviews;
+
+    final source = filtered.isEmpty && movieId == null && userId == null
+        ? allReviews
+        : filtered;
+
+    final totalPages = source.isEmpty
+        ? 1
+        : (source.length / _pageSize).ceil();
     final startIndex = (page - 1) * _pageSize;
     final endIndex = startIndex + _pageSize;
-    final pageReviews = _mockedReviews.sublist(
-      startIndex.clamp(0, _mockedReviews.length),
-      endIndex.clamp(0, _mockedReviews.length),
+    final pageReviews = source.sublist(
+      startIndex.clamp(0, source.length),
+      endIndex.clamp(0, source.length),
     );
 
     return Success(RemoteMovieReviewListing(
       totalPages: totalPages,
-      totalResults: _mockedReviews.length,
+      totalResults: source.length,
       reviews: pageReviews,
     ));
   }
 
+  @override
+  Future<Result<RemoteMovieReview>> getReviewDetails({
+    required String reviewId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    final allReviews = _mockedReviews;
+    for (final review in allReviews) {
+      if (review.reviewId == reviewId) {
+        return Success(review);
+      }
+    }
+    return const Failure(AppError.notFound);
+  }
+
+  @override
+  Future<Result<RemoteMovieReviewCommentListing>> getReviewComments({
+    required String reviewId,
+    required int page,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+
+    // Find the review's commentCount via the deterministic mocked list.
+    final allReviews = _mockedReviews;
+    final matchingReview = allReviews
+        .where((review) => review.reviewId == reviewId)
+        .toList();
+    final commentCount =
+        matchingReview.isNotEmpty ? matchingReview.first.commentCount : 0;
+
+    final allComments = List.generate(
+      commentCount,
+      (index) => RemoteMovieReviewComment(
+        id: '$reviewId-c-$index',
+        reviewId: reviewId,
+        authorId: 'u-${(index % 7) + 1}',
+        authorName: 'Commenter ${index + 1}',
+        body: 'Mocked comment $index for $reviewId.',
+        createdAt: 'Mar ${10 - (index % 10)}, 2024',
+      ),
+    );
+
+    final totalPages = allComments.isEmpty
+        ? 1
+        : (allComments.length / _commentsPageSize).ceil();
+    final startIndex = (page - 1) * _commentsPageSize;
+    final endIndex = startIndex + _commentsPageSize;
+    final pageComments = allComments.sublist(
+      startIndex.clamp(0, allComments.length),
+      endIndex.clamp(0, allComments.length),
+    );
+
+    return Success(RemoteMovieReviewCommentListing(
+      page: page,
+      totalPages: totalPages,
+      totalResults: allComments.length,
+      comments: pageComments,
+    ));
+  }
+
+  @override
+  Future<Result<void>> likeReview({required String reviewId}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    _likedReviewIds.add(reviewId);
+    _explicitlyUnlikedReviewIds.remove(reviewId);
+    return const Success(null);
+  }
+
+  @override
+  Future<Result<void>> unlikeReview({required String reviewId}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    _likedReviewIds.remove(reviewId);
+    _explicitlyUnlikedReviewIds.add(reviewId);
+    return const Success(null);
+  }
 
   @override
   Future<Result<RemoteMovieListListing>> getMovieLists({
@@ -363,7 +537,7 @@ static const _mockedLists = [
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
     final list = _mockedLists.firstWhere(
-      (list) => list.id == listId,
+      (movieList) => movieList.id == listId,
       orElse: () => _mockedLists.first,
     );
 
@@ -534,7 +708,7 @@ static const _mockedLists = [
       id: 101,
       name: 'Staff Picks: Spring 2024',
       creator: 'Moovie Editors',
-      description: 'Our editors\' hand-picked selection of the most exciting films this spring. From bold indie debuts to highly anticipated sequels, these are the movies we think deserve a spot on your watchlist right now.',
+      description: "Our editors' hand-picked selection of the most exciting films this spring. From bold indie debuts to highly anticipated sequels, these are the movies we think deserve a spot on your watchlist right now.",
       movieCount: 15,
       posterPaths: ['/8LJJjLjAzAwXS40S5mx79PJ2jSs.jpg', '/6EO0cjZt2vzAOmuDJZGED6GQmi4.jpg', '/iOdcXYSVzBgmBJzNIlIMOZ6fz0F.jpg', '/1OsQJEoSXBjduuCvDOlRhoEUaHu.jpg'],
     ),
@@ -642,4 +816,18 @@ static const _mockedLists = [
       lists: pageLists,
     ));
   }
+}
+
+class _BaseReview {
+  final int movieId;
+  final String title;
+  final String date;
+  final double rating;
+
+  const _BaseReview({
+    required this.movieId,
+    required this.title,
+    required this.date,
+    required this.rating,
+  });
 }
