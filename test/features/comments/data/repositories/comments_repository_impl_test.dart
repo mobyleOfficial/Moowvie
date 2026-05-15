@@ -32,7 +32,7 @@ void main() {
       repository = CommentsRepositoryImpl(mockRemoteDataSource);
     });
 
-    test('should return CommentResponse with domain models when successful',
+    test('should return CommentListing with domain models when successful',
         () async {
       const contentId = 'review-001';
       const page = 0;

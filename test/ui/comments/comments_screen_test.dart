@@ -6,10 +6,10 @@ import 'package:comments/comments.dart';
 import 'package:comments_ui/comments.dart';
 
 class MockGetCommentsUseCase implements GetCommentsUseCase {
-  Future<Result<CommentResponse>>? mockResult;
+  Future<Result<CommentListing>>? mockResult;
 
   @override
-  Future<Result<CommentResponse>> call([GetCommentsParams? params]) async {
+  Future<Result<CommentListing>> call([GetCommentsParams? params]) async {
     if (mockResult != null) {
       return mockResult!;
     }

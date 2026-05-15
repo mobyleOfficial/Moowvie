@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
 import 'package:injectable/injectable.dart';
-import 'package:comments_domain/models/comment_response.dart';
+import 'package:comments_domain/models/comment_listing.dart';
 import 'package:comments_domain/repositories/comments_repository.dart';
 import 'package:comments_data/datasources/comments_remote_data_source.dart';
 
@@ -11,7 +11,7 @@ class CommentsRepositoryImpl implements CommentsRepository {
   CommentsRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Result<CommentResponse>> getComments({
+  Future<Result<CommentListing>> getComments({
     required String contentId,
     required int page,
     int pageSize = 10,
@@ -24,7 +24,7 @@ class CommentsRepositoryImpl implements CommentsRepository {
 
     return switch (result) {
       Success(:final data) => Success(
-          CommentResponse(
+          CommentListing(
             comments: data.comments.map((model) => model.toDomain()).toList(),
             totalCount: data.totalCount,
             hasMore: data.hasMore,

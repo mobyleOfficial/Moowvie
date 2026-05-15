@@ -3,11 +3,11 @@ import 'package:core/core.dart';
 import 'package:comments/comments.dart';
 
 class MockCommentsRepository implements CommentsRepository {
-  CommentResponse? mockResponse;
+  CommentListing? mockResponse;
   AppError? mockError;
 
   @override
-  Future<Result<CommentResponse>> getComments({
+  Future<Result<CommentListing>> getComments({
     required String contentId,
     required int page,
     int pageSize = 10,
@@ -48,7 +48,7 @@ void main() {
         ),
       ];
 
-      final expectedResponse = CommentResponse(
+      final expectedResponse = CommentListing(
         comments: mockComments,
         totalCount: 1,
         hasMore: false,
@@ -90,7 +90,7 @@ void main() {
 
       final mockComments = <Comment>[];
 
-      final expectedResponse = CommentResponse(
+      final expectedResponse = CommentListing(
         comments: mockComments,
         totalCount: 0,
         hasMore: false,
