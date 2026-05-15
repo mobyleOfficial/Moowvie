@@ -28,3 +28,4 @@ export 'src/moovie_movies_grid.dart';
 export 'src/tmdb_image_url.dart';
 export 'src/moovie_empty_state.dart';
 export 'src/moovie_submission_banner.dart';
+export 'share/share_service.dart';

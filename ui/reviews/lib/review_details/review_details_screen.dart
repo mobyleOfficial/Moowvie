@@ -1,210 +1,783 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:common/common.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:movies/movies.dart';
+import 'package:movies_ui/movie_detail/movie_detail_router.dart';
+import 'package:public_profile/public_profile_router.dart';
 import 'package:reviews/review_details/review_details_bloc.dart';
+import 'package:reviews/review_details/review_details_router.dart';
 import 'package:reviews/review_details/review_details_state.dart';
+import 'package:reviews/review_details/widgets/comments_bottom_sheet.dart';
 
-class ReviewDetailsScreen extends StatelessWidget {
+class ReviewDetailsScreen extends StatefulWidget {
   final ReviewDetailsCubit cubit;
-  final String movieTitle;
-  final String reviewDate;
-  final double rating;
-  final int posterColorIndex;
-  const ReviewDetailsScreen({
-    super.key,
-    required this.cubit,
-    required this.movieTitle,
-    required this.reviewDate,
-    required this.rating,
-    required this.posterColorIndex,
+
+  const ReviewDetailsScreen({super.key, required this.cubit});
+
+  @override
+  State<ReviewDetailsScreen> createState() => _ReviewDetailsScreenState();
+}
+
+class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
+  AppBarController? _appBarController;
+  bool _actionsRegistered = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _appBarController = AppBarControllerScope.of(context);
+    if (!_actionsRegistered && _appBarController != null) {
+      _actionsRegistered = true;
+      final controller = _appBarController!;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        controller.setActions([
+          _ReviewDetailsActions(cubit: widget.cubit),
+        ]);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    final controller = _appBarController;
+    if (controller != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.clearActions();
+      });
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return BlocProvider.value(
+      value: widget.cubit,
+      child: BlocConsumer<ReviewDetailsCubit, ReviewDetailsState>(
+        listener: (context, state) {
+          if (state is ReviewDetailsLikeFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n?.reviewDetailsLikeError ?? '')),
+            );
+          }
+        },
+        buildWhen: (previous, current) => current is! ReviewDetailsLikeFailed,
+        builder: (context, state) => switch (state) {
+          ReviewDetailsLoading() => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          ReviewDetailsError() => Scaffold(
+              body: MoovieEmptyState(
+                title: l10n?.emptyStateErrorTitle ?? '',
+                message: state.message,
+                action: widget.cubit.reload,
+                actionLabel: l10n?.emptyStateRetry ?? '',
+              ),
+            ),
+          ReviewDetailsSuccess() => _ReviewDetailsSuccessView(state: state),
+          // Should be filtered by buildWhen, but provide a fallback for safety.
+          ReviewDetailsLikeFailed() =>
+            _ReviewDetailsSuccessView(state: state.base),
+        },
+      ),
+    );
+  }
+}
+
+class _ReviewDetailsSuccessView extends StatelessWidget {
+  final ReviewDetailsSuccess state;
+
+  const _ReviewDetailsSuccessView({required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<ReviewDetailsCubit>();
+    final review = state.review;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _MovieHeader(review: review),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _RatingAndDateRow(review: review),
+                  const SizedBox(height: 12),
+                  if (review.authorId != null && review.author != null)
+                    _AuthorRow(review: review),
+                  const SizedBox(height: 16),
+                  _LikeCountRow(count: review.likeCount),
+                  const SizedBox(height: 24),
+                  Text(
+                    review.content ?? l10n?.reviewDetailsNoBody ?? '',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            _CommentsSection(
+              comments: state.comments,
+              review: review,
+              onRetry: cubit.retryComments,
+            ),
+            const SizedBox(height: 16),
+            _OtherReviewsSection(
+              data: state.otherReviewsForMovie,
+              onRetry: cubit.retryOtherReviewsForMovie,
+            ),
+            const SizedBox(height: 16),
+            _MoreFromAuthorSection(
+              authorName: review.author,
+              data: state.moreFromAuthor,
+              onRetry: cubit.retryMoreFromAuthor,
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReviewDetailsActions extends StatelessWidget {
+  final ReviewDetailsCubit cubit;
+
+  const _ReviewDetailsActions({required this.cubit});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final shareService = GetIt.I<ShareService>();
+    return BlocBuilder<ReviewDetailsCubit, ReviewDetailsState>(
+      bloc: cubit,
+      builder: (context, state) {
+        final review = switch (state) {
+          ReviewDetailsSuccess() => state.review,
+          ReviewDetailsLikeFailed() => state.base.review,
+          _ => null,
+        };
+        final isBusy = switch (state) {
+          ReviewDetailsSuccess() => state.isLikeBusy,
+          ReviewDetailsLikeFailed() => state.base.isLikeBusy,
+          _ => false,
+        };
+        if (review == null) return const SizedBox.shrink();
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _LikeButton(
+              isLiked: review.likedByCurrentUser,
+              isBusy: isBusy,
+              onPressed: cubit.toggleLike,
+            ),
+            Tooltip(
+              message: l10n?.reviewDetailsShare ?? '',
+              child: IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () => shareService.shareReview(review),
+                tooltip: l10n?.reviewDetailsShare,
+                constraints: const BoxConstraints(
+                  minWidth: 48,
+                  minHeight: 48,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _LikeButton extends StatelessWidget {
+  final bool isLiked;
+  final bool isBusy;
+  final VoidCallback onPressed;
+
+  const _LikeButton({
+    required this.isLiked,
+    required this.isBusy,
+    required this.onPressed,
   });
 
-  Color _posterColor(ColorScheme colorScheme) => switch (posterColorIndex % 4) {
-    0 => colorScheme.tertiaryContainer,
-    1 => colorScheme.primaryContainer,
-    2 => colorScheme.secondaryContainer,
-    _ => colorScheme.surfaceContainerHighest,
-  };
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label =
+        isLiked ? (l10n?.reviewDetailsUnlike ?? '') : (l10n?.reviewDetailsLike ?? '');
+    return Semantics(
+      button: true,
+      label: label,
+      child: Tooltip(
+        message: label,
+        child: IconButton(
+          icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border),
+          onPressed: isBusy ? null : onPressed,
+          tooltip: label,
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+        ),
+      ),
+    );
+  }
+}
 
-  static String _reviewBody(String title) => switch (title) {
-    'Dune: Part Two' =>
-    'Denis Villeneuve\'s sequel surpasses its predecessor in almost every way. '
-        'The sweeping desert landscapes and thunderous sound design create an immersive world that '
-        'demands to be seen on the biggest screen possible. Chalamet and Zendaya carry the weight '
-        'of the story with conviction, while the action sequences are among the most breathtaking '
-        'in recent science fiction cinema.\n\n'
-        'The adaptation makes bold choices that deepen the thematic resonance of Herbert\'s vision '
-        'without losing the spectacle. A rare blockbuster that treats its audience as intelligent.',
-    'Oppenheimer' =>
-    'Nolan\'s most ambitious film yet is a staggering achievement in filmmaking. '
-        'The IMAX sequences depicting the Trinity test are genuinely awe-inspiring, and Cillian Murphy '
-        'delivers a career-defining performance as the conflicted physicist.\n\n'
-        'The non-linear structure initially feels disorienting but ultimately serves the story beautifully, '
-        'mirroring Oppenheimer\'s own fractured psychology. At three hours, it never drags. A genuine '
-        'masterpiece that will be studied for decades.',
-    'Poor Things' =>
-    'Lanthimos constructs a darkly comic fairy tale that is unlike anything else released this year. '
-        'Emma Stone is extraordinary, embodying Bella\'s rapid intellectual and emotional development '
-        'with fearless physicality and wit.\n\n'
-        'The production design is an imaginative feast, blending Victorian aesthetics with surrealist '
-        'flourishes. Some viewers may find its provocations exhausting, but for those on its wavelength, '
-        'it is wickedly funny and surprisingly moving.',
-    'The Zone of Interest' =>
-    'Glazer\'s Holocaust drama is one of the most formally radical films in recent memory. '
-        'By refusing to show the horror directly and instead focusing on the mundane domestic life '
-        'of Höss and his family, the film implicates the viewer in disturbing ways.\n\n'
-        'The sound design does much of the horrifying work. A challenging, essential work that '
-        'demands patience but rewards it with devastating effect.',
-    'Society of the Snow' =>
-    'Bayona\'s survival epic is a brutal, respectful tribute to the Andes survivors. '
-        'The film is technically stunning, recreating the harsh mountain environment with '
-        'oppressive authenticity, while the ensemble cast grounds the story in human dignity.\n\n'
-        'Where other survival films might sensationalize, this one reflects. It is sometimes '
-        'difficult to watch, but it is ultimately a film about hope and the bonds that sustain us.',
-    'Past Lives' =>
-    'Celine Song\'s debut feature is quietly devastating. The film traces the relationship '
-        'between two childhood friends across twenty-four years with extraordinary restraint and '
-        'emotional intelligence.\n\n'
-        'Greta Lee and Teo Yoo give performances of remarkable subtlety. The final scene, which '
-        'is almost entirely composed of faces and silence, is one of the most heartbreaking '
-        'sequences of recent cinema. A deeply personal and universal film.',
-    'Anatomy of a Fall' =>
-    'Triet\'s Palme d\'Or winner is a gripping legal thriller that is also a devastating '
-        'portrait of a marriage. Sandra Hüller is extraordinary as a woman whose guilt or '
-        'innocence the film deliberately leaves ambiguous.\n\n'
-        'The courtroom scenes crackle with tension, and the script is mercilessly intelligent '
-        'in the way it dissects how we construct narratives about other people\'s lives. '
-        'One of the most sophisticated films of the year.',
-    'The Holdovers' =>
-    'Alexander Payne\'s warm, funny character piece is the kind of old-fashioned quality '
-        'filmmaking that rarely gets made anymore. Paul Giamatti is at his curmudgeonly best, '
-        'matched stride for stride by Da\'Vine Joy Randolph in an Oscar-winning performance.\n\n'
-        'The film takes its time establishing its three central characters before bringing '
-        'them together, and the patience pays off in a final act of genuine emotional '
-        'generosity. A deeply satisfying film.',
-    'The Brutalist' =>
-    'Brady Corbet\'s three-and-a-half-hour epic is a genuine feat of ambition. '
-        'Adrien Brody anchors the film as a Hungarian-Jewish architect who emigrates to America '
-        'after the war, only to find the promised land full of its own compromises.\n\n'
-        'The VistaVision cinematography is stunning, and the film\'s meditation on art, '
-        'survival, and the American dream feels urgent and timeless.',
-    'Anora' =>
-    'Sean Baker\'s Palme d\'Or winner is a raucous, tender, and ultimately heartbreaking '
-        'film about a young woman who marries a Russian oligarch\'s son on a whim.\n\n'
-        'Mikey Madison is a revelation in the lead role, carrying the film through tonal '
-        'shifts from comedy to chaos to genuine pathos. The final scene is extraordinary.',
-    _ =>
-    'A compelling and thoughtfully crafted film that rewards attentive viewing. '
-        'The performances are uniformly strong, and the direction displays a confident '
-        'command of tone and pacing.\n\n'
-        'While not without its flaws, this is exactly the kind of cinema that reminds you '
-        'why films matter. Recommended.',
-  };
+class _MovieHeader extends StatelessWidget {
+  final MovieReview review;
+
+  const _MovieHeader({required this.review});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Semantics(
+      button: true,
+      label: review.title,
+      child: InkWell(
+        onTap: () => context.router.push(
+          MovieDetailRoute(movieId: review.movieId, movieTitle: review.title),
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ExcludeSemantics(
+                child: Container(
+                  width: double.infinity,
+                  height: 220,
+                  color: colorScheme.tertiaryContainer,
+                  child: Center(
+                    child: Icon(
+                      Icons.movie_outlined,
+                      size: 64,
+                      color: colorScheme.onTertiaryContainer,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Text(
+                  review.title,
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RatingAndDateRow extends StatelessWidget {
+  final MovieReview review;
+
+  const _RatingAndDateRow({required this.review});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        MoovieStarRating(rating: review.rating, starSize: 18),
+        const SizedBox(width: 10),
+        Text(
+          review.date,
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AuthorRow extends StatelessWidget {
+  final MovieReview review;
+
+  const _AuthorRow({required this.review});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final authorId = review.authorId;
+    final author = review.author ?? '';
+
+    return Semantics(
+      button: true,
+      label: author,
+      child: InkWell(
+        onTap: authorId == null
+            ? null
+            : () => context.router.push(PublicProfileRoute(userId: authorId)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: colorScheme.primaryContainer,
+                  child: Text(
+                    author.isNotEmpty ? author.substring(0, 1).toUpperCase() : '?',
+                    style: textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    author,
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LikeCountRow extends StatelessWidget {
+  final int count;
+
+  const _LikeCountRow({required this.count});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final posterColor = _posterColor(colorScheme);
-
-    return BlocProvider.value(
-      value: cubit,
-      child: BlocBuilder<ReviewDetailsCubit, ReviewDetailsState>(
-        builder: (context, state) => switch (state) {
-          ReviewDetailsLoading() => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+    return Row(
+      children: [
+        Icon(
+          Icons.favorite_outline,
+          size: 18,
+          color: colorScheme.onSurfaceVariant,
+          semanticLabel: null,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          l10n?.reviewDetailsLikeCount(count) ?? '',
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
           ),
-          ReviewDetailsError() => Scaffold(
-            body: MoovieEmptyState(
-              title: l10n?.emptyStateErrorTitle ?? '',
-              message: state.message,
-              action: cubit.reload,
-              actionLabel: l10n?.emptyStateRetry ?? '',
+        ),
+      ],
+    );
+  }
+}
+
+class _CommentsSection extends StatelessWidget {
+  final Result<MovieReviewCommentListing>? comments;
+  final MovieReview review;
+  final Future<void> Function() onRetry;
+
+  const _CommentsSection({
+    required this.comments,
+    required this.review,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final headerWidget = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        l10n?.reviewDetailsCommentsTitle ?? '',
+        style: textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onSurface,
+        ),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        headerWidget,
+        const SizedBox(height: 12),
+        if (comments == null)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: CircularProgressIndicator()),
+          )
+        else
+          switch (comments!) {
+            Failure() => _InlineRetryRow(
+                message: l10n?.reviewDetailsLoadCommentsError ?? '',
+                onRetry: onRetry,
+              ),
+            Success(:final data) => _CommentsPreview(
+                listing: data,
+                review: review,
+              ),
+          },
+      ],
+    );
+  }
+}
+
+class _CommentsPreview extends StatelessWidget {
+  final MovieReviewCommentListing listing;
+  final MovieReview review;
+
+  const _CommentsPreview({required this.listing, required this.review});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    if (listing.comments.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: Text(
+          l10n?.reviewDetailsNoComments ?? '',
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
+
+    final preview = listing.comments.take(3).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...preview.map((comment) => _CommentTile(comment: comment)),
+        if (listing.totalResults > 3)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: TextButton(
+              onPressed: () => MoovieBottomSheet.show<void>(
+                context: context,
+                builder: (_) => CommentsBottomSheet(reviewId: review.id),
+              ),
+              child: Text(
+                l10n?.reviewDetailsViewAllComments(listing.totalResults) ?? '',
+              ),
             ),
           ),
-          ReviewDetailsSuccess() => Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      ],
+    );
+  }
+}
+
+class _CommentTile extends StatelessWidget {
+  final MovieReviewComment comment;
+
+  const _CommentTile({required this.comment});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Semantics(
+      label: '${comment.authorName}: ${comment.body}',
+      child: ExcludeSemantics(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  ExcludeSemantics(
-                    child: Container(
-                      width: double.infinity,
-                      height: 220,
-                      color: posterColor,
+                  Text(
+                    comment.authorName,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          movieTitle,
-                          style: textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Semantics(
-                              label:
-                              '${rating % 1 == 0 ? rating.toInt() : rating} out of 5 stars',
-                              child: Row(
-                                children: List.generate(5, (starIndex) {
-                                  final isFilled =
-                                      starIndex < rating.floor();
-                                  final isHalf =
-                                      !isFilled && starIndex < rating;
-                                  return Icon(
-                                    isHalf
-                                        ? Icons.star_half
-                                        : (isFilled
-                                        ? Icons.star
-                                        : Icons.star_border),
-                                    size: 18,
-                                    color: colorScheme.onTertiaryContainer,
-                                  );
-                                }),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              reviewDate,
-                              style: textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          l10n?.reviewDetailsBodyTitle ?? '',
-                          style: textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          _reviewBody(movieTitle),
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                            height: 1.6,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                      ],
+                  const SizedBox(width: 8),
+                  Text(
+                    comment.createdAt,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 4),
+              Text(
+                comment.body,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OtherReviewsSection extends StatelessWidget {
+  final Result<List<MovieReview>>? data;
+  final Future<void> Function() onRetry;
+
+  const _OtherReviewsSection({required this.data, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (data == null) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    return switch (data!) {
+      Failure() => _InlineRetryRow(
+          message: l10n?.reviewDetailsLoadRelatedError ?? '',
+          onRetry: onRetry,
+        ),
+      Success(:final data) => data.isEmpty
+          ? const SizedBox.shrink()
+          : _ReviewsCarousel(
+              title: l10n?.reviewDetailsOtherReviewsForMovie ?? '',
+              reviews: data,
+              cardKind: _CarouselCardKind.byAuthor,
+            ),
+    };
+  }
+}
+
+class _MoreFromAuthorSection extends StatelessWidget {
+  final String? authorName;
+  final Result<List<MovieReview>>? data;
+  final Future<void> Function() onRetry;
+
+  const _MoreFromAuthorSection({
+    required this.authorName,
+    required this.data,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (data == null) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    return switch (data!) {
+      Failure() => _InlineRetryRow(
+          message: l10n?.reviewDetailsLoadRelatedError ?? '',
+          onRetry: onRetry,
+        ),
+      Success(:final data) => data.isEmpty
+          ? const SizedBox.shrink()
+          : _ReviewsCarousel(
+              title: l10n?.reviewDetailsMoreFromAuthor(
+                    authorName ?? l10n.reviewDetailsAnonymousAuthor,
+                  ) ??
+                  '',
+              reviews: data,
+              cardKind: _CarouselCardKind.byMovie,
+            ),
+    };
+  }
+}
+
+enum _CarouselCardKind {
+  /// Card shows star rating + author (used in "other reviews for this movie").
+  byAuthor,
+
+  /// Card shows movie title + rating + date (used in "more from author").
+  byMovie,
+}
+
+class _ReviewsCarousel extends StatelessWidget {
+  final String title;
+  final List<MovieReview> reviews;
+  final _CarouselCardKind cardKind;
+
+  const _ReviewsCarousel({
+    required this.title,
+    required this.reviews,
+    required this.cardKind,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            title,
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
             ),
           ),
-        },
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 160,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: reviews.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) => _CarouselCard(
+              review: reviews[index],
+              kind: cardKind,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CarouselCard extends StatelessWidget {
+  final MovieReview review;
+  final _CarouselCardKind kind;
+
+  const _CarouselCard({required this.review, required this.kind});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final author = review.author ?? l10n?.reviewDetailsAnonymousAuthor ?? '';
+    return Semantics(
+      button: true,
+      label: kind == _CarouselCardKind.byMovie
+          ? '${review.title}, ${review.date}'
+          : '${review.title}, $author',
+      child: SizedBox(
+        width: 220,
+        child: InkWell(
+          onTap: () => context.router.push(
+            ReviewDetailsRoute(reviewId: review.id, movieTitle: review.title),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MoovieStarRating(rating: review.rating, starSize: 14),
+                const SizedBox(height: 8),
+                if (kind == _CarouselCardKind.byMovie)
+                  Text(
+                    review.title,
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                else
+                  Text(
+                    l10n?.reviewDetailsBy(author) ?? '',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                const SizedBox(height: 6),
+                Expanded(
+                  child: Text(
+                    kind == _CarouselCardKind.byMovie
+                        ? review.date
+                        : (review.content ?? ''),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InlineRetryRow extends StatelessWidget {
+  final String message;
+  final Future<void> Function() onRetry;
+
+  const _InlineRetryRow({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              message,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.error,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onRetry,
+            child: Text(l10n?.emptyStateRetry ?? ''),
+          ),
+        ],
       ),
     );
   }

@@ -122,12 +122,7 @@ class _ReviewTile extends StatelessWidget {
       button: true,
       child: InkWell(
         onTap: () => context.router.push(
-          ReviewDetailsRoute(
-            movieTitle: review.title,
-            reviewDate: review.date,
-            rating: review.rating,
-            posterColorIndex: 1,
-          ),
+          ReviewDetailsRoute(reviewId: review.id, movieTitle: review.title),
         ),
         child: ExcludeSemantics(
           child: Padding(

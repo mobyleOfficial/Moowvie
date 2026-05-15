@@ -1,21 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:movies/movies.dart';
 import 'package:reviews/review_details/review_details_bloc.dart';
 import 'package:reviews/review_details/review_details_screen.dart';
 
 @RoutePage()
 class ReviewDetailsPage extends StatefulWidget {
+  final String reviewId;
   final String movieTitle;
-  final String reviewDate;
-  final double rating;
-  final int posterColorIndex;
 
   const ReviewDetailsPage({
     super.key,
+    required this.reviewId,
     required this.movieTitle,
-    required this.reviewDate,
-    required this.rating,
-    required this.posterColorIndex,
   });
 
   @override
@@ -23,7 +21,14 @@ class ReviewDetailsPage extends StatefulWidget {
 }
 
 class _ReviewDetailsPageState extends State<ReviewDetailsPage> {
-  late final ReviewDetailsCubit _cubit = ReviewDetailsCubit();
+  late final ReviewDetailsCubit _cubit = ReviewDetailsCubit(
+    reviewId: widget.reviewId,
+    getReviewDetails: GetIt.I<GetReviewDetails>(),
+    getReviewComments: GetIt.I<GetReviewComments>(),
+    getMovieReviews: GetIt.I<GetMovieReviews>(),
+    likeReview: GetIt.I<LikeReview>(),
+    unlikeReview: GetIt.I<UnlikeReview>(),
+  );
 
   @override
   void dispose() {
@@ -32,11 +37,5 @@ class _ReviewDetailsPageState extends State<ReviewDetailsPage> {
   }
 
   @override
-  Widget build(BuildContext context) => ReviewDetailsScreen(
-        cubit: _cubit,
-        movieTitle: widget.movieTitle,
-        reviewDate: widget.reviewDate,
-        rating: widget.rating,
-        posterColorIndex: widget.posterColorIndex,
-      );
+  Widget build(BuildContext context) => ReviewDetailsScreen(cubit: _cubit);
 }

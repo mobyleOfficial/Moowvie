@@ -150,6 +150,7 @@ class _MainScreenState extends State<MainScreen> {
                         title: titleOverride ?? tabTitles[activeIndex],
                         visible: !hideAppBar,
                         centerTitle: !hasOverride && isHomeTab,
+                        actions: _appBarController.currentActions,
                         leading: hasOverride
                             ? IconButton(
                                 icon: const Icon(Icons.arrow_back),
@@ -214,7 +215,12 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   TabIndexScope(
                     tabIndex: activeIndex,
-                    child: Expanded(child: child),
+                    child: Expanded(
+                      child: AppBarControllerScope(
+                        controller: _appBarController,
+                        child: child,
+                      ),
+                    ),
                   ),
                 ],
               ),
