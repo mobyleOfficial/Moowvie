@@ -814,6 +814,42 @@ abstract class AppLocalizations {
   /// **'{title} Reviews'**
   String movieDetailMovieReviews(String title);
 
+  /// Comments section title
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get comments;
+
+  /// Message shown when there are no comments
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet'**
+  String get noComments;
+
+  /// Button label to load more comments
+  ///
+  /// In en, this message translates to:
+  /// **'Load More Comments'**
+  String get loadMore;
+
+  /// Loading state message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// Error state title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Retry button label
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
   /// Tooltip and semantic label for the share review action in the AppBar
   ///
   /// In en, this message translates to:

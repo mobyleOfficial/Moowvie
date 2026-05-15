@@ -391,6 +391,24 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get comments => 'Comentários';
+
+  @override
+  String get noComments => 'Ainda não há comentários';
+
+  @override
+  String get loadMore => 'Carregar mais comentários';
+
+  @override
+  String get loading => 'Carregando...';
+
+  @override
+  String get error => 'Erro';
+
+  @override
+  String get retry => 'Tentar novamente';
+
+  @override
   String get reviewDetailsShare => 'Compartilhar review';
 
   @override

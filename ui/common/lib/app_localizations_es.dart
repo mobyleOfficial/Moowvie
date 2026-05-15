@@ -391,6 +391,24 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get comments => 'Comentarios';
+
+  @override
+  String get noComments => 'Sin comentarios aún';
+
+  @override
+  String get loadMore => 'Cargar más comentarios';
+
+  @override
+  String get loading => 'Cargando...';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get retry => 'Reintentar';
+
+  @override
   String get reviewDetailsShare => 'Compartir reseña';
 
   @override
