@@ -4,7 +4,6 @@ import 'package:movies_domain/models/movie_list.dart';
 import 'package:movies_domain/models/movie_list_listing.dart';
 import 'package:movies_domain/models/movie.dart';
 import 'package:movies_domain/models/movie_review.dart';
-import 'package:movies_domain/models/movie_review_comment_listing.dart';
 import 'package:movies_domain/models/movie_review_listing.dart';
 import 'package:movies_domain/models/recent_search.dart';
 import 'package:movies_domain/models/country.dart';
@@ -17,7 +16,6 @@ abstract interface class MoviesRepository {
   Future<Result<Movie>> getMovieDetail({required int movieId});
   Future<Result<MovieReviewListing>> getMovieReviews({required int page, String? userId, int? movieId});
   Future<Result<MovieReview>> getReviewDetails({required String reviewId});
-  Future<Result<MovieReviewCommentListing>> getReviewComments({required String reviewId, required int page});
   Future<Result<void>> likeReview({required String reviewId});
   Future<Result<void>> unlikeReview({required String reviewId});
   Future<Result<MovieListListing>> getMovieLists({required int page, String? userId});

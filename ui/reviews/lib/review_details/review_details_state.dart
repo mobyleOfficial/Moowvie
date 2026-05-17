@@ -20,14 +20,12 @@ class ReviewDetailsError extends ReviewDetailsState {
 class ReviewDetailsSuccess extends ReviewDetailsState {
   final MovieReview review;
   final bool isLikeBusy;
-  final Result<MovieReviewCommentListing>? comments;
   final Result<List<MovieReview>>? otherReviewsForMovie;
   final Result<List<MovieReview>>? moreFromAuthor;
 
   const ReviewDetailsSuccess({
     required this.review,
     this.isLikeBusy = false,
-    this.comments,
     this.otherReviewsForMovie,
     this.moreFromAuthor,
   });
@@ -35,17 +33,14 @@ class ReviewDetailsSuccess extends ReviewDetailsState {
   ReviewDetailsSuccess copyWith({
     MovieReview? review,
     bool? isLikeBusy,
-    Result<MovieReviewCommentListing>? comments,
     Result<List<MovieReview>>? otherReviewsForMovie,
     Result<List<MovieReview>>? moreFromAuthor,
-    bool clearComments = false,
     bool clearOtherReviewsForMovie = false,
     bool clearMoreFromAuthor = false,
   }) =>
       ReviewDetailsSuccess(
         review: review ?? this.review,
         isLikeBusy: isLikeBusy ?? this.isLikeBusy,
-        comments: clearComments ? null : (comments ?? this.comments),
         otherReviewsForMovie: clearOtherReviewsForMovie
             ? null
             : (otherReviewsForMovie ?? this.otherReviewsForMovie),

@@ -6,7 +6,6 @@ import 'package:reviews/review_details/review_details_state.dart';
 class ReviewDetailsCubit extends Cubit<ReviewDetailsState> {
   final String reviewId;
   final GetReviewDetails _getReviewDetails;
-  final GetReviewComments _getReviewComments;
   final GetMovieReviews _getMovieReviews;
   final LikeReview _likeReview;
   final UnlikeReview _unlikeReview;
@@ -14,12 +13,10 @@ class ReviewDetailsCubit extends Cubit<ReviewDetailsState> {
   ReviewDetailsCubit({
     required this.reviewId,
     required GetReviewDetails getReviewDetails,
-    required GetReviewComments getReviewComments,
     required GetMovieReviews getMovieReviews,
     required LikeReview likeReview,
     required UnlikeReview unlikeReview,
   })  : _getReviewDetails = getReviewDetails,
-        _getReviewComments = getReviewComments,
         _getMovieReviews = getMovieReviews,
         _likeReview = likeReview,
         _unlikeReview = unlikeReview,
@@ -46,21 +43,9 @@ class ReviewDetailsCubit extends Cubit<ReviewDetailsState> {
 
   Future<void> _loadSecondarySections({required MovieReview review}) async {
     await Future.wait<void>([
-      _loadComments(),
       _loadOtherReviewsForMovie(review),
       _loadMoreFromAuthor(review),
     ]);
-  }
-
-  Future<void> _loadComments() async {
-    final result = await _getReviewComments(
-      GetReviewCommentsParams(reviewId: reviewId, page: 1),
-    );
-
-    final currentState = state;
-    if (currentState is ReviewDetailsSuccess) {
-      emit(currentState.copyWith(comments: result));
-    }
   }
 
   Future<void> _loadOtherReviewsForMovie(MovieReview review) async {
@@ -112,14 +97,6 @@ class ReviewDetailsCubit extends Cubit<ReviewDetailsState> {
     final currentState = state;
     if (currentState is ReviewDetailsSuccess) {
       emit(currentState.copyWith(moreFromAuthor: filtered));
-    }
-  }
-
-  Future<void> retryComments() async {
-    final currentState = state;
-    if (currentState is ReviewDetailsSuccess) {
-      emit(currentState.copyWith(clearComments: true));
-      await _loadComments();
     }
   }
 

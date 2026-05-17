@@ -24,7 +24,6 @@ class _ReviewDetailsPageState extends State<ReviewDetailsPage> {
   late final ReviewDetailsCubit _cubit = ReviewDetailsCubit(
     reviewId: widget.reviewId,
     getReviewDetails: GetIt.I<GetReviewDetails>(),
-    getReviewComments: GetIt.I<GetReviewComments>(),
     getMovieReviews: GetIt.I<GetMovieReviews>(),
     likeReview: GetIt.I<LikeReview>(),
     unlikeReview: GetIt.I<UnlikeReview>(),

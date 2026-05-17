@@ -6,7 +6,6 @@ export 'get_movie_lists.dart';
 export 'get_movie_list_detail.dart';
 export 'get_movie_detail.dart';
 export 'get_movie_reviews.dart';
-export 'get_review_comments.dart';
 export 'get_review_details.dart';
 export 'like_review.dart';
 export 'unlike_review.dart';

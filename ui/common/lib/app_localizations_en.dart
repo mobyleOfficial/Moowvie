@@ -390,6 +390,24 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get comments => 'Comments';
+
+  @override
+  String get noComments => 'No comments yet';
+
+  @override
+  String get loadMore => 'Load More Comments';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
   String get reviewDetailsShare => 'Share review';
 
   @override

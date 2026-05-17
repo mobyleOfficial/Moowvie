@@ -25,10 +25,13 @@ dependencies:
     path: ../../features/movies
   user_activities_domain:
     path: ../../features/user_activities/domain
+  comments_ui:
+    path: ../comments
   movies_ui:
     path: ../movies_ui
   public_profile:
     path: ../public_profile
+  
 
 dev_dependencies:
   auto_route_generator: ^10.5.0

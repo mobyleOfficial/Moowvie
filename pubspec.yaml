@@ -46,6 +46,12 @@ dependencies:
   dio: ^5.0.0
   core:
     path: core
+  comments:
+    path: features/comments
+  comments_domain:
+    path: features/comments/domain
+  comments_data:
+    path: features/comments/data
   movies:
     path: features/movies
   movies_domain:
@@ -80,6 +86,8 @@ dependencies:
     path: ui/movies_ui
   common:
     path: ui/common
+  comments_ui:
+    path: ui/comments
   profile_ui:
     path: ui/profile
   reviews:

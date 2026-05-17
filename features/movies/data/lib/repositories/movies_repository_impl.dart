@@ -60,22 +60,6 @@ class MoviesRepositoryImpl implements MoviesRepository {
   }
 
   @override
-  Future<Result<MovieReviewCommentListing>> getReviewComments({
-    required String reviewId,
-    required int page,
-  }) async {
-    final result = await _dataSource.getReviewComments(
-      reviewId: reviewId,
-      page: page,
-    );
-
-    return switch (result) {
-      Success(:final data) => Success(data.toDomain()),
-      Failure(:final error) => Failure(error),
-    };
-  }
-
-  @override
   Future<Result<void>> likeReview({required String reviewId}) async {
     final result = await _dataSource.likeReview(reviewId: reviewId);
 

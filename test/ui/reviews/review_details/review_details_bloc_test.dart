@@ -13,7 +13,6 @@ ReviewDetailsCubit _buildCubit({
     ReviewDetailsCubit(
       reviewId: reviewId,
       getReviewDetails: GetReviewDetails(repository),
-      getReviewComments: GetReviewComments(repository),
       getMovieReviews: GetMovieReviews(repository),
       likeReview: LikeReview(repository),
       unlikeReview: UnlikeReview(repository),
@@ -52,14 +51,6 @@ void main() {
         () async {
       final repository = FakeMoviesRepository()
         ..reviewDetailsResult = const Success(_sampleReview)
-        ..reviewCommentsResult = const Success(
-          MovieReviewCommentListing(
-            page: 1,
-            totalPages: 1,
-            totalResults: 0,
-            comments: [],
-          ),
-        )
         ..movieReviewsResult = const Success(
           MovieReviewListing(totalPages: 1, totalResults: 0, reviews: []),
         );
@@ -71,7 +62,6 @@ void main() {
 
       expect(finalState, isA<ReviewDetailsSuccess>());
       final success = finalState as ReviewDetailsSuccess;
-      expect(success.comments, isA<Success<MovieReviewCommentListing>>());
       expect(success.otherReviewsForMovie, isA<Success<List<MovieReview>>>());
       expect(success.moreFromAuthor, isA<Success<List<MovieReview>>>());
     });
@@ -79,14 +69,6 @@ void main() {
     test('toggleLike optimistic update sticks on success', () async {
       final repository = FakeMoviesRepository()
         ..reviewDetailsResult = const Success(_sampleReview)
-        ..reviewCommentsResult = const Success(
-          MovieReviewCommentListing(
-            page: 1,
-            totalPages: 1,
-            totalResults: 0,
-            comments: [],
-          ),
-        )
         ..movieReviewsResult = const Success(
           MovieReviewListing(totalPages: 1, totalResults: 0, reviews: []),
         )
@@ -106,14 +88,6 @@ void main() {
     test('toggleLike emits LikeFailed once and reverts on failure', () async {
       final repository = FakeMoviesRepository()
         ..reviewDetailsResult = const Success(_sampleReview)
-        ..reviewCommentsResult = const Success(
-          MovieReviewCommentListing(
-            page: 1,
-            totalPages: 1,
-            totalResults: 0,
-            comments: [],
-          ),
-        )
         ..movieReviewsResult = const Success(
           MovieReviewListing(totalPages: 1, totalResults: 0, reviews: []),
         )
