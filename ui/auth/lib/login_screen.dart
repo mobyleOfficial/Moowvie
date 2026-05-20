@@ -6,8 +6,9 @@ import 'package:auth_ui/login_state.dart';
 
 class LoginScreen extends StatelessWidget {
   final LoginState state;
+  final VoidCallback? onClose;
 
-  const LoginScreen({super.key, required this.state});
+  const LoginScreen({super.key, required this.state, this.onClose});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -36,6 +37,15 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (onClose != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: onClose,
+                  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                ),
+              ),
             const Spacer(flex: 2),
             Icon(
               Icons.movie_outlined,

@@ -36,7 +36,10 @@ class _LoginPageState extends State<LoginPage> {
               context.router.maybePop(true);
             }
           },
-          builder: (context, state) => LoginScreen(state: state),
+          builder: (context, state) => LoginScreen(
+            state: state,
+            onClose: () => context.router.maybePop(false),
+          ),
         ),
       );
 }

@@ -12,7 +12,7 @@ class LoginCubit extends Cubit<LoginState> {
     required IsUserAuthenticatedUseCase isUserAuthenticatedUseCase,
   })  : _loginUseCase = loginUseCase,
         _isUserAuthenticatedUseCase = isUserAuthenticatedUseCase,
-        super(const LoginLoading());
+        super(const LoginUnauthenticated());
 
   Future<void> checkAuthStatus() async {
     emit(const LoginLoading());
