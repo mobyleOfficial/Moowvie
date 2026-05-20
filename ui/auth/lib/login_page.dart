@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -6,6 +7,7 @@ import 'package:auth_ui/login_cubit.dart';
 import 'package:auth_ui/login_state.dart';
 import 'package:auth_ui/login_screen.dart';
 
+@RoutePage()
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -31,13 +33,10 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state is LoginAuthenticated) {
-              Navigator.of(context).pop(true);
+              context.router.maybePop(true);
             }
           },
-          builder: (context, state) => SizedBox(
-            height: MediaQuery.of(context).size.height * 0.85,
-            child: LoginScreen(state: state),
-          ),
+          builder: (context, state) => LoginScreen(state: state),
         ),
       );
 }

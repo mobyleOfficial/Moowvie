@@ -1,20 +1,20 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:core/core.dart';
 import 'package:auth/auth.dart';
-import 'package:common/src/moovie_bottom_sheet.dart';
 
 class AuthGate {
-  static WidgetBuilder? _loginModalBuilder;
+  static PageRouteInfo? _loginRoute;
 
-  /// Register the login modal builder at app startup.
+  /// Register the login route at app startup.
   /// Must be called before any [check] calls.
-  static void configure({required WidgetBuilder loginModalBuilder}) {
-    _loginModalBuilder = loginModalBuilder;
+  static void configure({required PageRouteInfo loginRoute}) {
+    _loginRoute = loginRoute;
   }
 
   /// Returns true if user is authenticated (or just logged in via modal).
-  /// Returns false if user dismissed the modal without logging in.
+  /// Returns false if user dismissed the login without logging in.
   static Future<bool> check(BuildContext context) async {
     final result = await GetIt.I<IsUserAuthenticatedUseCase>()();
 
@@ -23,14 +23,11 @@ class AuthGate {
     }
 
     assert(
-      _loginModalBuilder != null,
+      _loginRoute != null,
       'AuthGate.configure() must be called before AuthGate.check()',
     );
 
-    final loginResult = await MoovieBottomSheet.show<bool>(
-      context: context,
-      builder: _loginModalBuilder!,
-    );
+    final loginResult = await context.router.root.push<bool>(_loginRoute!);
 
     return loginResult == true;
   }

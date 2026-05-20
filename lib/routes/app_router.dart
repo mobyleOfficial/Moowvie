@@ -1,3 +1,4 @@
+import 'package:auth_ui/login_router.dart';
 import 'package:social/social_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:moovie/routes/main_screen.dart';
@@ -92,6 +93,12 @@ class AppRouter extends RootStackRouter {
         ),
         CustomRoute(
           page: EditProfileRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          duration: _animationDuration,
+          reverseDuration: _animationDuration,
+        ),
+        CustomRoute(
+          page: LoginRoute.page,
           transitionsBuilder: TransitionsBuilders.slideBottom,
           duration: _animationDuration,
           reverseDuration: _animationDuration,
