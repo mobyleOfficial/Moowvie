@@ -4,12 +4,12 @@ import 'package:auth/auth.dart';
 import 'package:auth_ui/login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  final LoginUseCase _loginUseCase;
-  final IsUserAuthenticatedUseCase _isUserAuthenticatedUseCase;
+  final Login _loginUseCase;
+  final IsUserAuthenticated _isUserAuthenticatedUseCase;
 
   LoginCubit({
-    required LoginUseCase loginUseCase,
-    required IsUserAuthenticatedUseCase isUserAuthenticatedUseCase,
+    required Login loginUseCase,
+    required IsUserAuthenticated isUserAuthenticatedUseCase,
   })  : _loginUseCase = loginUseCase,
         _isUserAuthenticatedUseCase = isUserAuthenticatedUseCase,
         super(const LoginUnauthenticated());

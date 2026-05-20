@@ -18,12 +18,12 @@ class MockAuthRepository implements AuthRepository {
 }
 
 void main() {
-  late LoginUseCase useCase;
+  late Login useCase;
   late MockAuthRepository mockRepository;
 
   setUp(() {
     mockRepository = MockAuthRepository();
-    useCase = LoginUseCase(mockRepository);
+    useCase = Login(mockRepository);
   });
 
   test('calls repository login with google provider', () async {

@@ -24,12 +24,12 @@ class MockCommentsRepository implements CommentsRepository {
 
 void main() {
   group('GetCommentsUseCase', () {
-    late GetCommentsUseCase getCommentsUseCase;
+    late GetComments getCommentsUseCase;
     late MockCommentsRepository mockRepository;
 
     setUp(() {
       mockRepository = MockCommentsRepository();
-      getCommentsUseCase = GetCommentsUseCase(mockRepository);
+      getCommentsUseCase = GetComments(mockRepository);
     });
 
     test('should call getComments on repository with correct parameters', () async {

@@ -14,6 +14,6 @@ abstract class CommentsModule {
       CommentsRepositoryImpl(remoteDataSource);
 
   @injectable
-  GetCommentsUseCase getCommentsUseCase(CommentsRepository repository) =>
-      GetCommentsUseCase(repository);
+  GetComments getCommentsUseCase(CommentsRepository repository) =>
+      GetComments(repository);
 }

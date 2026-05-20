@@ -27,14 +27,14 @@ abstract class AuthModule {
       AuthRepositoryImpl(remoteDataSource, localDataSource);
 
   @injectable
-  LoginUseCase loginUseCase(
+  Login loginUseCase(
     AuthRepository repository,
   ) =>
-      LoginUseCase(repository);
+      Login(repository);
 
   @injectable
-  IsUserAuthenticatedUseCase isUserAuthenticatedUseCase(
+  IsUserAuthenticated isUserAuthenticatedUseCase(
     AuthRepository repository,
   ) =>
-      IsUserAuthenticatedUseCase(repository);
+      IsUserAuthenticated(repository);
 }

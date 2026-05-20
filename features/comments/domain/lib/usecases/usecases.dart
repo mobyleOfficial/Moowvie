@@ -1,1 +1,1 @@
-export 'get_comments_usecase.dart';
+export 'get_comments.dart';

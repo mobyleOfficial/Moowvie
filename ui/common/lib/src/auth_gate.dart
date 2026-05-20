@@ -16,7 +16,7 @@ class AuthGate {
   /// Returns true if user is authenticated (or just logged in via modal).
   /// Returns false if user dismissed the login without logging in.
   static Future<bool> check(BuildContext context) async {
-    final result = await GetIt.I<IsUserAuthenticatedUseCase>()();
+    final result = await GetIt.I<IsUserAuthenticated>()();
 
     if (result is Success<bool> && result.data) {
       return true;

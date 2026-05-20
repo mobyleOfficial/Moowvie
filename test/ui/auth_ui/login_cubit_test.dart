@@ -4,7 +4,7 @@ import 'package:core/core.dart';
 import 'package:auth_domain/domain.dart';
 import 'package:auth_ui/auth.dart';
 
-class MockLoginUseCase extends LoginUseCase {
+class MockLoginUseCase extends Login {
   Result<void>? mockResult;
 
   MockLoginUseCase() : super(_FakeAuthRepository());
@@ -14,7 +14,7 @@ class MockLoginUseCase extends LoginUseCase {
       mockResult ?? const Failure(AppError.unknown);
 }
 
-class MockIsUserAuthenticatedUseCase extends IsUserAuthenticatedUseCase {
+class MockIsUserAuthenticatedUseCase extends IsUserAuthenticated {
   Result<bool>? mockResult;
 
   MockIsUserAuthenticatedUseCase() : super(_FakeAuthRepository());

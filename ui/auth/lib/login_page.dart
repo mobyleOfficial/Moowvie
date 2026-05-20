@@ -17,8 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late final LoginCubit _cubit = LoginCubit(
-    loginUseCase: GetIt.I<LoginUseCase>(),
-    isUserAuthenticatedUseCase: GetIt.I<IsUserAuthenticatedUseCase>(),
+    loginUseCase: GetIt.I<Login>(),
+    isUserAuthenticatedUseCase: GetIt.I<IsUserAuthenticated>(),
   );
 
   @override

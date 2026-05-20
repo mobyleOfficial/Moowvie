@@ -15,12 +15,12 @@ class MockAuthRepository implements AuthRepository {
 }
 
 void main() {
-  late IsUserAuthenticatedUseCase useCase;
+  late IsUserAuthenticated useCase;
   late MockAuthRepository mockRepository;
 
   setUp(() {
     mockRepository = MockAuthRepository();
-    useCase = IsUserAuthenticatedUseCase(mockRepository);
+    useCase = IsUserAuthenticated(mockRepository);
   });
 
   test('returns true when user is authenticated', () async {

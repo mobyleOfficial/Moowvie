@@ -14,11 +14,11 @@ class GetCommentsParams {
   });
 }
 
-class GetCommentsUseCase
+class GetComments
     extends UseCase<GetCommentsParams, Result<CommentListing>> {
   final CommentsRepository _repository;
 
-  GetCommentsUseCase(this._repository);
+  GetComments(this._repository);
 
   @override
   Future<Result<CommentListing>> call([GetCommentsParams? params]) async =>

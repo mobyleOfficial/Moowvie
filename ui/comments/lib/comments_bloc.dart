@@ -5,7 +5,7 @@ import 'package:comments_ui/comments_state.dart';
 import 'package:get_it/get_it.dart';
 
 class CommentsCubit extends Cubit<CommentsState> {
-  final GetCommentsUseCase _getCommentsUseCase;
+  final GetComments _getCommentsUseCase;
   late String _contentId;
   int _currentPage = 0;
   int _pageSize = 10;
@@ -13,9 +13,9 @@ class CommentsCubit extends Cubit<CommentsState> {
   int _totalCount = 0;
   bool _hasMore = false;
 
-  CommentsCubit({GetCommentsUseCase? getCommentsUseCase})
+  CommentsCubit({GetComments? getCommentsUseCase})
       : _getCommentsUseCase =
-            getCommentsUseCase ?? GetIt.I<GetCommentsUseCase>(),
+            getCommentsUseCase ?? GetIt.I<GetComments>(),
         super(const CommentsLoading());
 
   Future<void> loadComments(String contentId) async {

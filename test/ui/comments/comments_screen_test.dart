@@ -5,7 +5,7 @@ import 'package:core/core.dart';
 import 'package:comments/comments.dart';
 import 'package:comments_ui/comments.dart';
 
-class MockGetCommentsUseCase implements GetCommentsUseCase {
+class MockGetCommentsUseCase implements GetComments {
   Future<Result<CommentListing>>? mockResult;
 
   @override
