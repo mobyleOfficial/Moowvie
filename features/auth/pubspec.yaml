@@ -1,0 +1,16 @@
+name: auth
+description: Auth feature for OAuth login and token management
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  auth_domain:
+    path: domain
+  auth_data:
+    path: data

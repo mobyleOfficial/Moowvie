@@ -351,5 +351,11 @@
   "reviewDetailsLoadCommentsError": "Couldn't load comments",
   "@reviewDetailsLoadCommentsError": { "description": "Inline error row label when the comments section fails to load" },
   "reviewDetailsLoadRelatedError": "Couldn't load related reviews",
-  "@reviewDetailsLoadRelatedError": { "description": "Inline error row label when a related-reviews carousel fails to load" }
+  "@reviewDetailsLoadRelatedError": { "description": "Inline error row label when a related-reviews carousel fails to load" },
+  "loginSubtitle": "Sign in to discover and review movies",
+  "@loginSubtitle": { "description": "Subtitle text on the login screen" },
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": { "description": "Google OAuth login button label" },
+  "continueWithFacebook": "Continue with Facebook",
+  "@continueWithFacebook": { "description": "Facebook OAuth login button label" }
 }

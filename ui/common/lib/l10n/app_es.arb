@@ -147,5 +147,8 @@
   "reviewDetailsAnonymousAuthor": "Anónimo",
   "reviewDetailsNoBody": "Sin texto de reseña",
   "reviewDetailsLoadCommentsError": "No se pudieron cargar los comentarios",
-  "reviewDetailsLoadRelatedError": "No se pudieron cargar las reseñas relacionadas"
+  "reviewDetailsLoadRelatedError": "No se pudieron cargar las reseñas relacionadas",
+  "loginSubtitle": "Inicia sesión para descubrir y reseñar películas",
+  "continueWithGoogle": "Continuar con Google",
+  "continueWithFacebook": "Continuar con Facebook"
 }

@@ -76,6 +76,12 @@ dependencies:
     path: features/public_profile/domain
   public_profile_data:
     path: features/public_profile/data
+  auth:
+    path: features/auth
+  auth_domain:
+    path: features/auth/domain
+  auth_data:
+    path: features/auth/data
   user_activities:
     path: features/user_activities
   user_activities_domain:
@@ -98,6 +104,8 @@ dependencies:
     path: ui/social
   user_activity:
     path: ui/user_activity
+  auth_ui:
+    path: ui/auth
   public_profile:
     path: ui/public_profile
   auto_route: ^11.1.0
@@ -105,10 +113,12 @@ dependencies:
   injectable: ^2.5.0
   workmanager: ^0.9.0
   infinite_scroll_pagination: ^5.0.0
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^10.0.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

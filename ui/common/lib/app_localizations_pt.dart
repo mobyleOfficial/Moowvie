@@ -470,4 +470,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get reviewDetailsLoadRelatedError =>
       'Não foi possível carregar os reviews relacionados';
+
+  @override
+  String get loginSubtitle => 'Entre para descobrir e avaliar filmes';
+
+  @override
+  String get continueWithGoogle => 'Continuar com Google';
+
+  @override
+  String get continueWithFacebook => 'Continuar com Facebook';
 }

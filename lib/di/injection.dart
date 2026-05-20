@@ -9,5 +9,5 @@ final getIt = GetIt.instance;
 @InjectableInit()
 void configureDependencies({required Store store}) {
   getIt.registerSingleton<Store>(store);
-  getIt.init();
+  getIt.$initGetIt();
 }
