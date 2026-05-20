@@ -103,10 +103,10 @@ class _HeroAppBar extends StatelessWidget {
                     imageUrl:
                         '${TmdbImageUrl.backdrop}${detail.info!.backdropPath}',
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(
+                    placeholder: (_, _) => Container(
                       color: colorScheme.surfaceContainerHighest,
                     ),
-                    errorWidget: (_, __, ___) => Container(
+                    errorWidget: (_, _, _) => Container(
                       color: colorScheme.surfaceContainerHighest,
                     ),
                   ),
@@ -221,10 +221,10 @@ class _MovieInfoSection extends StatelessWidget {
                       imageUrl:
                           '${TmdbImageUrl.posterMedium}${detail.posterPath}',
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
+                      placeholder: (_, _) => Container(
                         color: colorScheme.surfaceContainerHighest,
                       ),
-                      errorWidget: (_, __, ___) => Container(
+                      errorWidget: (_, _, _) => Container(
                         color: colorScheme.surfaceContainerHighest,
                         child: Icon(Icons.movie,
                             color: colorScheme.onSurfaceVariant),
@@ -284,11 +284,11 @@ class _WatchProvidersSection extends StatelessWidget {
                                   imageUrl:
                                       '${TmdbImageUrl.posterSmall}${provider.logoPath}',
                                   fit: BoxFit.cover,
-                                  placeholder: (_, __) => Container(
+                                  placeholder: (_, _) => Container(
                                     color:
                                         colorScheme.surfaceContainerHighest,
                                   ),
-                                  errorWidget: (_, __, ___) => Container(
+                                  errorWidget: (_, _, _) => Container(
                                     color:
                                         colorScheme.surfaceContainerHighest,
                                     child: Center(
@@ -640,7 +640,7 @@ class _SimilarMoviesSection extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: movies.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 final movie = movies[index];
                 return Semantics(
@@ -661,11 +661,11 @@ class _SimilarMoviesSection extends StatelessWidget {
                                     imageUrl:
                                         '${TmdbImageUrl.posterMedium}${movie.posterPath}',
                                     fit: BoxFit.cover,
-                                    placeholder: (_, __) => Container(
+                                    placeholder: (_, _) => Container(
                                       color: colorScheme
                                           .surfaceContainerHighest,
                                     ),
-                                    errorWidget: (_, __, ___) => Container(
+                                    errorWidget: (_, _, _) => Container(
                                       color: colorScheme
                                           .surfaceContainerHighest,
                                       child: const Center(

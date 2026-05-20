@@ -8,7 +8,7 @@ class CommentsCubit extends Cubit<CommentsState> {
   final GetComments _getCommentsUseCase;
   late String _contentId;
   int _currentPage = 0;
-  int _pageSize = 10;
+  final int _pageSize = 10;
   List<Comment> _allComments = [];
   int _totalCount = 0;
   bool _hasMore = false;
@@ -63,7 +63,7 @@ class CommentsCubit extends Cubit<CommentsState> {
           ),
         );
       case Failure(:final error):
-        emit(CommentsError(error.message ?? 'Failed to load comments'));
+        emit(CommentsError(error.message));
     }
   }
 }

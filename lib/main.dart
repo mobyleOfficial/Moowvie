@@ -22,7 +22,7 @@ Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Workmanager().initialize(callbackDispatcher);
   final appDir = await getApplicationDocumentsDirectory();
-  final store = await openStore(directory: '${appDir.path}/objectbox');
+  final store = openStore(directory: '${appDir.path}/objectbox');
   configureDependencies(store: store);
   AuthGate.configure(loginRoute: const LoginRoute());
   runApp(MyApp());

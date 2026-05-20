@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'platform_helper.dart';
+import 'package:common/src/platform_helper.dart';
 
 class MoovieAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;

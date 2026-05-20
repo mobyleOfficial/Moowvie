@@ -27,6 +27,7 @@ class AuthGate {
       'AuthGate.configure() must be called before AuthGate.check()',
     );
 
+    if (!context.mounted) return false;
     final loginResult = await context.router.root.push<bool>(_loginRoute!);
 
     return loginResult == true;

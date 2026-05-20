@@ -114,7 +114,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
   // movie detail screen. Built with stable ids that do not collide with
   // _mockedReviews.
   List<RemoteMovieReview> get _mockedPopularReviews => [
-        RemoteMovieReview(
+        const RemoteMovieReview(
           reviewId: 'rp-0',
           movieId: 0,
           title: '',
@@ -125,7 +125,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
               'A visually stunning masterpiece that stays with you long after the credits roll. '
               'The performances are extraordinary and the direction is impeccable.',
         ),
-        RemoteMovieReview(
+        const RemoteMovieReview(
           reviewId: 'rp-1',
           movieId: 0,
           title: '',
@@ -136,7 +136,7 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
               'Impressive storytelling with a few pacing issues in the second act, but the finale '
               'more than makes up for it. One of the best of the year.',
         ),
-        RemoteMovieReview(
+        const RemoteMovieReview(
           reviewId: 'rp-2',
           movieId: 0,
           title: '',

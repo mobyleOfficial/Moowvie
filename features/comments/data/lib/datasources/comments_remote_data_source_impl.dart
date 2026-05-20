@@ -337,7 +337,7 @@ class CommentsRemoteDataSourceImpl implements CommentsRemoteDataSource {
         ),
       );
     } catch (exception) {
-      return Failure(AppError.unknown);
+      return const Failure(AppError.unknown);
     }
   }
 }

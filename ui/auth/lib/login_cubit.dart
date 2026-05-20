@@ -24,7 +24,7 @@ class LoginCubit extends Cubit<LoginState> {
         data
             ? emit(const LoginAuthenticated())
             : emit(const LoginUnauthenticated());
-      case Failure(:final error):
+      case Failure():
         emit(const LoginUnauthenticated());
     }
   }

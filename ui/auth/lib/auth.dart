@@ -1,5 +1,3 @@
-library auth_ui;
-
 export 'login_state.dart';
 export 'login_cubit.dart';
 export 'login_page.dart';

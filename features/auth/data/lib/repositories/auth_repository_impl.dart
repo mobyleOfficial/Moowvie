@@ -4,7 +4,6 @@ import 'package:auth_domain/models/oauth_provider.dart';
 import 'package:auth_domain/repositories/auth_repository.dart';
 import 'package:auth_data/datasources/oauth_remote_data_source.dart';
 import 'package:auth_data/datasources/auth_local_data_source.dart';
-import 'package:auth_data/models/oauth_result_model.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {

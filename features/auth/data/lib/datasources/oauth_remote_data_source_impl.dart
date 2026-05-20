@@ -6,9 +6,7 @@ import 'package:auth_data/models/oauth_result_model.dart';
 
 @injectable
 class OAuthRemoteDataSourceImpl implements OAuthRemoteDataSource {
-  final HttpClient _httpClient;
-
-  OAuthRemoteDataSourceImpl(this._httpClient);
+  OAuthRemoteDataSourceImpl();
 
   @override
   Future<Result<OAuthResultModel>> initiateOAuth(String provider) async {

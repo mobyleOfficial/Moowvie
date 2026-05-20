@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
-import 'errors/http_error.dart';
-import 'http_client.dart';
-import 'result/result.dart';
+import 'package:core/http/errors/http_error.dart';
+import 'package:core/http/http_client.dart';
+import 'package:core/http/result/result.dart';
 
 class DioHttpClient implements HttpClient {
   final Dio _dio;

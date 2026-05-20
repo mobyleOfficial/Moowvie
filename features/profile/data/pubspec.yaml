@@ -18,5 +18,7 @@ dependencies:
     path: ../../../core
   movies_data:
     path: ../../movies/data
+  movies_domain:
+    path: ../../movies/domain
   profile_domain:
     path: ../domain

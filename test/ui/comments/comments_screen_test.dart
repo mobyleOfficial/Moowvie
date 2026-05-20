@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:core/core.dart';
 import 'package:comments/comments.dart';
-import 'package:comments_ui/comments.dart';
+import 'package:comments_ui/comments_screen.dart';
 
 class MockGetCommentsUseCase implements GetComments {
   Future<Result<CommentListing>>? mockResult;
@@ -13,7 +12,7 @@ class MockGetCommentsUseCase implements GetComments {
     if (mockResult != null) {
       return mockResult!;
     }
-    return Failure(AppError.unknown);
+    return const Failure(AppError.unknown);
   }
 }
 
