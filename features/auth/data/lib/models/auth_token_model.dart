@@ -1,5 +1,3 @@
-import 'package:auth_domain/models/auth_token.dart';
-
 class AuthTokenModel {
   final String accessToken;
   final String? refreshToken;
@@ -23,16 +21,4 @@ class AuthTokenModel {
         'refresh_token': refreshToken,
         'expires_at': expiresAt.toIso8601String(),
       };
-
-  AuthToken toDomain() => AuthToken(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        expiresAt: expiresAt,
-      );
-
-  factory AuthTokenModel.fromDomain(AuthToken token) => AuthTokenModel(
-        accessToken: token.accessToken,
-        refreshToken: token.refreshToken,
-        expiresAt: token.expiresAt,
-      );
 }

@@ -227,13 +227,24 @@ class _MainScreenState extends State<MainScreen> {
             ),
             bottomNavigationBar: MoovieBottomNavigationBar(
               currentIndex: activeIndex,
-              onTap: tabsRouter.setActiveIndex,
+              onTap: (index) async {
+                if (index == 2 || index == 3) {
+                  final allowed = await AuthGate.check(context);
+                  if (!allowed) return;
+                }
+                tabsRouter.setActiveIndex(index);
+              },
               centerItem: MoovieBottomNavigationBarItem(
                 icon: Icons.add,
                 label: l10n?.newUserActivityTab ?? '',
               ),
-              onCenterTap: () => context.router.root
-                  .push(const NewUserActivityRoute()),
+              onCenterTap: () async {
+                final allowed = await AuthGate.check(context);
+                if (!allowed) return;
+                if (context.mounted) {
+                  context.router.root.push(const NewUserActivityRoute());
+                }
+              },
               items: [
                 MoovieBottomNavigationBarItem(
                   icon: Icons.home_outlined,

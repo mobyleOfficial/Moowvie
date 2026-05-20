@@ -1,3 +1,4 @@
+import 'package:auth_ui/login_page.dart';
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,6 +24,9 @@ Future<void> mainApp() async {
   final appDir = await getApplicationDocumentsDirectory();
   final store = await openStore(directory: '${appDir.path}/objectbox');
   configureDependencies(store: store);
+  AuthGate.configure(
+    loginModalBuilder: (_) => const LoginPage(),
+  );
   runApp(MyApp());
 }
 

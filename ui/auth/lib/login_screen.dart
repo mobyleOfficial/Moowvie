@@ -83,7 +83,7 @@ class LoginScreen extends StatelessWidget {
               height: 48,
               child: ElevatedButton.icon(
                 onPressed: () =>
-                    context.read<AuthCubit>().loginWithGoogle(),
+                    context.read<LoginCubit>().loginWithGoogle(),
                 icon: const Icon(Icons.g_mobiledata, size: 24),
                 label: Text(
                   AppLocalizations.of(context)!.continueWithGoogle,
@@ -104,7 +104,7 @@ class LoginScreen extends StatelessWidget {
               height: 48,
               child: ElevatedButton.icon(
                 onPressed: () =>
-                    context.read<AuthCubit>().loginWithFacebook(),
+                    context.read<LoginCubit>().loginWithFacebook(),
                 icon: const Icon(Icons.facebook, size: 24),
                 label: Text(
                   AppLocalizations.of(context)!.continueWithFacebook,

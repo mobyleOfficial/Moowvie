@@ -179,7 +179,10 @@ class _ReviewDetailsActions extends StatelessWidget {
             _LikeButton(
               isLiked: review.likedByCurrentUser,
               isBusy: isBusy,
-              onPressed: cubit.toggleLike,
+              onPressed: () async {
+                final allowed = await AuthGate.check(context);
+                if (allowed) cubit.toggleLike();
+              },
             ),
             Tooltip(
               message: l10n?.reviewDetailsShare ?? '',

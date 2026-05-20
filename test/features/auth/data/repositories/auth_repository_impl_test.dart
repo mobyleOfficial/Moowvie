@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:core/core.dart';
-import 'package:auth_domain/domain.dart';
 import 'package:auth/auth.dart';
 
 class MockOAuthRemoteDataSource implements OAuthRemoteDataSource {
@@ -22,14 +21,17 @@ class MockAuthLocalDataSource implements AuthLocalDataSource {
   Result<AuthTokenModel?>? getTokenResult;
   Result<void>? saveTokenResult;
   Result<void>? clearTokenResult;
+  AuthTokenModel? lastSavedToken;
 
   @override
   Future<Result<AuthTokenModel?>> getToken() async =>
       getTokenResult ?? const Failure(AppError.unknown);
 
   @override
-  Future<Result<void>> saveToken(AuthTokenModel token) async =>
-      saveTokenResult ?? const Failure(AppError.unknown);
+  Future<Result<void>> saveToken(AuthTokenModel token) async {
+    lastSavedToken = token;
+    return saveTokenResult ?? const Failure(AppError.unknown);
+  }
 
   @override
   Future<Result<void>> clearToken() async =>
@@ -47,57 +49,66 @@ void main() {
     repository = AuthRepositoryImpl(mockRemote, mockLocal);
   });
 
-  group('initiateOAuth', () {
-    test('maps remote result to domain OAuthResult', () async {
+  group('login', () {
+    test('initiates OAuth, completes it, and saves the token', () async {
       mockRemote.initiateOAuthResult = const Success(
-        OAuthResultModel(
-          provider: 'google',
-          providerToken: 'mock-token',
-        ),
+        OAuthResultModel(provider: 'google', providerToken: 'mock-token'),
       );
-
-      final result = await repository.initiateOAuth(OAuthProvider.google);
-
-      expect(result, isA<Success<OAuthResult>>());
-      final data = (result as Success<OAuthResult>).data;
-      expect(data.provider, OAuthProvider.google);
-      expect(data.providerToken, 'mock-token');
-    });
-
-    test('propagates failure from remote', () async {
-      mockRemote.initiateOAuthResult = const Failure(AppError.network);
-
-      final result = await repository.initiateOAuth(OAuthProvider.google);
-
-      expect(result, isA<Failure<OAuthResult>>());
-      expect((result as Failure<OAuthResult>).error, AppError.network);
-    });
-  });
-
-  group('completeOAuth', () {
-    test('maps remote AuthTokenModel to domain AuthToken', () async {
       mockRemote.completeOAuthResult = Success(
         AuthTokenModel(
           accessToken: 'jwt-token',
           expiresAt: DateTime(2026, 6, 19),
         ),
       );
+      mockLocal.saveTokenResult = const Success(null);
 
-      final oauthResult = OAuthResult(
-        provider: OAuthProvider.google,
-        providerToken: 'mock-token',
+      final result = await repository.login(OAuthProvider.google);
+
+      expect(result, isA<Success<void>>());
+      expect(mockLocal.lastSavedToken?.accessToken, 'jwt-token');
+    });
+
+    test('returns failure when OAuth initiation fails', () async {
+      mockRemote.initiateOAuthResult = const Failure(AppError.network);
+
+      final result = await repository.login(OAuthProvider.google);
+
+      expect(result, isA<Failure<void>>());
+      expect((result as Failure<void>).error, AppError.network);
+    });
+
+    test('returns failure when OAuth completion fails', () async {
+      mockRemote.initiateOAuthResult = const Success(
+        OAuthResultModel(provider: 'google', providerToken: 'mock-token'),
       );
+      mockRemote.completeOAuthResult = const Failure(AppError.server);
 
-      final result = await repository.completeOAuth(oauthResult);
+      final result = await repository.login(OAuthProvider.google);
 
-      expect(result, isA<Success<AuthToken>>());
-      final data = (result as Success<AuthToken>).data;
-      expect(data.accessToken, 'jwt-token');
+      expect(result, isA<Failure<void>>());
+      expect((result as Failure<void>).error, AppError.server);
+    });
+
+    test('returns failure when token save fails', () async {
+      mockRemote.initiateOAuthResult = const Success(
+        OAuthResultModel(provider: 'facebook', providerToken: 'mock-token'),
+      );
+      mockRemote.completeOAuthResult = Success(
+        AuthTokenModel(
+          accessToken: 'jwt-token',
+          expiresAt: DateTime(2026, 6, 19),
+        ),
+      );
+      mockLocal.saveTokenResult = const Failure(AppError.unknown);
+
+      final result = await repository.login(OAuthProvider.facebook);
+
+      expect(result, isA<Failure<void>>());
     });
   });
 
-  group('checkAuthStatus', () {
-    test('returns authenticated when valid token exists', () async {
+  group('isUserAuthenticated', () {
+    test('returns true when valid token exists', () async {
       mockLocal.getTokenResult = Success(
         AuthTokenModel(
           accessToken: 'valid-token',
@@ -105,28 +116,22 @@ void main() {
         ),
       );
 
-      final result = await repository.checkAuthStatus();
+      final result = await repository.isUserAuthenticated();
 
-      expect(result, isA<Success<AuthStatus>>());
-      expect(
-        (result as Success<AuthStatus>).data,
-        AuthStatus.authenticated,
-      );
+      expect(result, isA<Success<bool>>());
+      expect((result as Success<bool>).data, true);
     });
 
-    test('returns unauthenticated when no token exists', () async {
+    test('returns false when no token exists', () async {
       mockLocal.getTokenResult = const Success(null);
 
-      final result = await repository.checkAuthStatus();
+      final result = await repository.isUserAuthenticated();
 
-      expect(result, isA<Success<AuthStatus>>());
-      expect(
-        (result as Success<AuthStatus>).data,
-        AuthStatus.unauthenticated,
-      );
+      expect(result, isA<Success<bool>>());
+      expect((result as Success<bool>).data, false);
     });
 
-    test('returns unauthenticated when token is expired', () async {
+    test('returns false when token is expired', () async {
       mockLocal.getTokenResult = Success(
         AuthTokenModel(
           accessToken: 'expired-token',
@@ -134,38 +139,10 @@ void main() {
         ),
       );
 
-      final result = await repository.checkAuthStatus();
+      final result = await repository.isUserAuthenticated();
 
-      expect(result, isA<Success<AuthStatus>>());
-      expect(
-        (result as Success<AuthStatus>).data,
-        AuthStatus.unauthenticated,
-      );
-    });
-  });
-
-  group('saveToken', () {
-    test('delegates to local data source', () async {
-      mockLocal.saveTokenResult = const Success(null);
-
-      final token = AuthToken(
-        accessToken: 'jwt',
-        expiresAt: DateTime(2026, 6, 19),
-      );
-
-      final result = await repository.saveToken(token);
-
-      expect(result, isA<Success<void>>());
-    });
-  });
-
-  group('clearToken', () {
-    test('delegates to local data source', () async {
-      mockLocal.clearTokenResult = const Success(null);
-
-      final result = await repository.clearToken();
-
-      expect(result, isA<Success<void>>());
+      expect(result, isA<Success<bool>>());
+      expect((result as Success<bool>).data, false);
     });
   });
 }

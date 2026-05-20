@@ -27,32 +27,14 @@ abstract class AuthModule {
       AuthRepositoryImpl(remoteDataSource, localDataSource);
 
   @injectable
-  CheckAuthStatusUseCase checkAuthStatusUseCase(
+  LoginUseCase loginUseCase(
     AuthRepository repository,
   ) =>
-      CheckAuthStatusUseCase(repository);
+      LoginUseCase(repository);
 
   @injectable
-  InitiateOAuthUseCase initiateOAuthUseCase(
+  IsUserAuthenticatedUseCase isUserAuthenticatedUseCase(
     AuthRepository repository,
   ) =>
-      InitiateOAuthUseCase(repository);
-
-  @injectable
-  CompleteOAuthUseCase completeOAuthUseCase(
-    AuthRepository repository,
-  ) =>
-      CompleteOAuthUseCase(repository);
-
-  @injectable
-  SaveTokenUseCase saveTokenUseCase(
-    AuthRepository repository,
-  ) =>
-      SaveTokenUseCase(repository);
-
-  @injectable
-  ClearTokenUseCase clearTokenUseCase(
-    AuthRepository repository,
-  ) =>
-      ClearTokenUseCase(repository);
+      IsUserAuthenticatedUseCase(repository);
 }

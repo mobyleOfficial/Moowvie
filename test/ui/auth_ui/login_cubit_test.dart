@@ -4,94 +4,55 @@ import 'package:core/core.dart';
 import 'package:auth_domain/domain.dart';
 import 'package:auth_ui/auth.dart';
 
-class MockCheckAuthStatusUseCase extends CheckAuthStatusUseCase {
-  Result<AuthStatus>? mockResult;
-
-  MockCheckAuthStatusUseCase() : super(_FakeAuthRepository());
-
-  @override
-  Future<Result<AuthStatus>> call([void params]) async =>
-      mockResult ?? const Failure(AppError.unknown);
-}
-
-class MockInitiateOAuthUseCase extends InitiateOAuthUseCase {
-  Result<OAuthResult>? mockResult;
-
-  MockInitiateOAuthUseCase() : super(_FakeAuthRepository());
-
-  @override
-  Future<Result<OAuthResult>> call([OAuthProvider? params]) async =>
-      mockResult ?? const Failure(AppError.unknown);
-}
-
-class MockCompleteOAuthUseCase extends CompleteOAuthUseCase {
-  Result<AuthToken>? mockResult;
-
-  MockCompleteOAuthUseCase() : super(_FakeAuthRepository());
-
-  @override
-  Future<Result<AuthToken>> call([OAuthResult? params]) async =>
-      mockResult ?? const Failure(AppError.unknown);
-}
-
-class MockClearTokenUseCase extends ClearTokenUseCase {
+class MockLoginUseCase extends LoginUseCase {
   Result<void>? mockResult;
 
-  MockClearTokenUseCase() : super(_FakeAuthRepository());
+  MockLoginUseCase() : super(_FakeAuthRepository());
 
   @override
-  Future<Result<void>> call([void params]) async =>
+  Future<Result<void>> call([OAuthProvider? params]) async =>
+      mockResult ?? const Failure(AppError.unknown);
+}
+
+class MockIsUserAuthenticatedUseCase extends IsUserAuthenticatedUseCase {
+  Result<bool>? mockResult;
+
+  MockIsUserAuthenticatedUseCase() : super(_FakeAuthRepository());
+
+  @override
+  Future<Result<bool>> call([void params]) async =>
       mockResult ?? const Failure(AppError.unknown);
 }
 
 class _FakeAuthRepository implements AuthRepository {
   @override
-  Future<Result<AuthStatus>> checkAuthStatus() async =>
+  Future<Result<void>> login(OAuthProvider provider) async =>
       const Failure(AppError.unknown);
 
   @override
-  Future<Result<OAuthResult>> initiateOAuth(OAuthProvider provider) async =>
-      const Failure(AppError.unknown);
-
-  @override
-  Future<Result<AuthToken>> completeOAuth(OAuthResult oauthResult) async =>
-      const Failure(AppError.unknown);
-
-  @override
-  Future<Result<void>> saveToken(AuthToken token) async =>
-      const Failure(AppError.unknown);
-
-  @override
-  Future<Result<void>> clearToken() async =>
+  Future<Result<bool>> isUserAuthenticated() async =>
       const Failure(AppError.unknown);
 }
 
 void main() {
-  late MockCheckAuthStatusUseCase mockCheckAuthStatus;
-  late MockInitiateOAuthUseCase mockInitiateOAuth;
-  late MockCompleteOAuthUseCase mockCompleteOAuth;
-  late MockClearTokenUseCase mockClearToken;
+  late MockLoginUseCase mockLogin;
+  late MockIsUserAuthenticatedUseCase mockIsUserAuthenticated;
 
   setUp(() {
-    mockCheckAuthStatus = MockCheckAuthStatusUseCase();
-    mockInitiateOAuth = MockInitiateOAuthUseCase();
-    mockCompleteOAuth = MockCompleteOAuthUseCase();
-    mockClearToken = MockClearTokenUseCase();
+    mockLogin = MockLoginUseCase();
+    mockIsUserAuthenticated = MockIsUserAuthenticatedUseCase();
   });
 
-  AuthCubit buildCubit() => AuthCubit(
-        checkAuthStatusUseCase: mockCheckAuthStatus,
-        initiateOAuthUseCase: mockInitiateOAuth,
-        completeOAuthUseCase: mockCompleteOAuth,
-        clearTokenUseCase: mockClearToken,
+  LoginCubit buildCubit() => LoginCubit(
+        loginUseCase: mockLogin,
+        isUserAuthenticatedUseCase: mockIsUserAuthenticated,
       );
 
   group('checkAuthStatus', () {
-    blocTest<AuthCubit, LoginState>(
+    blocTest<LoginCubit, LoginState>(
       'emits [LoginLoading, LoginAuthenticated] when user is authenticated',
       build: () {
-        mockCheckAuthStatus.mockResult =
-            const Success(AuthStatus.authenticated);
+        mockIsUserAuthenticated.mockResult = const Success(true);
         return buildCubit();
       },
       act: (cubit) => cubit.checkAuthStatus(),
@@ -101,11 +62,10 @@ void main() {
       ],
     );
 
-    blocTest<AuthCubit, LoginState>(
-      'emits [LoginLoading, LoginUnauthenticated] when user is not authenticated',
+    blocTest<LoginCubit, LoginState>(
+      'emits [LoginLoading, LoginUnauthenticated] when not authenticated',
       build: () {
-        mockCheckAuthStatus.mockResult =
-            const Success(AuthStatus.unauthenticated);
+        mockIsUserAuthenticated.mockResult = const Success(false);
         return buildCubit();
       },
       act: (cubit) => cubit.checkAuthStatus(),
@@ -115,10 +75,11 @@ void main() {
       ],
     );
 
-    blocTest<AuthCubit, LoginState>(
+    blocTest<LoginCubit, LoginState>(
       'emits [LoginLoading, LoginUnauthenticated] on failure',
       build: () {
-        mockCheckAuthStatus.mockResult = const Failure(AppError.unknown);
+        mockIsUserAuthenticated.mockResult =
+            const Failure(AppError.unknown);
         return buildCubit();
       },
       act: (cubit) => cubit.checkAuthStatus(),
@@ -130,21 +91,10 @@ void main() {
   });
 
   group('loginWithGoogle', () {
-    blocTest<AuthCubit, LoginState>(
-      'emits [LoginLoading, LoginAuthenticated] on successful Google login',
+    blocTest<LoginCubit, LoginState>(
+      'emits [LoginLoading, LoginAuthenticated] on success',
       build: () {
-        mockInitiateOAuth.mockResult = Success(
-          OAuthResult(
-            provider: OAuthProvider.google,
-            providerToken: 'google-token',
-          ),
-        );
-        mockCompleteOAuth.mockResult = Success(
-          AuthToken(
-            accessToken: 'jwt',
-            expiresAt: DateTime(2026, 6, 19),
-          ),
-        );
+        mockLogin.mockResult = const Success(null);
         return buildCubit();
       },
       act: (cubit) => cubit.loginWithGoogle(),
@@ -154,29 +104,10 @@ void main() {
       ],
     );
 
-    blocTest<AuthCubit, LoginState>(
-      'emits [LoginLoading, LoginError] when OAuth initiation fails',
+    blocTest<LoginCubit, LoginState>(
+      'emits [LoginLoading, LoginError] on failure',
       build: () {
-        mockInitiateOAuth.mockResult = const Failure(AppError.network);
-        return buildCubit();
-      },
-      act: (cubit) => cubit.loginWithGoogle(),
-      expect: () => [
-        isA<LoginLoading>(),
-        isA<LoginError>(),
-      ],
-    );
-
-    blocTest<AuthCubit, LoginState>(
-      'emits [LoginLoading, LoginError] when OAuth completion fails',
-      build: () {
-        mockInitiateOAuth.mockResult = Success(
-          OAuthResult(
-            provider: OAuthProvider.google,
-            providerToken: 'google-token',
-          ),
-        );
-        mockCompleteOAuth.mockResult = const Failure(AppError.server);
+        mockLogin.mockResult = const Failure(AppError.network);
         return buildCubit();
       },
       act: (cubit) => cubit.loginWithGoogle(),
@@ -187,30 +118,17 @@ void main() {
     );
   });
 
-  group('logout', () {
-    blocTest<AuthCubit, LoginState>(
-      'emits [LoginLoading, LoginUnauthenticated] on successful logout',
+  group('loginWithFacebook', () {
+    blocTest<LoginCubit, LoginState>(
+      'emits [LoginLoading, LoginAuthenticated] on success',
       build: () {
-        mockClearToken.mockResult = const Success(null);
+        mockLogin.mockResult = const Success(null);
         return buildCubit();
       },
-      act: (cubit) => cubit.logout(),
+      act: (cubit) => cubit.loginWithFacebook(),
       expect: () => [
         isA<LoginLoading>(),
-        isA<LoginUnauthenticated>(),
-      ],
-    );
-
-    blocTest<AuthCubit, LoginState>(
-      'emits [LoginLoading, LoginError] when logout fails',
-      build: () {
-        mockClearToken.mockResult = const Failure(AppError.unknown);
-        return buildCubit();
-      },
-      act: (cubit) => cubit.logout(),
-      expect: () => [
-        isA<LoginLoading>(),
-        isA<LoginError>(),
+        isA<LoginAuthenticated>(),
       ],
     );
   });

@@ -1,6 +1,3 @@
-import 'package:auth_domain/models/oauth_provider.dart';
-import 'package:auth_domain/models/oauth_result.dart';
-
 class OAuthResultModel {
   final String provider;
   final String providerToken;
@@ -20,19 +17,4 @@ class OAuthResultModel {
         'provider': provider,
         'provider_token': providerToken,
       };
-
-  OAuthResult toDomain() => OAuthResult(
-        provider: provider == 'google'
-            ? OAuthProvider.google
-            : OAuthProvider.facebook,
-        providerToken: providerToken,
-      );
-
-  factory OAuthResultModel.fromDomain(OAuthResult result) =>
-      OAuthResultModel(
-        provider: result.provider == OAuthProvider.google
-            ? 'google'
-            : 'facebook',
-        providerToken: result.providerToken,
-      );
 }
