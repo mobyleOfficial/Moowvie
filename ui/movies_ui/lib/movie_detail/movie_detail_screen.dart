@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies/movies.dart';
 import 'package:movies_ui/movie_detail/movie_detail_bloc.dart';
+import 'package:movies_ui/movie_detail/movie_detail_router.dart';
 import 'package:movies_ui/movie_detail/movie_detail_state.dart';
 import 'package:reviews/reviews_list/reviews_router.dart';
 
@@ -646,52 +647,61 @@ class _SimilarMoviesSection extends StatelessWidget {
                 return Semantics(
                   label: movie.title,
                   button: true,
-                  child: SizedBox(
-                    width: 100,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: SizedBox(
-                            width: 100,
-                            height: 140,
-                            child: movie.posterPath.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl:
-                                        '${TmdbImageUrl.posterMedium}${movie.posterPath}',
-                                    fit: BoxFit.cover,
-                                    placeholder: (_, _) => Container(
-                                      color: colorScheme
-                                          .surfaceContainerHighest,
-                                    ),
-                                    errorWidget: (_, _, _) => Container(
+                  child: InkWell(
+                    onTap: () => context.router.push(
+                      MovieDetailRoute(
+                        movieId: movie.id,
+                        movieTitle: movie.title,
+                      ),
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    child: SizedBox(
+                      width: 100,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: SizedBox(
+                              width: 100,
+                              height: 140,
+                              child: movie.posterPath.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl:
+                                          '${TmdbImageUrl.posterMedium}${movie.posterPath}',
+                                      fit: BoxFit.cover,
+                                      placeholder: (_, _) => Container(
+                                        color: colorScheme
+                                            .surfaceContainerHighest,
+                                      ),
+                                      errorWidget: (_, _, _) => Container(
+                                        color: colorScheme
+                                            .surfaceContainerHighest,
+                                        child: const Center(
+                                            child: Icon(Icons.movie)),
+                                      ),
+                                    )
+                                  : Container(
                                       color: colorScheme
                                           .surfaceContainerHighest,
                                       child: const Center(
                                           child: Icon(Icons.movie)),
                                     ),
-                                  )
-                                : Container(
-                                    color: colorScheme
-                                        .surfaceContainerHighest,
-                                    child: const Center(
-                                        child: Icon(Icons.movie)),
-                                  ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ExcludeSemantics(
-                          child: Text(
-                            movie.title,
-                            style: textTheme.labelSmall?.copyWith(
-                              color: colorScheme.onSurface,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          ExcludeSemantics(
+                            child: Text(
+                              movie.title,
+                              style: textTheme.labelSmall?.copyWith(
+                                color: colorScheme.onSurface,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
