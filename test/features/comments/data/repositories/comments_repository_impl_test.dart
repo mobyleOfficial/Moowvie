@@ -18,7 +18,7 @@ class MockCommentsRemoteDataSource implements CommentsRemoteDataSource {
     if (mockResponse != null) {
       return Success(mockResponse!);
     }
-    return Failure(AppError.unknown);
+    return const Failure(AppError.unknown);
   }
 }
 
@@ -63,8 +63,8 @@ void main() {
         pageSize: pageSize,
       );
 
-      expect(result, isA<Success>());
-      final successResult = result as Success;
+      expect(result, isA<Success<CommentListing>>());
+      final successResult = result as Success<CommentListing>;
       expect(successResult.data.comments.length, equals(1));
       expect(successResult.data.comments[0].authorName, equals('Alice Smith'));
       expect(successResult.data.totalCount, equals(1));
@@ -82,8 +82,8 @@ void main() {
         pageSize: 10,
       );
 
-      expect(result, isA<Failure>());
-      final failureResult = result as Failure;
+      expect(result, isA<Failure<CommentListing>>());
+      final failureResult = result as Failure<CommentListing>;
       expect(failureResult.error, equals(AppError.network));
     });
 
@@ -115,8 +115,8 @@ void main() {
         pageSize: 10,
       );
 
-      expect(result, isA<Success>());
-      final successResult = result as Success;
+      expect(result, isA<Success<CommentListing>>());
+      final successResult = result as Success<CommentListing>;
       final comment = successResult.data.comments[0];
       expect(comment, isA<Comment>());
       expect(comment.id, equals('comment-2'));
@@ -152,8 +152,8 @@ void main() {
         pageSize: 10,
       );
 
-      expect(result, isA<Success>());
-      final successResult = result as Success;
+      expect(result, isA<Success<CommentListing>>());
+      final successResult = result as Success<CommentListing>;
       expect(successResult.data.comments.length, equals(10));
       expect(successResult.data.totalCount, equals(25));
       expect(successResult.data.hasMore, equals(true));

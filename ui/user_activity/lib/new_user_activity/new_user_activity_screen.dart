@@ -7,8 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reviews/review_creation/review_creation_router.dart';
 import 'package:movies/movies.dart';
 import 'package:user_activity/model/tab_items.dart';
-import 'new_user_activity_bloc.dart';
-import 'new_user_activity_state.dart';
+import 'package:user_activity/new_user_activity/new_user_activity_bloc.dart';
+import 'package:user_activity/new_user_activity/new_user_activity_state.dart';
 
 class NewUserActivityScreen extends StatefulWidget {
   final NewUserActivityCubit cubit;
@@ -239,7 +239,7 @@ class _SearchResultsList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: movies.length,
-      separatorBuilder: (_, __) => Divider(
+      separatorBuilder: (_, _) => Divider(
         indent: 72,
         height: 1,
         color: colorScheme.outlineVariant,
@@ -292,10 +292,10 @@ class _MovieResultTile extends StatelessWidget {
                             imageUrl:
                                 '${TmdbImageUrl.posterSmall}${movie.posterPath}',
                             fit: BoxFit.cover,
-                            placeholder: (_, __) => Container(
+                            placeholder: (_, _) => Container(
                               color: colorScheme.surfaceContainerHighest,
                             ),
-                            errorWidget: (_, __, ___) => Container(
+                            errorWidget: (_, _, _) => Container(
                               color: colorScheme.surfaceContainerHighest,
                               child: Icon(
                                 Icons.movie,

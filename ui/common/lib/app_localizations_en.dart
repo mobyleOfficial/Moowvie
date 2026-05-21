@@ -467,4 +467,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewDetailsLoadRelatedError => 'Couldn\'t load related reviews';
+
+  @override
+  String get loginSubtitle => 'Sign in to discover and review movies';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get continueWithFacebook => 'Continue with Facebook';
 }

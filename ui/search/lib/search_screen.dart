@@ -122,7 +122,7 @@ class _SearchResultsSectionState extends State<_SearchResultsSection> {
       length: _categories.length,
       child: Column(
         children: [
-          MoovieTabBar(
+          const MoovieTabBar(
             isScrollable: true,
             tabs: _categories,
           ),
@@ -182,7 +182,7 @@ class _MoviesResultsTab extends StatelessWidget {
             : ListView.separated(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: movies.length,
-                separatorBuilder: (_, __) => Divider(
+                separatorBuilder: (_, _) => Divider(
                   indent: 72,
                   height: 1,
                   color: colorScheme.outlineVariant,
@@ -445,10 +445,10 @@ class _MovieResultTile extends StatelessWidget {
                         imageUrl:
                             '${TmdbImageUrl.posterSmall}${movie.posterPath}',
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(
+                        placeholder: (_, _) => Container(
                           color: colorScheme.surfaceContainerHighest,
                         ),
-                        errorWidget: (_, __, ___) => Container(
+                        errorWidget: (_, _, _) => Container(
                           color: colorScheme.surfaceContainerHighest,
                           child: Icon(
                             Icons.movie,

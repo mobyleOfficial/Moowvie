@@ -939,6 +939,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load related reviews'**
   String get reviewDetailsLoadRelatedError;
+
+  /// Subtitle text on the login screen
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to discover and review movies'**
+  String get loginSubtitle;
+
+  /// Google OAuth login button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// Facebook OAuth login button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Facebook'**
+  String get continueWithFacebook;
 }
 
 class _AppLocalizationsDelegate

@@ -383,10 +383,10 @@ class _MovieHeader extends StatelessWidget {
                 ? CachedNetworkImage(
                     imageUrl: '$posterBaseUrl$posterPath',
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(
+                    placeholder: (_, _) => Container(
                       color: colorScheme.surfaceContainerHighest,
                     ),
-                    errorWidget: (_, __, ___) => Container(
+                    errorWidget: (_, _, _) => Container(
                       color: colorScheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.movie,

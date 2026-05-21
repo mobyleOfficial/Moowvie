@@ -216,7 +216,7 @@ class _ProfileInfoContent extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: profile.favoriteMovies.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) => Semantics(
                 label: profile.favoriteMovies[index].title,
                 button: true,
@@ -311,7 +311,7 @@ class _ProfileInfoContent extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: profile.watchlist.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) => Semantics(
                 label: profile.watchlist[index].title,
                 button: true,
@@ -523,7 +523,7 @@ class _MoviesListSheet extends StatelessWidget {
               ),
               shrinkWrap: true,
               itemCount: movies.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final movie = movies[index];
                 return InkWell(
@@ -548,12 +548,12 @@ class _MoviesListSheet extends StatelessWidget {
                                 width: 48,
                                 height: 72,
                                 fit: BoxFit.cover,
-                                placeholder: (_, __) => Container(
+                                placeholder: (_, _) => Container(
                                   width: 48,
                                   height: 72,
                                   color: colorScheme.surfaceContainerHighest,
                                 ),
-                                errorWidget: (_, __, ___) => Container(
+                                errorWidget: (_, _, _) => Container(
                                   width: 48,
                                   height: 72,
                                   color: colorScheme.surfaceContainerHighest,
@@ -625,7 +625,7 @@ class _UsersListSheet extends StatelessWidget {
               ),
               shrinkWrap: true,
               itemCount: users.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 4),
+              separatorBuilder: (_, _) => const SizedBox(height: 4),
               itemBuilder: (context, index) {
                 final user = users[index];
                 return ListTile(

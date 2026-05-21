@@ -471,4 +471,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get reviewDetailsLoadRelatedError =>
       'No se pudieron cargar las reseñas relacionadas';
+
+  @override
+  String get loginSubtitle =>
+      'Inicia sesión para descubrir y reseñar películas';
+
+  @override
+  String get continueWithGoogle => 'Continuar con Google';
+
+  @override
+  String get continueWithFacebook => 'Continuar con Facebook';
 }

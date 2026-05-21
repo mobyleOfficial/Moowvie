@@ -36,20 +36,20 @@ void main() {
   setUp(() {
     final shareService = _FakeShareService();
     final commentsRepository = FakeCommentsRepository();
-    final getCommentsUseCase = GetCommentsUseCase(commentsRepository);
+    final getCommentsUseCase = GetComments(commentsRepository);
     final getIt = GetIt.instance;
 
     // Clear existing registrations
     if (getIt.isRegistered<ShareService>()) {
       getIt.unregister<ShareService>();
     }
-    if (getIt.isRegistered<GetCommentsUseCase>()) {
-      getIt.unregister<GetCommentsUseCase>();
+    if (getIt.isRegistered<GetComments>()) {
+      getIt.unregister<GetComments>();
     }
 
     // Register dependencies
     getIt.registerLazySingleton<ShareService>(() => shareService);
-    getIt.registerLazySingleton<GetCommentsUseCase>(() => getCommentsUseCase);
+    getIt.registerLazySingleton<GetComments>(() => getCommentsUseCase);
   });
 
   tearDown(() async {

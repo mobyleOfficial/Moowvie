@@ -27,7 +27,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   void initState() {
     super.initState();
     _commentsCubit = CommentsCubit(
-      getCommentsUseCase: GetIt.I<GetCommentsUseCase>(),
+      getCommentsUseCase: GetIt.I<GetComments>(),
     );
     _commentsCubit.loadComments(widget.contentId);
   }

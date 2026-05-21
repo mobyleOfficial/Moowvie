@@ -1,5 +1,4 @@
-/// User Activities feature module - exports all public APIs
-library user_activities;
+// User Activities feature module - exports all public APIs
 
 export 'package:user_activities_domain/domain.dart';
 export 'package:user_activities_data/data.dart';

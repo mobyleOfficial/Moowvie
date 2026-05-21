@@ -179,7 +179,10 @@ class _ReviewDetailsActions extends StatelessWidget {
             _LikeButton(
               isLiked: review.likedByCurrentUser,
               isBusy: isBusy,
-              onPressed: cubit.toggleLike,
+              onPressed: () async {
+                final allowed = await AuthGate.check(context);
+                if (allowed) cubit.toggleLike();
+              },
             ),
             Tooltip(
               message: l10n?.reviewDetailsShare ?? '',
@@ -508,7 +511,7 @@ class _ReviewsCarousel extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: reviews.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) => _CarouselCard(
               review: reviews[index],
               kind: cardKind,

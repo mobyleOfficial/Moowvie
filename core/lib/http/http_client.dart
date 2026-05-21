@@ -1,4 +1,4 @@
-import 'result/result.dart';
+import 'package:core/http/result/result.dart';
 
 abstract interface class HttpClient {
   Future<Result<T>> get<T>(

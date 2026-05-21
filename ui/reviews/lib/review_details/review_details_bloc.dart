@@ -74,7 +74,7 @@ class ReviewDetailsCubit extends Cubit<ReviewDetailsState> {
       final currentState = state;
       if (currentState is ReviewDetailsSuccess) {
         emit(currentState.copyWith(
-          moreFromAuthor: Success<List<MovieReview>>(const []),
+          moreFromAuthor: const Success<List<MovieReview>>([]),
         ));
       }
       return;

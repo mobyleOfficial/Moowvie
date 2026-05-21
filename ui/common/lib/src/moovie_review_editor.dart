@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'moovie_bottom_sheet.dart';
-import 'moovie_dialog.dart';
-import '../app_localizations.dart';
+import 'package:common/src/moovie_bottom_sheet.dart';
+import 'package:common/src/moovie_dialog.dart';
+import 'package:common/app_localizations.dart';
 
 class MoovieReviewEditor extends StatefulWidget {
   final String? initialHtml;

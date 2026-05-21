@@ -57,7 +57,7 @@ class MoviesArticlesScreen extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _articles.length,
-      separatorBuilder: (_, __) => Divider(
+      separatorBuilder: (_, _) => Divider(
         indent: 72,
         height: 1,
         color: colorScheme.outlineVariant,

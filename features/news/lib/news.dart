@@ -1,5 +1,4 @@
-/// News feature module - exports all public APIs
-library news;
+// News feature module - exports all public APIs
 
 export 'package:news_domain/domain.dart';
 export 'package:news_data/data.dart';

@@ -18,18 +18,18 @@ class MockCommentsRepository implements CommentsRepository {
     if (mockResponse != null) {
       return Success(mockResponse!);
     }
-    return Failure(AppError.unknown);
+    return const Failure(AppError.unknown);
   }
 }
 
 void main() {
   group('GetCommentsUseCase', () {
-    late GetCommentsUseCase getCommentsUseCase;
+    late GetComments getCommentsUseCase;
     late MockCommentsRepository mockRepository;
 
     setUp(() {
       mockRepository = MockCommentsRepository();
-      getCommentsUseCase = GetCommentsUseCase(mockRepository);
+      getCommentsUseCase = GetComments(mockRepository);
     });
 
     test('should call getComments on repository with correct parameters', () async {
@@ -57,15 +57,15 @@ void main() {
       mockRepository.mockResponse = expectedResponse;
 
       final result = await getCommentsUseCase(
-        GetCommentsParams(
+        const GetCommentsParams(
           contentId: contentId,
           page: page,
           pageSize: pageSize,
         ),
       );
 
-      expect(result, isA<Success>());
-      final successResult = result as Success;
+      expect(result, isA<Success<CommentListing>>());
+      final successResult = result as Success<CommentListing>;
       expect(successResult.data.comments.length, equals(1));
       expect(successResult.data.totalCount, equals(1));
       expect(successResult.data.hasMore, equals(false));
@@ -77,11 +77,11 @@ void main() {
       mockRepository.mockError = AppError.network;
 
       final result = await getCommentsUseCase(
-        GetCommentsParams(contentId: contentId),
+        const GetCommentsParams(contentId: contentId),
       );
 
-      expect(result, isA<Failure>());
-      final failureResult = result as Failure;
+      expect(result, isA<Failure<CommentListing>>());
+      final failureResult = result as Failure<CommentListing>;
       expect(failureResult.error, equals(AppError.network));
     });
 
@@ -99,11 +99,11 @@ void main() {
       mockRepository.mockResponse = expectedResponse;
 
       final result = await getCommentsUseCase(
-        GetCommentsParams(contentId: contentId),
+        const GetCommentsParams(contentId: contentId),
       );
 
-      expect(result, isA<Success>());
-      final successResult = result as Success;
+      expect(result, isA<Success<CommentListing>>());
+      final successResult = result as Success<CommentListing>;
       expect(successResult.data.comments.isEmpty, true);
     });
   });

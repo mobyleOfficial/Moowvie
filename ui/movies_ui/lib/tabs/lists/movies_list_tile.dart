@@ -58,7 +58,7 @@ class MoviesListTile extends StatelessWidget {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: posterPaths.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
                   itemBuilder: (context, index) => ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
@@ -66,12 +66,12 @@ class MoviesListTile extends StatelessWidget {
                       width: 80,
                       height: 120,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
+                      placeholder: (_, _) => Container(
                         width: 80,
                         height: 120,
                         color: colorScheme.surfaceContainerHighest,
                       ),
-                      errorWidget: (_, __, ___) => Container(
+                      errorWidget: (_, _, _) => Container(
                         width: 80,
                         height: 120,
                         color: colorScheme.surfaceContainerHighest,

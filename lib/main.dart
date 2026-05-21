@@ -1,3 +1,4 @@
+import 'package:auth_ui/login_router.dart';
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,8 +22,9 @@ Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Workmanager().initialize(callbackDispatcher);
   final appDir = await getApplicationDocumentsDirectory();
-  final store = await openStore(directory: '${appDir.path}/objectbox');
+  final store = openStore(directory: '${appDir.path}/objectbox');
   configureDependencies(store: store);
+  AuthGate.configure(loginRoute: const LoginRoute());
   runApp(MyApp());
 }
 

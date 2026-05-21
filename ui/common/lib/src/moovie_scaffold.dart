@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'platform_helper.dart';
+import 'package:common/src/platform_helper.dart';
 
 class MoovieScaffold extends StatelessWidget {
   final String? title;
@@ -40,7 +40,7 @@ class MoovieScaffold extends StatelessWidget {
           child: Column(
             children: [
               Expanded(child: body),
-              if (bottomNavigationBar != null) bottomNavigationBar!,
+              ?bottomNavigationBar,
             ],
           ),
         ),

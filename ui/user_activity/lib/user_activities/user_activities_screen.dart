@@ -69,7 +69,7 @@ class _UserActivitiesList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: activities.length,
-      separatorBuilder: (_, __) => Divider(
+      separatorBuilder: (_, _) => Divider(
         indent: 56,
         height: 1,
         color: colorScheme.outlineVariant,
