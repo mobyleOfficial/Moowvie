@@ -7,6 +7,7 @@ import 'package:movies/movies.dart';
 import 'package:movies_ui/movie_detail/movie_detail_bloc.dart';
 import 'package:movies_ui/movie_detail/movie_detail_router.dart';
 import 'package:movies_ui/movie_detail/movie_detail_state.dart';
+import 'package:reviews/review_details/review_details_router.dart';
 import 'package:reviews/reviews_list/reviews_router.dart';
 
 class MovieDetailScreen extends StatelessWidget {
@@ -533,71 +534,84 @@ class _PopularReviewsSection extends StatelessWidget {
           ...reviews.map(
             (review) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest
-                      .withValues(alpha: 0.4),
+              child: Semantics(
+                label: '${review.author ?? ''}, ${review.date}',
+                button: true,
+                child: InkWell(
+                  onTap: () => context.router.push(
+                    ReviewDetailsRoute(
+                      reviewId: review.id,
+                      movieTitle: review.title,
+                    ),
+                  ),
                   borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: colorScheme.primaryContainer,
-                          child: Text(
-                            (review.author ?? '?')[0].toUpperCase(),
-                            style: textTheme.labelSmall?.copyWith(
-                              color: colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 14,
+                              backgroundColor: colorScheme.primaryContainer,
+                              child: Text(
+                                (review.author ?? '?')[0].toUpperCase(),
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            review.author ?? '',
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                review.author ?? '',
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
                             ),
-                          ),
+                            Icon(Icons.star_rounded,
+                                size: 16,
+                                color: colorScheme.onTertiaryContainer),
+                            const SizedBox(width: 2),
+                            Text(
+                              review.rating.toStringAsFixed(1),
+                              style: textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
-                        Icon(Icons.star_rounded,
-                            size: 16,
-                            color: colorScheme.onTertiaryContainer),
-                        const SizedBox(width: 2),
+                        const SizedBox(height: 8),
                         Text(
-                          review.rating.toStringAsFixed(1),
+                          review.content ?? '',
                           style: textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
                             color: colorScheme.onSurfaceVariant,
+                            height: 1.4,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          review.date,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.7),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      review.content ?? '',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        height: 1.4,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      review.date,
-                      style: textTheme.labelSmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant
-                            .withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
